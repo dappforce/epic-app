@@ -3,24 +3,24 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: grillchat-<BRANCH>
-  name: grillchat-<BRANCH>
-  namespace: sub-back
+    app: epicapp-<BRANCH>
+  name: epicapp-<BRANCH>
+  namespace: epic-app
 spec:
   ports:
     - port: 3000
       protocol: TCP
       targetPort: 3000
   selector:
-    app: grillchat-<BRANCH>
+    app: epicapp-<BRANCH>
   type: ClusterIP
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: grillchat-<BRANCH>
-  namespace: sub-back
+  name: epicapp-<BRANCH>
+  namespace: epic-app
   annotations:
     ingress.kubernetes.io/from-to-www-redirect: 'true'
     nginx.ingress.kubernetes.io/from-to-www-redirect: 'true'
@@ -31,7 +31,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: <BRANCH>.subsocial.network
+    - host: dev-<BRANCH>-epicapp.subsocial.network
       http:
         paths:
           - backend:
@@ -44,15 +44,15 @@ spec:
 
   tls:
     - hosts:
-        - <BRANCH>.subsocial.network
+        - dev-<BRANCH>-epicapp.subsocial.network
       secretName: subsocial-ssl
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grillchat-<BRANCH>-env
-  namespace: sub-back
+  name: epicapp-<BRANCH>-env
+  namespace: epic-app
 data:
-  REDIS_HOST: 'redis-master.default'
+  REDIS_HOST: 'redis-epic-master.redis'
   REDIS_PORT: '6379'
