@@ -2,23 +2,23 @@ name: Common CD setup
 description: 'Sets up the environment for jobs during CD'
 
 inputs:
-  token_input:
-    description: 'the k8s temporary creds'
+  do_access_token:
+    description: "K8S temporary credentials"
     required: true
-  k8s_input:
-    description: 'the cluster name'
+  k8s_cluster_id:
+    description: "Target cluster id"
     required: true
-  app_input:
-    description: 'the App name'
+  deployment_name:
+    description: "Target deployment to execute"
     required: true
-  zone_input:
-    description: 'the cf zone'
+  cf_zone_id:
+    description: "Cloudflare Zone ID"
     required: true
-  mail_input:
-    description: 'the cf mail'
+  cf_login_mail:
+    description: "Cloudflare login email"
     required: true
-  tokens_input:
-    description: 'the cf token'
+  cf_login_token:
+    description: "Cloudflare login token"
     required: true
 
 runs:
@@ -28,56 +28,64 @@ runs:
       uses: actions/checkout@v4
 
     - name: Extract main branch name
-      if: github.ref == 'refs/heads/main'
+      if: ${{ inputs.deployment_name == 'production' }}
       shell: bash
-      run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       id: extract_branch
 
-    - name: Extract feature branch name
-      if: startsWith(github.ref, 'refs/heads/deploy/')
+    - name: Extract Development pre-release branch name
+      if: ${{ inputs.deployment_name == 'development' }}
       shell: bash
-      run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')" >> $GITHUB_ENV
+      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^dev\///')" >> $GITHUB_ENV
       id: extract_features_branch
 
-    - name: Prepare
+    - name: Prepare environmental variables
       id: prep
       shell: bash
       run: |
-        echo "image=dappforce/subsocial-web-app-grillchat:${{ inputs.app_input }}-${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
+        echo "image=dappforce/subsocial-web-app-epicapp:epicapp-${{ env.BRANCH_NAME }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
       with:
-        token: ${{ inputs.token_input }}
+        token: ${{ inputs.do_access_token }}
 
     - name: Save DigitalOcean kubeconfig with short-lived credentials
       shell: bash
-      run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ inputs.k8s_input }}
+      run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ inputs.k8s_cluster_id }}
 
-    - name: Remove HPA
-      if: github.ref == 'refs/heads/main'
+# TODO: Uncomment the following steps when the HPA is ready
+#    - name: Remove old HPA
+#      if: ${{ inputs.deployment_name == 'production' }}
+#      shell: bash
+#      run: |
+#        kubectl delete hpa -n epic-app mainnet-grillchat --ignore-not-found=true || kubectl delete hpa -n epic-app grillchat --ignore-not-found=true
+
+    - name: Prepare pre-release deployment
+      if: ${{ inputs.deployment_name == 'development' }}
       shell: bash
       run: |
-        [[ "${{ inputs.app_input }}" == "main" ]] && kubectl delete hpa -n sub-back mainnet-grillchat --ignore-not-found=true || kubectl delete hpa -n sub-back grillchat --ignore-not-found=true
+        NAME=${{ env.BRANCH_NAME }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.deployment_name }}/all.yaml
+        NAME=${{ env.BRANCH_NAME }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.deployment_name }}/deployment.yaml
+        
+        LOADBALANCER_IP=$(kubectl get svc -n nginx nginx-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ inputs.cf_zone_id }}/dns_records" \
+            -H "X-Auth-Email:${{ inputs.cf_login_email }}" \
+            -H "Authorization:Bearer ${{ inputs.cf_login_token }}" \
+            -H "Content-Type:application/json" \
+            --data '{"type":"A","name":"dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network","content":"'$LOADBALANCER_IP'","ttl":3600,"priority":10,"proxied":true}'
 
-    - name: Add feature name
-      if: startsWith(github.ref, 'refs/heads/deploy/')
+    - name: Deploy EPIC to the ${{ inputs.deployment_name }} infrastructure
       shell: bash
       run: |
-        NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/all.yaml
-        NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
-        curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ inputs.zone_input }}/dns_records"      -H "X-Auth-Email:${{ inputs.mail_input }}"      -H "Authorization:Bearer ${{ inputs.tokens_input }}"      -H "Content-Type:application/json"      --data '{"type":"A","name":"${{ env.name }}.subsocial.network","content":"174.138.105.155","ttl":3600,"priority":10,"proxied":true}'
+        sed -i 's|<IMAGE>|'${{ env.image }}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.deployment_name }}/deployment.yaml
+        kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.deployment_name }}/all.yaml
+        kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.deployment_name }}/deployment.yaml
 
-    - name: Deploy ${{ inputs.app_input }}
-      shell: bash
-      run: |
-        sed -i 's|<IMAGE>|'${{ env.image }}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
-        kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/all.yaml
-        kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/deployment.yaml
-
-    - name: Add HPA
-      if: github.ref == 'refs/heads/main'
-      shell: bash
-      run: |
-        [[ "${{ inputs.app_input }}" == "main" ]] && kubectl rollout status -n sub-back deployment/mainnet-grillchat || kubectl rollout status -n sub-back deployment/grillchat
-        kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.app_input }}/hpa.yaml
+# TODO: Uncomment the following steps when the HPA is ready
+#    - name: Add HPA for production
+#      if: ${{ inputs.deployment_name == 'production' }}
+#      shell: bash
+#      run: |
+#        kubectl rollout status -n epic-app deployment/mainnet-grillchat || kubectl rollout status -n epic-app deployment/grillchat
+#        kubectl apply -f $GITHUB_WORKSPACE/deployment/${{ inputs.deployment_name }}/hpa.yaml
