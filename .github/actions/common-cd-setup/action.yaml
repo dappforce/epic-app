@@ -28,13 +28,13 @@ runs:
       uses: actions/checkout@v4
 
     - name: Extract main branch name
-      if: ${{ inputs.deployment_name == 'production' }}
+      if: inputs.deployment_name == 'production'
       shell: bash
       run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       id: extract_branch
 
     - name: Extract Development pre-release branch name
-      if: ${{ inputs.deployment_name == 'development' }}
+      if: inputs.deployment_name == 'development'
       shell: bash
       run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^dev\///')" >> $GITHUB_ENV
       id: extract_features_branch
@@ -62,7 +62,7 @@ runs:
 #        kubectl delete hpa -n epic-app mainnet-grillchat --ignore-not-found=true || kubectl delete hpa -n epic-app grillchat --ignore-not-found=true
 
     - name: Prepare pre-release deployment
-      if: ${{ inputs.deployment_name == 'development' }}
+      if: inputs.deployment_name == 'development'
       shell: bash
       run: |
         NAME=${{ env.BRANCH_NAME }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/${{ inputs.deployment_name }}/all.yaml
