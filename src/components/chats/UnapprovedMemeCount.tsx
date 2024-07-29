@@ -52,12 +52,14 @@ export default function UnapprovedMemeCount({
   if (isLoading || loadingBlockedInApp || loadingBlockedInContest)
     return <Skeleton className={cx('my-0.5', className)} />
 
+  const blockedFactor = (blocked / (approved + blocked)) * 100
+
   return (
     <div className={cx('rounded-full text-sm text-text-muted', className)}>
       <div className='flex flex-shrink-0 items-center gap-2'>
-        {(data?.length ?? 0) >= 5 && (
+        {(data?.length ?? 0) >= 5 && blockedFactor > 0 && (
           <div className='mr-1 flex flex-shrink-0 items-center gap-1 rounded-full border-2 border-yellow-600 px-2 py-0.5 text-yellow-500'>
-            💩 {((blocked / (approved + blocked)) * 100).toFixed(0)}%
+            💩 {blockedFactor.toFixed(0)}%
           </div>
         )}
         <div className='flex flex-shrink-0 items-center gap-1'>
