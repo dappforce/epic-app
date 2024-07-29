@@ -36,7 +36,7 @@ spec:
         paths:
           - backend:
               service:
-                name: grillchat-<BRANCH>
+                name: epicapp-<BRANCH>
                 port:
                   number: 3000
             path: /c(/|$)(.*)
