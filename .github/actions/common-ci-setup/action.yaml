@@ -61,4 +61,4 @@ runs:
       id: prep
       shell: bash
       run: |
-        echo "image=dappforce/subsocial-web-app-grillchat:epicapp-${{ env.BRANCH_NAME }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
+        echo "image=dappforce/subsocial-web-app-epicapp:epicapp-${{ env.BRANCH_NAME }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
