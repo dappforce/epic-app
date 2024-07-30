@@ -40,7 +40,7 @@ jobs:
       # TODO: move to common-ci-setup
       - name: Build production image
         if: matrix.deployment_name == 'production'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
@@ -86,7 +86,7 @@ jobs:
 
       - name: Build pre-release image
         if: matrix.deployment_name == 'development'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
