@@ -3,13 +3,13 @@ description: 'Sets up the environment for jobs during CI'
 
 inputs:
   username_input:
-    description: 'the DockerHub username'
+    description: 'DockerHub login username'
     required: true
   password_input:
-    description: 'the DockerHub password'
+    description: 'DockerHub login password'
     required: true
-  app_input:
-    description: 'the App name'
+  deployment_name:
+    description: 'Target deployment to execute'
     required: true
 
 runs:
@@ -19,16 +19,16 @@ runs:
       uses: actions/checkout@v4
 
     - name: Extract main branch name
-      if: github.ref == 'refs/heads/main'
-      shell: bash
-      run: echo "name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      if: inputs.deployment_name == 'production'
       id: extract_branch
-
-    - name: Extract feature branch name
-      if: startsWith(github.ref, 'refs/heads/deploy/')
       shell: bash
-      run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')" >> $GITHUB_ENV
+      run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+    - name: Extract Development pre-release branch name
+      if: inputs.deployment_name == 'development'
       id: extract_features_branch
+      shell: bash
+      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^dev\///')" >> $GITHUB_ENV
 
     - name: Set up Docker context for buildx
       id: buildx-context
@@ -61,4 +61,4 @@ runs:
       id: prep
       shell: bash
       run: |
-        echo "image=dappforce/subsocial-web-app-grillchat:${{ inputs.app_input }}-${{ env.name }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
+        echo "image=dappforce/subsocial-web-app-epicapp:epicapp-${{ env.BRANCH_NAME }}-$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV

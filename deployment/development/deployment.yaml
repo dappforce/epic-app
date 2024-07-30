@@ -2,37 +2,37 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: grillchat-<BRANCH>
-  name: grillchat-<BRANCH>
-  namespace: sub-back
+    app: epicapp-<BRANCH>
+  name: epicapp-<BRANCH>
+  namespace: epic-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: grillchat-<BRANCH>
+      app: epicapp-<BRANCH>
   template:
     metadata:
       labels:
-        app: grillchat-<BRANCH>
-      name: grillchat-<BRANCH>
+        app: epicapp-<BRANCH>
+      name: epicapp-<BRANCH>
     spec:
       containers:
         - image: <IMAGE>
           imagePullPolicy: IfNotPresent
-          name: grillchat-<BRANCH>
+          name: epicapp-<BRANCH>
           ports:
             - containerPort: 3000
           envFrom:
             - configMapRef:
-                name: grillchat-<BRANCH>-env
+                name: epicapp-<BRANCH>-env
             - secretRef:
-                name: grillchat-secret
+                name: epicapp-secret
           resources:
             requests:
-              memory: '500Mi'
+              memory: '244Mi'
               cpu: '50m'
             limits:
-              memory: '768Mi'
+              memory: '325Mi'
       imagePullSecrets:
         - name: dockerhub
       restartPolicy: Always
