@@ -104,10 +104,10 @@ jobs:
             GH_NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=gl-notifications-dev.appspot.com
             GH_NEXT_PUBLIC_FIREBASE_MESSAGING_ID=581626459774
             GH_NEXT_PUBLIC_FIREBASE_APP_ID=1:581626459774:web:6b7098eb48c0b142f50a2f
-            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://epic-fast-test-epic-data-hub-core.subsocial.network/graphql
-            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://epic-fast-test-epic-data-hub-core.subsocial.network/graphql-ws
-            GH_DATAHUB_QUEUE_URL=https://epic-fast-test-epic-data-hub-queue.subsocial.network/graphql
-            GH_NOTIFICATIONS_URL=https://epic-fast-test-epic-notif-data-hub-core.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://dev-epic-fast-test-epic-dh-core.subsocial.network/graphql
+            GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://dev-epic-fast-test-epic-dh-core.subsocial.network/graphql-ws
+            GH_DATAHUB_QUEUE_URL=https://dev-epic-fast-test-epic-dh-queue.subsocial.network/graphql
+            GH_NOTIFICATIONS_URL=https://dev-epic-fast-test-epic-dh-notif.subsocial.network/graphql
             GH_NEXT_PUBLIC_OFFCHAIN_POSTING_HUBS=12468
             GH_NEXT_PUBLIC_PROPOSALS_HUB=12364
             GH_NEXT_PUBLIC_APP_ID=0xa580866e85dc3f78346ab3131210064e
