@@ -1,5 +1,4 @@
 import Button from '@/components/Button'
-import ProfilePostsListModal from '@/components/chats/ChatItem/profilePosts/ProfileProstsListModal'
 import Input from '@/components/inputs/Input'
 import Toast from '@/components/Toast'
 import { useProfilePostsModal } from '@/stores/profile-posts-modal'
@@ -68,7 +67,6 @@ const SearchUser = () => {
           </Button>
         </div>
       </div>
-      <ProfilePostsListModal tabsConfig={{ defaultTab: 'all' }} />
     </>
   )
 }

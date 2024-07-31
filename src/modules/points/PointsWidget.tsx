@@ -42,10 +42,12 @@ import Points from './PointsPreview'
 
 export default function PointsWidget({
   withPointsAnimation = true,
+  customIsOpen,
   ...props
 }: ComponentProps<'div'> & {
   isNoTgScroll?: boolean
   withPointsAnimation?: boolean
+  customIsOpen?: boolean
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const isMounted = useIsMounted()
@@ -56,6 +58,12 @@ export default function PointsWidget({
       setIsOpen(false)
     }
   })
+
+  useEffect(() => {
+    if (customIsOpen !== undefined) {
+      setIsOpen(customIsOpen)
+    }
+  }, [customIsOpen])
 
   useEffect(() => {
     if (!props.isNoTgScroll) {

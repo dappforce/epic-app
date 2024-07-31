@@ -1,6 +1,7 @@
 import useRandomColor from '@/hooks/useRandomColor'
 import useTgLink from '@/hooks/useTgLink'
 import { getProfileQuery } from '@/services/datahub/profiles/query'
+import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
 import { generateRandomName } from '@/utils/random-name'
 import { ComponentProps, ComponentPropsWithoutRef, forwardRef } from 'react'
@@ -19,6 +20,7 @@ export type NameProps = ComponentProps<'span'> & {
   labelingData?: { chatId: string }
   clipText?: boolean
   asLink?: boolean
+  withProfileModal?: boolean
 }
 
 export default function Name({
@@ -31,58 +33,16 @@ export default function Name({
   showModeratorChip,
   clipText,
   profileSourceIconPosition = 'none',
+  withProfileModal = true,
   asLink,
   ...props
 }: NameProps) {
-  const { inView, ref } = useInView({ triggerOnce: true })
+  const { ref } = useInView({ triggerOnce: true })
 
-  const { isLoading, name, textColor, profile } = useName(address)
-  const { telegramLink, telegramUsername } = useTgLink(address, asLink)
+  const { isLoading, name, textColor } = useName(address)
+  const { telegramLink } = useTgLink(address, asLink)
 
-  // const identitiesIcons = (linkedIdentity?.externalProviders.length ?? 0) >
-  //   0 && (
-  //   <div className='flex items-center'>
-  //     {linkedIdentity?.externalProviders?.map((p) => {
-  //       const data = profileSourceData[p.provider]
-  //       if (!data) return null
-  //       const { icon: Icon, tooltip, link } = data
-
-  //       return (
-  //         <div
-  //           key={p.externalId}
-  //           className={cx(
-  //             'relative top-px flex-shrink-0 text-[0.9em] text-text-muted',
-  //             clipText && 'overflow-hidden',
-  //             profileSourceIconClassName
-  //           )}
-  //           onClick={(e) => e.stopPropagation()}
-  //         >
-  //           <PopOver
-  //             trigger={
-  //               <LinkText
-  //                 href={link?.(p.externalId, address)}
-  //                 openInNewTab
-  //                 onClick={() =>
-  //                   sendEvent('idenity_link_clicked', {
-  //                     eventSource: getCurrentPageChatId(),
-  //                   })
-  //                 }
-  //               >
-  //                 <Icon />
-  //               </LinkText>
-  //             }
-  //             panelSize='sm'
-  //             yOffset={6}
-  //             placement='top'
-  //             triggerOnHover
-  //           >
-  //             <span>{tooltip}</span>
-  //           </PopOver>
-  //         </div>
-  //       )
-  //     })}
-  //   </div>
-  // )
+  const { openModal } = useProfilePostsModal()
 
   if (isLoading) {
     return (
@@ -99,34 +59,36 @@ export default function Name({
   }
 
   return (
-    <LinkOrText
-      {...props}
-      href={telegramLink}
-      ref={ref}
-      className={cx(
-        'flex items-center gap-1',
-        clipText && 'overflow-hidden',
-        className
-      )}
-      style={{ color: color || textColor }}
-    >
-      {/* {profileSourceIconPosition === 'left' && identitiesIcons} */}
-      <span
+    <>
+      <LinkOrText
+        {...props}
+        href={telegramLink}
+        ref={ref}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+
+          withProfileModal && openModal({ address })
+
+          props.onClick?.(e)
+        }}
         className={cx(
-          clipText && 'overflow-hidden text-ellipsis whitespace-nowrap'
+          'flex items-center gap-1',
+          clipText && 'overflow-hidden',
+          { ['cursor-pointer']: withProfileModal },
+          className
         )}
+        style={{ color: color || textColor }}
       >
-        {additionalText} {name}{' '}
-      </span>
-      {/* {profileSourceIconPosition === 'right' && identitiesIcons} */}
-      {/* {inView && showModeratorChip && (
-        <ChatModerateChip
-          className='relative top-px flex items-center'
-          chatId={labelingData?.chatId ?? ''}
-          address={address}
-        />
-      )} */}
-    </LinkOrText>
+        <span
+          className={cx(
+            clipText && 'overflow-hidden text-ellipsis whitespace-nowrap'
+          )}
+        >
+          {additionalText} {name}{' '}
+        </span>
+      </LinkOrText>
+    </>
   )
 }
 

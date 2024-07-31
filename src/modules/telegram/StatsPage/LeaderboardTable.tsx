@@ -11,6 +11,7 @@ import {
 } from '@/services/datahub/leaderboard/query'
 import { LeaderboardDataPeriod } from '@/services/datahub/leaderboard/types'
 import { useMyMainAddress } from '@/stores/my-account'
+import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx, mutedTextColorStyles } from '@/utils/class-names'
 import Image, { ImageProps } from 'next/image'
 import { Dispatch, SetStateAction, useEffect, useMemo } from 'react'
@@ -78,6 +79,7 @@ const LeaderboardTable = ({
   setRefetchTab,
 }: LeaderboardTableProps) => {
   const myAddress = useMyMainAddress()
+  const { openModal } = useProfilePostsModal()
 
   const { data: leaderboardDataResult, isLoading } =
     leaderboardDataQueryByPeriod[period].useQuery(period, {
@@ -150,6 +152,9 @@ const LeaderboardTable = ({
                   <TableRow
                     key={i}
                     columns={leaderboardColumns()}
+                    onRowClick={(item) => {
+                      openModal({ address: item.address })
+                    }}
                     item={item}
                     withDivider={false}
                     className='first:[&>td]:rounded-s-xl last:[&>td]:rounded-e-xl'

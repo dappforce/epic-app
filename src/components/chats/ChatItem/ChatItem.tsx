@@ -4,7 +4,6 @@ import { SuperLikeWrapper } from '@/components/content-staking/SuperLike'
 import { FloatingWrapperProps } from '@/components/floating/FloatingWrapper'
 import useLongTouch from '@/hooks/useLongTouch'
 import { PostRewards } from '@/services/datahub/content-staking/query'
-import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
 import { isTouchDevice } from '@/utils/device'
 import { PostData } from '@subsocial/api/types'
@@ -51,7 +50,6 @@ export default function ChatItem({
 }: ChatItemProps) {
   const { ownerId, id: messageId } = message.struct
   const { body, extensions, link } = message.content || {}
-  const { openModal } = useProfilePostsModal()
 
   const canRenderEmbed = useCanRenderEmbed(link ?? '')
 
@@ -74,14 +72,6 @@ export default function ChatItem({
       >
         {!isMyMessage && (
           <AddressAvatar
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-
-              if (enableProfileModal) {
-                openModal({ chatId, hubId, messageId, address: ownerId })
-              }
-            }}
             address={ownerId}
             className='flex-shrink-0 cursor-pointer'
           />

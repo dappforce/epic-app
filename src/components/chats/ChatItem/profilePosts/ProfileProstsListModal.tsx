@@ -7,7 +7,6 @@ import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import { TabButton } from '@/modules/chat/HomePage/ChatTabs'
 import { getModerationReasonsQuery } from '@/services/datahub/moderation/query'
-import { getUserPostedMemesForCountQuery } from '@/services/datahub/posts/query'
 import { getPaginatedPostIdsByPostIdAndAccount } from '@/services/datahub/posts/queryByAccount'
 import { useSendEvent } from '@/stores/analytics'
 import { useProfilePostsModal } from '@/stores/profile-posts-modal'
@@ -47,12 +46,14 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
 
   const router = useRouter()
 
+  const defaultChatId = tabsConfig ? chatIdByTab[tabsConfig.defaultTab] : ''
+
   const {
     isOpen,
     closeModal,
     messageId = '',
-    chatId = tabsConfig ? chatIdByTab[tabsConfig.defaultTab] : '',
-    hubId = tabsConfig ? defaultHubId : '',
+    chatId = !defaultChatId ? chatIdByTab['all'] : '',
+    hubId = defaultHubId,
     address = '',
     openModal,
   } = useProfilePostsModal()
@@ -61,14 +62,6 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
   const sendEvent = useSendEvent()
   const isAdmin = useIsModerationAdmin()
   const { isAuthorized } = useAuthorizedForModeration(chatId)
-  const { data: userPostedMemes, isLoading: loadingMemes } =
-    getUserPostedMemesForCountQuery.useQuery(
-      {
-        address,
-        chatId,
-      },
-      { enabled: isOpen }
-    )
 
   const { data, isLoading } =
     getPaginatedPostIdsByPostIdAndAccount.useInfiniteQuery(chatId, address)
@@ -100,7 +93,6 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
   return createPortal(
     <>
       <Transition
-        key='profile-posts-list-modal'
         appear
         show={isOpen}
         className='fixed inset-0 z-10 h-full w-full bg-background transition duration-300'

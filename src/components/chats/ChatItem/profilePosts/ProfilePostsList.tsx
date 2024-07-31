@@ -154,6 +154,7 @@ function ProfilePostsListContent({
                       message={message}
                       enableProfileModal={false}
                       showBlockedMessage={isAuthorized}
+                      showBlockButton={isAuthorized}
                       menuIdPrefix='profile-posts-list'
                     />
                   </Fragment>

@@ -27,7 +27,7 @@ const useProfilePostsModalBase = create<State & Actions>()((set) => ({
     set({ isOpen: true, ...config })
   },
   closeModal: () => {
-    set(initialState)
+    set({ isOpen: false })
   },
 }))
 export const useProfilePostsModal = createSelectors(useProfilePostsModalBase)
