@@ -1,4 +1,3 @@
-import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
 import { useState } from 'react'
 import Name, { NameProps } from './Name'
@@ -49,8 +48,6 @@ export function ProfilePreviewModalName({
   hubId: string
   enableProfileModal?: boolean
 }) {
-  const { openModal } = useProfilePostsModal()
-
   return (
     <Name
       {...props}
@@ -58,7 +55,6 @@ export function ProfilePreviewModalName({
         if (enableProfileModal) {
           e.preventDefault()
           e.stopPropagation()
-          openModal({ messageId, chatId, hubId, address: props.address })
           props.onClick?.(e)
         }
       }}

@@ -1,6 +1,7 @@
 import Container from '@/components/Container'
 import Loading from '@/components/Loading'
 import ScrollableContainer from '@/components/ScrollableContainer'
+import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import { useConfigContext } from '@/providers/config/ConfigProvider'
 import { getPostQuery } from '@/services/api/query'
 import { getPostMetadataQuery } from '@/services/datahub/posts/query'
@@ -10,7 +11,6 @@ import { cx } from '@/utils/class-names'
 import { sendMessageToParentWindow } from '@/utils/window'
 import { ComponentProps, Fragment, useEffect, useId, useRef } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import ProfilePostsListModal from '../ChatItem/profilePosts/ProfileProstsListModal'
 import usePaginatedMessageIds from '../hooks/usePaginatedMessageIds'
 import usePinnedMessage from '../hooks/usePinnedMessage'
 import CenterChatNotice from './CenterChatNotice'
@@ -64,6 +64,7 @@ function ChatListContent({
   const sendEvent = useSendEvent()
   const { enableBackButton } = useConfigContext()
   const { data: postMetadata } = getPostMetadataQuery.useQuery(chatId)
+  const isAdmin = useIsModerationAdmin()
 
   const scrollableContainerId = useId()
 
@@ -225,6 +226,7 @@ function ChatListContent({
                         message={message}
                         disableSuperLike={disableSuperLike}
                         scrollToMessage={scrollToMessage}
+                        showBlockButton={isAdmin}
                         showApproveButton={onlyDisplayUnapprovedMessages}
                       />
                     </Fragment>
@@ -246,7 +248,6 @@ function ChatListContent({
           newMessageNoticeClassName={newMessageNoticeClassName}
         />
       </div>
-      <ProfilePostsListModal />
     </ChatListContext.Provider>
   )
 }

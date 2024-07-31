@@ -1,6 +1,7 @@
 import useRandomColor from '@/hooks/useRandomColor'
 import useTgLink from '@/hooks/useTgLink'
 import { getProfileQuery } from '@/services/datahub/profiles/query'
+import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
 import { getIpfsContentUrl } from '@/utils/ipfs'
 import { decodeProfileSource } from '@/utils/profile'
@@ -32,6 +33,7 @@ export type AddressAvatarProps = ComponentProps<'div'> & {
   asLink?: boolean
   forceProfileSource?: ForceProfileSource
   loading?: ImageProps['loading']
+  withProfileModal?: boolean
 }
 
 const AddressAvatar = forwardRef<HTMLDivElement, AddressAvatarProps>(
@@ -40,12 +42,14 @@ const AddressAvatar = forwardRef<HTMLDivElement, AddressAvatarProps>(
       address,
       forceProfileSource,
       asLink,
+      withProfileModal = true,
       loading,
       ...props
     }: AddressAvatarProps,
     ref
   ) {
     const backgroundColor = useRandomColor(address)
+    const { openModal } = useProfilePostsModal()
 
     const [isAvatarError, setIsAvatarError] = useState(false)
     const onImageError = useCallback(() => setIsAvatarError(true), [])
@@ -102,9 +106,17 @@ const AddressAvatar = forwardRef<HTMLDivElement, AddressAvatarProps>(
       <LinkOrText
         {...props}
         href={telegramLink}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+
+          withProfileModal && openModal({ address })
+          props.onClick?.(e as any)
+        }}
         ref={ref as any}
         className={cx(
           'relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-full bg-background-lightest',
+          { ['cursor-pointer']: withProfileModal },
           props.className
         )}
         style={{ backgroundColor }}

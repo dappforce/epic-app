@@ -16,6 +16,7 @@ export type ChatItemContainerProps = Omit<MemeChatItemProps, 'isMyMessage'> & {
   disableSuperLike?: boolean
   hubId: string
   showApproveButton?: boolean
+  showBlockButton?: boolean
 }
 
 function ChatItemContainer(
@@ -26,6 +27,7 @@ function ChatItemContainer(
     showBlockedMessage,
     enableProfileModal = true,
     disableSuperLike,
+    showBlockButton,
     showApproveButton,
     ...props
   }: ChatItemContainerProps,
@@ -62,6 +64,7 @@ function ChatItemContainer(
         disableSuperLike={disableSuperLike}
         hubId={hubId}
         showApproveButton={showApproveButton}
+        showBlockButton={showBlockButton}
       />
     </div>
   )

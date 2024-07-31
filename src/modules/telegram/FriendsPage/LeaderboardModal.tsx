@@ -9,6 +9,7 @@ import {
   getReferrerRankQuery,
 } from '@/services/datahub/referral/query'
 import { useMyMainAddress } from '@/stores/my-account'
+import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx, mutedTextColorStyles } from '@/utils/class-names'
 import { Transition } from '@headlessui/react'
 import { isDef } from '@subsocial/utils'
@@ -52,7 +53,7 @@ const LeaderboardModal = ({ isOpen, close }: LeaderboardModalProps) => {
         leaveFrom='h-auto'
         leaveTo='opacity-0 -translate-y-24 !duration-150'
       >
-        <div className='mx-auto flex w-full max-w-screen-md flex-1 flex-col overflow-auto'>
+        <div className='mx-auto flex w-full max-w-screen-md flex-1 flex-col overflow-hidden'>
           <Image
             src={BlueGradient}
             priority
@@ -70,7 +71,7 @@ const LeaderboardModal = ({ isOpen, close }: LeaderboardModalProps) => {
               <HiXMark className='text-3xl' />
             </Button>
           </div>
-          <div className='relative mx-auto flex h-full w-full flex-col items-center px-4'>
+          <div className='relative mx-auto flex h-full w-full flex-col items-center overflow-auto px-4'>
             <LeaderboardModalContent />
           </div>
         </div>
@@ -156,6 +157,8 @@ const LeaderboardTable = ({ isContest }: LeaderboardTableProps) => {
     isContest || false
   ).useQuery({})
 
+  const { openModal } = useProfilePostsModal()
+
   const { leaderboardData: items, totalCount } = referrersData || {}
 
   const { data: referrerData } = getReferrerRankQuery(
@@ -186,6 +189,7 @@ const LeaderboardTable = ({ isContest }: LeaderboardTableProps) => {
       items?.map((item, i) => ({
         index: i + 1,
         className: item.address === myAddress ? 'bg-slate-800' : '',
+        address: item.address,
         user: (
           <UserPreview
             address={item.address}
@@ -234,6 +238,9 @@ const LeaderboardTable = ({ isContest }: LeaderboardTableProps) => {
                     <TableRow
                       key={i}
                       columns={tableColumns()}
+                      onRowClick={(item) => {
+                        openModal({ address: item.address })
+                      }}
                       item={item}
                       withDivider={false}
                       className='first:[&>td]:rounded-s-xl first:[&>td]:pl-2 last:[&>td]:rounded-e-xl last:[&>td]:pr-2'

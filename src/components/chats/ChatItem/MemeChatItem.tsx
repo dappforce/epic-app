@@ -12,7 +12,6 @@ import { FloatingWrapperProps } from '@/components/floating/FloatingWrapper'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import useLongTouch from '@/hooks/useLongTouch'
 import { PostRewards } from '@/services/datahub/content-staking/query'
-import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
 import { isTouchDevice } from '@/utils/device'
 import { PostData } from '@subsocial/api/types'
@@ -36,6 +35,7 @@ export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   chatId: string
   hubId: string
   showApproveButton?: boolean
+  showBlockButton?: boolean
   disableSuperLike?: boolean
   menuIdPrefix?: string
   dummySuperLike?: SuperLikeButtonProps
@@ -51,6 +51,7 @@ export default function MemeChatItem({
   hubId,
   disableSuperLike,
   showApproveButton,
+  showBlockButton,
   enableProfileModal = true,
   menuIdPrefix,
   dummySuperLike,
@@ -60,7 +61,6 @@ export default function MemeChatItem({
   const { ref, inView } = useInView()
   const { ownerId, id: messageId } = message.struct
   const { body, extensions } = message.content || {}
-  const { openModal } = useProfilePostsModal()
 
   const isAdmin = useIsModerationAdmin()
 
@@ -108,19 +108,6 @@ export default function MemeChatItem({
                         )}
                       >
                         <AddressAvatar
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-
-                            if (enableProfileModal) {
-                              openModal({
-                                chatId,
-                                hubId,
-                                messageId,
-                                address: ownerId,
-                              })
-                            }
-                          }}
                           address={ownerId}
                           className='flex-shrink-0 cursor-pointer'
                         />
@@ -189,17 +176,21 @@ export default function MemeChatItem({
                         />
                       )}
                     </div>
-                    {showApproveButton && (
-                      <div className='grid grid-cols-2 gap-2 px-2'>
-                        <BlockUnblockMemeButton
-                          chatId={chatId}
-                          hubId={hubId}
-                          message={message}
-                        />
-                        <ApproveMemeButton
-                          messageId={message.id}
-                          chatId={chatId}
-                        />
+                    {(showApproveButton || showBlockButton) && (
+                      <div className='flex items-center gap-2 px-2 [&>button]:w-full'>
+                        {showBlockButton && (
+                          <BlockUnblockMemeButton
+                            chatId={chatId}
+                            hubId={hubId}
+                            message={message}
+                          />
+                        )}
+                        {showApproveButton && (
+                          <ApproveMemeButton
+                            messageId={message.id}
+                            chatId={chatId}
+                          />
+                        )}
                       </div>
                     )}
                   </div>

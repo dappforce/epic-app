@@ -19,6 +19,7 @@ export type ChatItemWithMenuProps = {
   showBlockedMessage?: boolean
   disableSuperLike?: boolean
   scrollToMessage?: ScrollToMessage
+  showBlockButton?: boolean
   showApproveButton?: boolean
   menuIdPrefix?: string
 }
@@ -30,6 +31,7 @@ function InnerChatItemWithMenu({
   enableProfileModal = true,
   showBlockedMessage,
   disableSuperLike,
+  showBlockButton,
   scrollToMessage,
   showApproveButton,
   menuIdPrefix,
@@ -56,6 +58,7 @@ function InnerChatItemWithMenu({
             enableProfileModal={enableProfileModal}
             scrollToMessage={scrollToMessage}
             showApproveButton={showApproveButton}
+            showBlockButton={showBlockButton}
             menuIdPrefix={menuIdPrefix}
           />
         </ChatItemMenuWrapper>

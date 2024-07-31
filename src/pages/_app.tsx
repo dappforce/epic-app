@@ -2,6 +2,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import HeadConfig, { HeadConfigProps } from '@/components/HeadConfig'
 import Spinner from '@/components/Spinner'
 import Toast from '@/components/Toast'
+import ProfilePostsListModal from '@/components/chats/ChatItem/profilePosts/ProfileProstsListModal'
 import GlobalModals from '@/components/modals/GlobalModals'
 import { ReferralUrlChanger } from '@/components/referral/ReferralUrlChanger'
 import { env } from '@/env.mjs'
@@ -147,7 +148,9 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
           <ErrorBoundary>
             <EvmProvider>
               <TappingHooksWrapper>
-                <Component {...props} />
+                <ProfileModalWrapper>
+                  <Component {...props} />
+                </ProfileModalWrapper>
               </TappingHooksWrapper>
             </EvmProvider>
           </ErrorBoundary>
@@ -156,6 +159,13 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
     </TelegramScriptWrapper>
   )
 }
+
+const ProfileModalWrapper = ({ children }: { children: React.ReactNode }) => (
+  <>
+    {children}
+    <ProfilePostsListModal />
+  </>
+)
 
 function TelegramScriptWrapper({ children }: { children: React.ReactNode }) {
   const [isExpanded, setIsExpanded] = useState(false)
