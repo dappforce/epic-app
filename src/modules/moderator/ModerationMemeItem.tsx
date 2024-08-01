@@ -6,8 +6,9 @@ import UnapprovedMemeCount from '@/components/chats/UnapprovedMemeCount'
 import { SuperLikeButtonProps } from '@/components/content-staking/SuperLike'
 import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { cx } from '@/utils/class-names'
+import { Checkbox } from '@headlessui/react'
 import { PostData } from '@subsocial/api/types'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps } from 'react'
 
 export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   message: PostData
@@ -17,6 +18,8 @@ export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   menuIdPrefix?: string
   dummySuperLike?: SuperLikeButtonProps
   noBorder?: boolean
+  setSelectedPostIds: (ids: string[]) => void
+  selectedPostIds: string[]
 }
 
 export default function ModerationMemeItem({
@@ -26,11 +29,12 @@ export default function ModerationMemeItem({
   hubId,
   dummySuperLike,
   noBorder,
+  selectedPostIds,
+  setSelectedPostIds,
   ...props
 }: MemeChatItemProps) {
   const { ownerId } = message.struct
   const { body, extensions } = message.content || {}
-  const [enabled, setEnabled] = useState(false)
 
   const displayedTime = message.struct.createdAtTime
 
@@ -50,7 +54,11 @@ export default function ModerationMemeItem({
         props.className
       )}
       onClick={() => {
-        setEnabled(!enabled)
+        setSelectedPostIds(
+          selectedPostIds.includes(message.struct.id)
+            ? selectedPostIds.filter((id) => id !== message.struct.id)
+            : [...selectedPostIds, message.struct.id]
+        )
       }}
     >
       <div className='flex items-center justify-between gap-2'>
@@ -76,10 +84,16 @@ export default function ModerationMemeItem({
             />
           </div>
         </div>
-        {/* <Checkbox */}
-        {/* <Checkbox
-          checked={enabled}
-          onChange={setEnabled}
+
+        <Checkbox
+          checked={selectedPostIds.includes(message.struct.id)}
+          onChange={() => {
+            setSelectedPostIds(
+              selectedPostIds.includes(message.struct.id)
+                ? selectedPostIds.filter((id) => id !== message.struct.id)
+                : [...selectedPostIds, message.struct.id]
+            )
+          }}
           className='group block size-8 rounded bg-slate-900 data-[checked]:bg-background-primary'
         >
           <svg
@@ -94,7 +108,7 @@ export default function ModerationMemeItem({
               strokeLinejoin='round'
             />
           </svg>
-        </Checkbox> */}
+        </Checkbox>
       </div>
       <MediaLoader
         containerClassName='overflow-hidden w-full h-full justify-center flex items-center cursor-pointer'
