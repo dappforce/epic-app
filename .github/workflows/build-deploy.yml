@@ -121,9 +121,9 @@ jobs:
             GH_NEXT_PUBLIC_TELEGRAM_NOTIFICATION_BOT=https://t.me/g_notif_staging_bot/
             GH_TELEGRAM_BOT_TOKEN="7038999347:AAGBgXTWcXpR4vZPW9A8_ia9PkWOpeyDeWA"
             # without base path
-            # GH_NEXTAUTH_URL=https://${{ env.name }}.subsocial.network
+            # GH_NEXTAUTH_URL=https://dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network
             # with base path
-            GH_NEXTAUTH_URL=https://${{ env.name }}.subsocial.network/c/api/auth
+            GH_NEXTAUTH_URL=https://dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network/c/api/auth
             GH_NEXT_PUBLIC_BASE_PATH=/c
             GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=6342977780
             GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=subsocial_staging_bot
