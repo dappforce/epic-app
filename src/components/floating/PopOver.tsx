@@ -152,6 +152,7 @@ export default function PopOver({
             modal={false}
           >
             <Transition
+              as='div'
               enter='transition duration-100 ease-out'
               enterFrom='transform opacity-0'
               enterTo='transform opacity-100'

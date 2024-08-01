@@ -25,7 +25,7 @@
     "@dicebear/core": "^5.3.4",
     "@ethersproject/hash": "^5.7.0",
     "@floating-ui/react": "^0.26.0",
-    "@headlessui/react": "^1.7.11",
+    "@headlessui/react": "2.1",
     "@hookform/resolvers": "^3.1.1",
     "@khmyznikov/pwa-install": "^0.2.5",
     "@kiltprotocol/augment-api": "^0.34.0",

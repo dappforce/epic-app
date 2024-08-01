@@ -94,6 +94,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
     <>
       <Transition
         appear
+        as={'div'}
         show={isOpen}
         className='fixed inset-0 z-10 h-full w-full bg-background transition duration-300'
         enterFrom={cx('opacity-0')}
@@ -103,6 +104,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
       />
       <Transition
         appear
+        as={'div'}
         show={isOpen}
         className='fixed inset-0 z-10 flex h-full w-full flex-col bg-background pb-20 transition duration-300'
         enterFrom={cx('opacity-0 -translate-y-48')}

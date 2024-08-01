@@ -408,6 +408,7 @@ function MintingMessageNotice({ message }: { message: PostData }) {
       </Button>
       <Transition
         show={isOpen}
+        as='div'
         className='transition'
         enterFrom={cx('opacity-0 -translate-y-2')}
         enterTo='opacity-100 translate-y-0'
