@@ -58,6 +58,7 @@ type Data = {
   postId: string
   onlyDisplayUnapprovedMessages: boolean
   myAddress: string
+  pageSize?: number
 }
 export const blockedCountOffset = {
   blocked: 0,
@@ -68,9 +69,11 @@ async function getPaginatedPostIdsByRootPostId({
   client,
   onlyDisplayUnapprovedMessages,
   myAddress,
+  pageSize,
 }: {
   page: number
   client?: QueryClient | null
+  pageSize?: number
 } & Data): Promise<PaginatedPostsData> {
   if (!postId || !client)
     return { data: [], page, hasMore: false, totalData: 0 }
@@ -84,15 +87,17 @@ async function getPaginatedPostIdsByRootPostId({
   const chatPerPage = onlyDisplayUnapprovedMessages ? 50 : CHAT_PER_PAGE
   const firstPageDataLength = oldIds?.length || chatPerPage
 
+  const postsPerPage = pageSize || chatPerPage
+
   // only first page that has dynamic content, where its length can increase from:
   // - subscription
   // - invalidation
   // so the offset has to accommodate the length of the current first page
-  let offset = Math.max((page - 2) * chatPerPage + firstPageDataLength, 0)
+  let offset = Math.max((page - 2) * postsPerPage + firstPageDataLength, 0)
   if (page === 1) offset = 0
   if (onlyDisplayUnapprovedMessages) {
     // no need to check for first page for pending tabs, to avoid skipped data
-    offset = Math.max((page - 1) * chatPerPage - blockedCountOffset.blocked, 0)
+    offset = Math.max((page - 1) * postsPerPage - blockedCountOffset.blocked, 0)
   }
 
   const res = await datahubQueryRequest<
@@ -127,7 +132,7 @@ async function getPaginatedPostIdsByRootPostId({
         orderDirection: onlyDisplayUnapprovedMessages
           ? QueryOrder.Asc
           : QueryOrder.Desc,
-        pageSize: chatPerPage,
+        pageSize: postsPerPage,
         offset,
       },
     },
@@ -215,12 +220,14 @@ export const getPaginatedPostIdsByPostId = {
   fetchFirstPageQuery: async (
     client: QueryClient | null,
     data: Data,
-    page = 1
+    page = 1,
+    pageSize?: number
   ) => {
     const res = await getPaginatedPostIdsByRootPostId({
       ...data,
       page,
       client,
+      pageSize,
     })
     if (!client) return res
 

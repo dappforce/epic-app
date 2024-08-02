@@ -3,7 +3,6 @@ import MediaLoader from '@/components/MediaLoader'
 import { ProfilePreviewModalName } from '@/components/ProfilePreviewModalWrapper'
 import ChatRelativeTime from '@/components/chats/ChatItem/ChatRelativeTime'
 import UnapprovedMemeCount from '@/components/chats/UnapprovedMemeCount'
-import { SuperLikeButtonProps } from '@/components/content-staking/SuperLike'
 import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { cx } from '@/utils/class-names'
 import { Checkbox } from '@headlessui/react'
@@ -15,9 +14,6 @@ export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   messageBubbleId?: string
   chatId: string
   hubId: string
-  menuIdPrefix?: string
-  dummySuperLike?: SuperLikeButtonProps
-  noBorder?: boolean
   setSelectedPostIds: (ids: string[]) => void
   selectedPostIds: string[]
 }
@@ -27,8 +23,6 @@ export default function ModerationMemeItem({
   messageBubbleId,
   chatId,
   hubId,
-  dummySuperLike,
-  noBorder,
   selectedPostIds,
   setSelectedPostIds,
   ...props

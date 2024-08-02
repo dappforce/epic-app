@@ -22,12 +22,14 @@ type PaginatedConfig = {
   hubId: string
   chatId: string
   onlyDisplayUnapprovedMessages?: boolean
+  pageSize?: number
 }
 
 export default function usePaginatedMessageIds({
   chatId,
   hubId,
   onlyDisplayUnapprovedMessages,
+  pageSize,
 }: PaginatedConfig): PaginatedData {
   const myAddress = useMyMainAddress() ?? ''
   // because from server it doesn't have access to myAddress, so we need to use the data without users' unapproved posts as placeholder
@@ -37,6 +39,7 @@ export default function usePaginatedMessageIds({
         postId: chatId,
         onlyDisplayUnapprovedMessages: !!onlyDisplayUnapprovedMessages,
         myAddress: '',
+        pageSize,
       },
       {
         enabled: false,
@@ -48,6 +51,7 @@ export default function usePaginatedMessageIds({
         postId: chatId,
         onlyDisplayUnapprovedMessages: !!onlyDisplayUnapprovedMessages,
         myAddress,
+        pageSize,
       },
       { enabled: !!myAddress, placeholderData }
     )

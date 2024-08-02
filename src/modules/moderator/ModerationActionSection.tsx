@@ -12,6 +12,10 @@ type ModerationActionSectionProps = {
   selectedPostIds: string[]
   selectAll: () => void
   messageIds: string[]
+  setPage: (page: number) => void
+  totalDataCount: number
+  page: number
+  loadMore: () => void
 }
 
 const ModerationActionSection = ({
@@ -19,6 +23,10 @@ const ModerationActionSection = ({
   setSelectedPostIds,
   selectAll,
   messageIds,
+  totalDataCount,
+  setPage,
+  page,
+  loadMore,
 }: ModerationActionSectionProps) => {
   const [enabled, setEnabled] = useState(false)
 
@@ -27,6 +35,8 @@ const ModerationActionSection = ({
       setEnabled(false)
     }
   }, [messageIds.length, selectedPostIds])
+
+  const offset = (page - 1) * 8
 
   return (
     <div className='flex items-center justify-between gap-2'>
@@ -65,12 +75,30 @@ const ModerationActionSection = ({
         )}
       </div>
       <div className='flex items-center gap-4'>
-        <span>1-8 from 13455</span>
+        <span>
+          {offset}-{offset + 8 > totalDataCount ? totalDataCount : offset + 8}{' '}
+          from {totalDataCount}
+        </span>
         <div className='flex items-center gap-1'>
-          <Button variant={'transparent'} size={'circleSm'}>
+          <Button
+            variant={'transparent'}
+            onClick={() => {
+              setPage(page - 1)
+            }}
+            size={'circleSm'}
+            disabled={page === 1}
+          >
             <MdOutlineKeyboardArrowLeft className='size-11' />
           </Button>
-          <Button variant={'transparent'} size={'circleSm'}>
+          <Button
+            onClick={() => {
+              loadMore()
+              setPage(page + 1)
+            }}
+            variant={'transparent'}
+            size={'circleSm'}
+            disabled={page * 8 >= totalDataCount}
+          >
             <MdOutlineKeyboardArrowRight className='size-11' />
           </Button>
         </div>
