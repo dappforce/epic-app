@@ -5,9 +5,9 @@ import ChatRelativeTime from '@/components/chats/ChatItem/ChatRelativeTime'
 import UnapprovedMemeCount from '@/components/chats/UnapprovedMemeCount'
 import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { cx } from '@/utils/class-names'
-import { Checkbox } from '@headlessui/react'
 import { PostData } from '@subsocial/api/types'
 import { ComponentProps } from 'react'
+import ModerationCheckbox from './Checkbox'
 
 export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   message: PostData
@@ -44,7 +44,7 @@ export default function ModerationMemeItem({
       {...props}
       className={cx(
         'relative flex h-full w-full flex-col gap-2',
-        'rounded-2xl bg-slate-800 p-2',
+        'overflow-hidden rounded-2xl bg-slate-800 pt-2',
         props.className
       )}
       onClick={() => {
@@ -55,7 +55,7 @@ export default function ModerationMemeItem({
         )
       }}
     >
-      <div className='flex items-center justify-between gap-2'>
+      <div className='flex items-center justify-between gap-4 px-2'>
         <div className='flex items-center gap-2'>
           <AddressAvatar
             address={ownerId}
@@ -78,31 +78,23 @@ export default function ModerationMemeItem({
             />
           </div>
         </div>
-
-        <Checkbox
-          checked={selectedPostIds.includes(message.struct.id)}
-          onChange={() => {
-            setSelectedPostIds(
-              selectedPostIds.includes(message.struct.id)
-                ? selectedPostIds.filter((id) => id !== message.struct.id)
-                : [...selectedPostIds, message.struct.id]
-            )
-          }}
-          className='group block size-8 rounded bg-slate-900 data-[checked]:bg-background-primary'
-        >
-          <svg
-            className='stroke-white opacity-0 group-data-[checked]:opacity-100'
-            viewBox='0 0 14 14'
-            fill='none'
-          >
-            <path
-              d='M3 8L6 11L11 3.5'
-              strokeWidth={2}
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            />
-          </svg>
-        </Checkbox>
+        <div className='flex min-w-fit items-center gap-2'>
+          <ChatRelativeTime
+            isUpdated={message.struct.isUpdated}
+            createdAtTime={displayedTime}
+            className={cx('w-fit text-xs text-text-muted')}
+          />
+          <ModerationCheckbox
+            checked={selectedPostIds.includes(message.struct.id)}
+            onChange={() => {
+              setSelectedPostIds(
+                selectedPostIds.includes(message.struct.id)
+                  ? selectedPostIds.filter((id) => id !== message.struct.id)
+                  : [...selectedPostIds, message.struct.id]
+              )
+            }}
+          />
+        </div>
       </div>
       <MediaLoader
         containerClassName='overflow-hidden w-full h-full justify-center flex items-center cursor-pointer'
@@ -115,11 +107,6 @@ export default function ModerationMemeItem({
           {body}
         </p>
       )}
-      <ChatRelativeTime
-        isUpdated={message.struct.isUpdated}
-        createdAtTime={displayedTime}
-        className={cx('w-fit text-xs text-text-muted')}
-      />
     </div>
   )
 }

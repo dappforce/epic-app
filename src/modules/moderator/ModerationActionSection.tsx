@@ -11,9 +11,10 @@ type ModerationActionSectionProps = {
   setSelectedPostIds: (ids: string[]) => void
   selectedPostIds: string[]
   selectAll: () => void
-  messageIds: string[]
+  messagesByPage: string[]
   setPage: (page: number) => void
   totalDataCount: number
+  pageSize: number
   page: number
   loadMore: () => void
 }
@@ -22,21 +23,24 @@ const ModerationActionSection = ({
   selectedPostIds,
   setSelectedPostIds,
   selectAll,
-  messageIds,
+  messagesByPage,
   totalDataCount,
+  pageSize,
   setPage,
   page,
   loadMore,
 }: ModerationActionSectionProps) => {
   const [enabled, setEnabled] = useState(false)
 
+  const offset = (page - 1) * pageSize
+
+  const totalByPage = offset + pageSize
+
   useEffect(() => {
-    if (selectedPostIds.length !== messageIds.length) {
+    if (selectedPostIds.length !== messagesByPage.length) {
       setEnabled(false)
     }
-  }, [messageIds.length, selectedPostIds])
-
-  const offset = (page - 1) * 8
+  }, [messagesByPage.length, selectedPostIds])
 
   return (
     <div className='flex items-center justify-between gap-2'>
@@ -76,7 +80,7 @@ const ModerationActionSection = ({
       </div>
       <div className='flex items-center gap-4'>
         <span>
-          {offset}-{offset + 8 > totalDataCount ? totalDataCount : offset + 8}{' '}
+          {offset}-{totalByPage > totalDataCount ? totalDataCount : totalByPage}{' '}
           from {totalDataCount}
         </span>
         <div className='flex items-center gap-1'>

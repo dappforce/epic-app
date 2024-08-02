@@ -14,31 +14,29 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
   const [page, setPage] = useState(1)
   const pageSize = 8
 
-  const {
-    messageIds,
-    hasMore,
-    loadMore,
-    totalDataCount,
-    currentPage,
-    isLoading,
-  } = usePaginatedMessageIds({
-    hubId,
-    chatId,
-    onlyDisplayUnapprovedMessages: true,
-    pageSize: 8,
-  })
+  const { messageIds, hasMore, loadMore, totalDataCount } =
+    usePaginatedMessageIds({
+      hubId,
+      chatId,
+      onlyDisplayUnapprovedMessages: true,
+      pageSize,
+    })
 
   const renderedMessageQueries = getPostQuery.useQueries(messageIds)
 
-  const postsIdsByPage = useMemo(() => {
-    const offset = (page - 1) * pageSize
+  const offset = (page - 1) * pageSize
 
-    return renderedMessageQueries.slice(offset, offset + 8)
-  }, [renderedMessageQueries, page])
+  const postsIdsByPage = useMemo(() => {
+    return renderedMessageQueries.slice(offset, offset + pageSize)
+  }, [renderedMessageQueries, offset])
 
   useEffect(() => {
     loadMore()
   }, [loadMore])
+
+  useEffect(() => {
+    setSelectedPostIds([])
+  }, [page])
 
   return (
     <div className='flex flex-col gap-6'>
@@ -46,12 +44,13 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
         selectedPostIds={selectedPostIds}
         setSelectedPostIds={setSelectedPostIds}
         selectAll={() => {
-          setSelectedPostIds(messageIds)
+          setSelectedPostIds(messageIds.slice(offset, offset + pageSize))
         }}
-        messageIds={messageIds}
+        messagesByPage={messageIds.slice(offset, offset + pageSize)}
         page={page}
         setPage={setPage}
         totalDataCount={totalDataCount}
+        pageSize={pageSize}
         loadMore={() => {
           hasMore && loadMore()
         }}
