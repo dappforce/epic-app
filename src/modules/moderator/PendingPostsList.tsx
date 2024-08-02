@@ -42,6 +42,7 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
     <div className='flex flex-col gap-6'>
       <ModerationActionSection
         selectedPostIds={selectedPostIds}
+        chatId={chatId}
         setSelectedPostIds={setSelectedPostIds}
         selectAll={() => {
           setSelectedPostIds(messageIds.slice(offset, offset + pageSize))

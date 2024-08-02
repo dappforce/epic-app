@@ -6,6 +6,7 @@ import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from 'react-icons/md'
+import ModerationButtons from './ModerationButtons'
 
 type ModerationActionSectionProps = {
   setSelectedPostIds: (ids: string[]) => void
@@ -15,6 +16,7 @@ type ModerationActionSectionProps = {
   setPage: (page: number) => void
   totalDataCount: number
   pageSize: number
+  chatId: string
   page: number
   loadMore: () => void
 }
@@ -27,6 +29,7 @@ const ModerationActionSection = ({
   totalDataCount,
   pageSize,
   setPage,
+  chatId,
   page,
   loadMore,
 }: ModerationActionSectionProps) => {
@@ -73,8 +76,10 @@ const ModerationActionSection = ({
           <>
             <span className='text-xl'>Selected: {selectedPostIds.length} </span>
 
-            <Button variant={'redOutline'}>Block</Button>
-            <Button variant={'greenOutline'}>Approve</Button>
+            <ModerationButtons
+              chatId={chatId}
+              selectedMessageIds={selectedPostIds}
+            />
           </>
         )}
       </div>
