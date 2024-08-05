@@ -116,7 +116,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
           address={address}
         />
         <div className='mx-auto flex w-full max-w-screen-md flex-1 flex-col overflow-auto'>
-          <div className='relative mx-auto flex w-full items-center justify-between gap-2 px-4 py-3'>
+          <div className='relative mx-auto flex w-full items-center justify-between gap-2 py-3 pl-1 pr-2'>
             <div className='flex flex-1 items-center gap-2'>
               <Button
                 variant='transparent'
@@ -182,7 +182,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
               </div>
             )}
           </div>
-          <div className='relative mx-auto flex h-full max-h-full min-h-[400px] w-full flex-col items-center px-4'>
+          <div className='relative mx-auto flex h-full max-h-full min-h-[400px] w-full flex-col items-center'>
             {tabsConfig && (
               <div className='sticky top-14 mb-2 grid h-12 w-full grid-flow-col items-center gap-4 bg-background px-4'>
                 <TabButton
