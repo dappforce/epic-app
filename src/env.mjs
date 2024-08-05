@@ -29,6 +29,7 @@ export const env = createEnv({
     TWITTER_CLIENT_SECRET: z.string().default(''),
     GOOGLE_CLIENT_ID: z.string().default(''),
     GOOGLE_CLIENT_SECRET: z.string().default(''),
+    FRAMES_SECRET: z.string().default(''),
   },
   client: {
     NEXT_PUBLIC_APP_ID: z.string().default(''),

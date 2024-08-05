@@ -1,3 +1,4 @@
+import { env } from '@/env.mjs'
 import { Frog } from 'frog'
 import { devtools } from 'frog/dev'
 import { serveStatic } from 'frog/serve-static'
@@ -50,6 +51,8 @@ export class FrogFramesManager {
       // Supply a Hub to enable frame verification.
       // hub: neynar({ apiKey: process.env.DATAHUB_NEYNAR_API_KEY || '' }),
       title: 'Epic Meme2Earn',
+      secret: env.FRAMES_SECRET,
+      imageAspectRatio: '1:1',
       imageOptions: {
         width: 800,
         height: 800,
