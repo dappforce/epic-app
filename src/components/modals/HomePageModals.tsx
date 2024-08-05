@@ -38,7 +38,7 @@ export default function HomePageModals() {
       // need to have timeout so that the scrollTo from useTgNoScroll is done first
       setTimeout(() => {
         setIsOpenWelcomeModal(true)
-      })
+      }, 150)
     } else {
       setCanModalBeOpened('yesterday-reward')
     }

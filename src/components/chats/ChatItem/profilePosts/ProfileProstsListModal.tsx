@@ -19,7 +19,6 @@ import {
   HiOutlineChevronLeft,
   HiOutlineInformationCircle,
 } from 'react-icons/hi2'
-import UnapprovedMemeCount from '../../UnapprovedMemeCount'
 import { useModerateWithSuccessToast } from '../ChatItemMenus'
 import ProfileDetailModal from './ProfileDetailModal'
 import ProfilePostsList from './ProfilePostsList'
@@ -116,7 +115,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
           address={address}
         />
         <div className='mx-auto flex w-full max-w-screen-md flex-1 flex-col overflow-auto'>
-          <div className='relative mx-auto flex w-full items-center justify-between gap-2 px-4 py-3'>
+          <div className='relative mx-auto flex w-full items-center justify-between gap-2 py-3 pl-1 pr-2'>
             <div className='flex flex-1 items-center gap-2'>
               <Button
                 variant='transparent'
@@ -133,7 +132,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
               </Button>
               <AddressAvatar
                 address={address}
-                className='flex-shrink-0 cursor-pointer'
+                className='-ml-1 flex-shrink-0 cursor-pointer'
               />
               <div
                 className='flex flex-col gap-0.5'
@@ -142,23 +141,23 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
                 }}
               >
                 <Name address={address} className='!text-text' clipText />
-                {isAdmin ? (
+                {/* {isAdmin ? (
                   <UnapprovedMemeCount
                     className='flex-shrink-0 bg-transparent p-0 text-text-muted'
                     address={address}
                     chatId={chatId}
                   />
-                ) : (
-                  <span className='flex items-center gap-1 text-xs font-medium leading-[normal] text-slate-400'>
-                    <span>Memes:</span>
-                    <SkeletonFallback
-                      isLoading={isLoading}
-                      className='my-0 w-fit min-w-8'
-                    >
-                      {totalPostsCount}
-                    </SkeletonFallback>
-                  </span>
-                )}
+                ) : ( */}
+                <span className='flex items-center gap-1 text-xs font-medium leading-[normal] text-slate-400'>
+                  <span>Memes:</span>
+                  <SkeletonFallback
+                    isLoading={isLoading}
+                    className='my-0 w-fit min-w-8'
+                  >
+                    {totalPostsCount}
+                  </SkeletonFallback>
+                </span>
+                {/* )} */}
               </div>
             </div>
 
@@ -182,7 +181,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
               </div>
             )}
           </div>
-          <div className='relative mx-auto flex h-full max-h-full min-h-[400px] w-full flex-col items-center px-4'>
+          <div className='relative mx-auto flex h-full max-h-full min-h-[400px] w-full flex-col items-center'>
             {tabsConfig && (
               <div className='sticky top-14 mb-2 grid h-12 w-full grid-flow-col items-center gap-4 bg-background px-4'>
                 <TabButton
