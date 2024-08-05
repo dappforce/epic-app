@@ -133,7 +133,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
               </Button>
               <AddressAvatar
                 address={address}
-                className='flex-shrink-0 cursor-pointer'
+                className='-ml-1 flex-shrink-0 cursor-pointer'
               />
               <div
                 className='flex flex-col gap-0.5'
