@@ -31,7 +31,6 @@ export class FrogFramesManager {
   private importFramesDefinitions() {
     Object.keys(frames).forEach((key) => {
       // @ts-ignore
-      console.log(frames, key)
       this.frameDefinitions[key] = frames[key] as FrameDefinition
     })
   }

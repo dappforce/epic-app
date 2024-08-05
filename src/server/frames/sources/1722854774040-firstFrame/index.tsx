@@ -1,9 +1,11 @@
 /* eslint-disable react/jsx-key */
 /** @jsxImportSource frog/jsx */
+import { env } from '@/env.mjs'
 import { Button, Frog } from 'frog'
+import urlJoin from 'url-join'
 
 const frameName = '1722854774040-1'
-const frameRootPath = `/${frameName}`
+const frameRootPath = urlJoin(env.NEXT_PUBLIC_BASE_PATH, `/${frameName}`)
 
 const frame = {
   name: frameName,
