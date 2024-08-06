@@ -11,6 +11,7 @@ import { datahubQueryRequest } from '../utils'
 export type Identity = {
   mainAddress: string
   externalProviders: {
+    id: string
     provider: IdentityProvider
     externalId: string
     username?: string | null
