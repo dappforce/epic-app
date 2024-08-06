@@ -75,6 +75,7 @@ jobs:
             GH_NEXT_PUBLIC_PROPOSALS_HUB=27942
             GH_SERVER_MNEMONIC=${{ secrets.GH_SERVER_MNEMONIC }}
             GH_NEXT_PUBLIC_NEYNAR_CLIENT_ID=e8dc01b0-046c-4698-98ac-05432050961d
+            GH_FRAMES_SECRET=<<todo add to secrets>>
             GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=6523818125
             GH_NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=EpicAppBot
           target: runner
@@ -128,6 +129,7 @@ jobs:
             GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=6342977780
             GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=subsocial_staging_bot
             GH_NEXT_PUBLIC_NEYNAR_CLIENT_ID=e8dc01b0-046c-4698-98ac-05432050961d
+            GH_FRAMES_SECRET=JG/W96svVHQ3bdaEKWm1h8xJXqxDtqZ6t7tKCZNWhh0=
           target: runner
           tags: |
             ${{ env.image }}
