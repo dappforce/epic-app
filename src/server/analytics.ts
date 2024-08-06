@@ -23,5 +23,5 @@ export function sendServerEvent(
   }
   const client = getAmplitudeServerClient()
   if (!client) return
-  client.logEvent(event)
+  client.logEvent(event).then()
 }

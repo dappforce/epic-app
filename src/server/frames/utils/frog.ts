@@ -3,6 +3,7 @@ import { sendServerEvent } from '@/server/analytics'
 import { Frog } from 'frog'
 import { devtools } from 'frog/dev'
 import { serveStatic } from 'frog/serve-static'
+import { FrameData } from 'frog/types/frame'
 import frames from '../sources'
 import { FrameDefinition } from './types'
 
@@ -57,27 +58,48 @@ export class FrogFramesManager {
       imageOptions: {
         width: 800,
         height: 800,
-        // fonts: [
-        //   {
-        //     name: "Radio Canada",
-        //     weight: 400,
-        //     source: "google",
-        //   },
-        //   {
-        //     name: "Radio Canada",
-        //     weight: 600,
-        //     source: "google",
-        //   },
-        // ],
       },
     })
-    sendServerEvent('frog_app_init', {
-      test: 'test',
-    })
-    console.log('initFrogApp')
 
     this.initFrames()
 
     devtools(this.frogAppInstance, { serveStatic })
+  }
+
+  static sendAnalyticsEventOnFrameAction<
+    C extends {
+      status: 'initial' | 'redirect' | 'response'
+      url: string
+      frameData?: FrameData
+      buttonValue?: string
+    }
+  >(frameName: string, contextData: C, customPayload: Record<any, any> = {}) {
+    const { buttonValue, status, frameData, url } = contextData
+
+    if (status === 'initial') {
+      sendServerEvent('farcaster_frame_initial_open', {
+        frameName,
+        frameStepId: 1,
+        frameUrl: url,
+        ...customPayload,
+      })
+    } else if (status === 'response') {
+      sendServerEvent('farcaster_frame_step_open', {
+        frameName,
+        frameStepId: 1,
+        frameUrl: url,
+        buttonValue,
+        ...(frameData
+          ? {
+              interactorFid: frameData.fid,
+              castHash: frameData.castId.hash,
+              castOwnerFid: frameData.castId.fid,
+              messageHash: frameData.messageHash,
+              timestamp: frameData.timestamp,
+            }
+          : {}),
+        ...customPayload,
+      })
+    }
   }
 }
