@@ -31,6 +31,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().default(''),
     GOOGLE_CLIENT_SECRET: z.string().default(''),
     FRAMES_SECRET: z.string().default(''),
+    NEYNAR_API_KEY: z.string().default(''),
   },
   client: {
     NEXT_PUBLIC_APP_ID: z.string().default(''),
