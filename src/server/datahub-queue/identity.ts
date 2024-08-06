@@ -82,7 +82,6 @@ const UPDATE_EXTERNAL_PROVIDER = gql`
 `
 
 export async function updateExternalProvider(input: SocialEventDataApiInput) {
-  await backendSigWrapper(input)
   const res = await datahubQueueRequest<
     UpdateExternalProviderMutation,
     UpdateExternalProviderMutationVariables
@@ -94,7 +93,7 @@ export async function updateExternalProvider(input: SocialEventDataApiInput) {
   })
   throwErrorIfNotProcessed(
     res.updateLinkedIdentityExternalProvider,
-    'Failed to add external provider to identity'
+    'Failed to update external provider'
   )
 }
 

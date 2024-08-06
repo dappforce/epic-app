@@ -12,7 +12,11 @@ import {
   SynthUpdateLinkedIdentityExternalProviderCallParsedArgs,
   socialCallName,
 } from '@subsocial/data-hub-sdk'
-import { DatahubParams, createSocialDataEventPayload } from '../utils'
+import {
+  DatahubParams,
+  createSignedSocialDataEvent,
+  createSocialDataEventPayload,
+} from '../utils'
 import { Identity } from './fetcher'
 import { getLinkedIdentityQuery } from './query'
 
@@ -132,7 +136,7 @@ async function updateExternalProvider(
     SocialCallDataArgs<'synth_update_linked_identity_external_provider'>
   >
 ) {
-  const input = await createSocialDataEventPayload(
+  const input = await createSignedSocialDataEvent(
     socialCallName.synth_update_linked_identity_external_provider,
     params,
     params.args
