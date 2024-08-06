@@ -196,6 +196,7 @@ export type Mutation = {
   setPostApproveStatus: IngestDataResponseDto;
   socialProfileAddReferrerId: IngestDataResponseDto;
   socialProfileSetActionPermissions: IngestDataResponseDto;
+  updateLinkedIdentityExternalProvider: IngestDataResponseDto;
   updatePostBlockchainSyncStatus: IngestDataResponseDto;
   updatePostOptimistic: IngestDataResponseDto;
   updateSpaceOffChain: IngestDataResponseDto;
@@ -327,6 +328,11 @@ export type MutationSocialProfileSetActionPermissionsArgs = {
 };
 
 
+export type MutationUpdateLinkedIdentityExternalProviderArgs = {
+  args: CreateMutateLinkedIdentityInput;
+};
+
+
 export type MutationUpdatePostBlockchainSyncStatusArgs = {
   updatePostBlockchainSyncStatusInput: UpdatePostBlockchainSyncStatusInput;
 };
@@ -451,6 +457,7 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
   SynthUpdatePostTxRetry = 'synth_update_post_tx_retry',
   UpdatePost = 'update_post',
@@ -534,7 +541,7 @@ export type UpdateExternalProviderMutationVariables = Exact<{
 }>;
 
 
-export type UpdateExternalProviderMutation = { __typename?: 'Mutation', addNewLinkedIdentityExternalProvider: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
+export type UpdateExternalProviderMutation = { __typename?: 'Mutation', updateLinkedIdentityExternalProvider: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
 
 export type LinkIdentityEvmMessageMutationVariables = Exact<{
   address: Scalars['String']['input'];
@@ -677,7 +684,7 @@ export const AddExternalProviderToIdentity = gql`
     `;
 export const UpdateExternalProvider = gql`
     mutation UpdateExternalProvider($args: CreateMutateLinkedIdentityInput!) {
-  addNewLinkedIdentityExternalProvider(args: $args) {
+  updateLinkedIdentityExternalProvider(args: $args) {
     processed
     callId
     message
