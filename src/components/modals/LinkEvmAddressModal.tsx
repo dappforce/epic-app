@@ -45,10 +45,14 @@ export default function LinkEvmAddressModal(
     })
   }
 
+  const defaultTitle = myEvmAddress
+    ? 'Edit your Ethereum address for rewards'
+    : 'Your Ethereum address for rewards'
+
   return (
     <Modal
       {...props}
-      title={props.title || 'Your Ethereum address for rewards'}
+      title={props.title || defaultTitle}
       description={
         props.description ??
         'We will send your token rewards to this address if you win this contest.'

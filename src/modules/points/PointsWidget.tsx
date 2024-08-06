@@ -228,7 +228,7 @@ const UserStatsSection = ({
   const [openRewardModal, setOpenRewardModal] = useState(false)
   const [openEvmLinkModal, setOpenEvmLinkModal] = useState(false)
 
-  const { evmAddress } = useLinkedEvmAddress()
+  const { evmAddress, isLoading } = useLinkedEvmAddress()
 
   return (
     <>
@@ -236,7 +236,7 @@ const UserStatsSection = ({
         <div
           className={cx(
             'border-b border-slate-700 p-4',
-            evmAddress && 'border-none'
+            !isLoading && 'border-none'
           )}
           onClick={() => {
             sendEvent('open_leaderboard')
@@ -279,34 +279,54 @@ const UserStatsSection = ({
             <IoIosArrowForward className={cx('fill-slate-400 text-2xl')} />
           </div>
         </div>
-        {evmAddress && (
-          <Card className='mx-4 flex items-center justify-between gap-4 p-4 py-3'>
-            <div className='flex flex-col gap-1'>
-              <span className='text-sm font-medium text-text-muted'>
-                My EVM Address
-              </span>
-              <div className='flex items-center gap-2.5'>
-                <span className='font-semibold'>
-                  {truncateAddress(evmAddress ?? '')}
-                </span>
+        {(() => {
+          if (isLoading) return null
+          if (evmAddress) {
+            return (
+              <Card className='mx-4 flex items-center justify-between gap-4 p-4 py-3'>
+                <div className='flex flex-col gap-1'>
+                  <span className='text-sm font-medium text-text-muted'>
+                    My EVM Address
+                  </span>
+                  <div className='flex items-center gap-2.5'>
+                    <span className='font-semibold'>
+                      {truncateAddress(evmAddress ?? '')}
+                    </span>
+                    <Button
+                      className='flex-shrink-0 text-sm text-text-muted'
+                      variant='transparent'
+                      size='circleSm'
+                      onClick={() => {
+                        sendEvent('copy_evm_address_click')
+                        copyToClipboard(evmAddress ?? '')
+                        toast.custom((t) => (
+                          <Toast t={t} title='Copied to clipboard!' />
+                        ))
+                      }}
+                    >
+                      <MdContentCopy />
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )
+          } else {
+            return (
+              <div className='px-4 pb-2'>
                 <Button
-                  className='flex-shrink-0 text-sm text-text-muted'
-                  variant='transparent'
-                  size='circleSm'
+                  className='w-full'
                   onClick={() => {
-                    sendEvent('copy_evm_address_click')
-                    copyToClipboard(evmAddress ?? '')
-                    toast.custom((t) => (
-                      <Toast t={t} title='Copied to clipboard!' />
-                    ))
+                    sendEvent('connect_evm_address_click')
+                    setOpenEvmLinkModal(true)
                   }}
+                  variant='primaryOutline'
                 >
-                  <MdContentCopy />
+                  Connect Ethereum Wallet
                 </Button>
               </div>
-            </div>
-          </Card>
-        )}
+            )
+          }
+        })()}
         <div className='flex w-full items-center gap-4 px-4'>
           <div className='flex w-full flex-col gap-1 border-r border-slate-700 py-4'>
             <span className='text-text-muted'>LIKES LEFT TODAY:</span>
@@ -357,8 +377,6 @@ const UserStatsSection = ({
       <LinkEvmAddressModal
         isOpen={openEvmLinkModal}
         closeModal={() => setOpenEvmLinkModal(false)}
-        title='Edit your Ethereum address for rewards'
-        description='We will send your token rewards to this address if you win in contest.'
       />
     </>
   )
