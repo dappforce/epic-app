@@ -308,6 +308,16 @@ const UserStatsSection = ({
                     </Button>
                   </div>
                 </div>
+                <LinkText
+                  variant='primary'
+                  className='mr-1'
+                  onClick={() => {
+                    sendEvent('edit_evm_address_click')
+                    setOpenEvmLinkModal(true)
+                  }}
+                >
+                  Edit
+                </LinkText>
               </Card>
             )
           } else {
