@@ -1,7 +1,8 @@
 import usePaginatedMessageIds from '@/components/chats/hooks/usePaginatedMessageIds'
 import { getPostQuery } from '@/services/api/query'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import ModerationActionSection from './ModerationActionSection'
+import { useModerationContext } from './ModerationContext'
 import ModerationMemeItem from './ModerationMemeItem'
 
 type PendingPostsListProps = {
@@ -10,11 +11,9 @@ type PendingPostsListProps = {
 }
 
 const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
-  const [selectedPostIds, setSelectedPostIds] = useState<string[]>([])
-  const [page, setPage] = useState(1)
-  const pageSize = 8
+  const { setSelectedPostIds, page, pageSize } = useModerationContext()
 
-  const { messageIds, hasMore, loadMore, totalDataCount, refetch, isLoading } =
+  const { messageIds, hasMore, loadMore, totalDataCount, refetch } =
     usePaginatedMessageIds({
       hubId,
       chatId,
@@ -28,7 +27,7 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
 
   const postsIdsByPage = useMemo(() => {
     return renderedMessageQueries.slice(offset, offset + pageSize)
-  }, [renderedMessageQueries, offset])
+  }, [renderedMessageQueries, offset, pageSize])
 
   useEffect(() => {
     loadMore()
@@ -36,22 +35,15 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
 
   useEffect(() => {
     setSelectedPostIds([])
-  }, [page])
+  }, [page, setSelectedPostIds])
 
   return (
     <div className='flex flex-col gap-6'>
       <ModerationActionSection
-        selectedPostIds={selectedPostIds}
         chatId={chatId}
-        setSelectedPostIds={setSelectedPostIds}
-        selectAll={() => {
-          setSelectedPostIds(messageIds.slice(offset, offset + pageSize))
-        }}
-        messagesByPage={messageIds.slice(offset, offset + pageSize)}
-        page={page}
-        setPage={setPage}
+        offset={offset}
+        messageIds={messageIds}
         totalDataCount={totalDataCount}
-        pageSize={pageSize}
         refetch={refetch}
         loadMore={() => {
           hasMore && loadMore()
@@ -67,8 +59,6 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
               message={message}
               chatId={chatId}
               hubId={hubId}
-              selectedPostIds={selectedPostIds}
-              setSelectedPostIds={setSelectedPostIds}
             />
           )
         })}

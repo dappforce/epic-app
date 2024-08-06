@@ -4,14 +4,17 @@ import Logo from '@/components/Logo'
 import { env } from '@/env.mjs'
 import { useTelegramLogin } from '@/providers/config/TelegramLoginProvider'
 import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
+import { ModerationContextWrapper } from './ModerationContext'
 import PendingPostsList from './PendingPostsList'
 
 const ModeratorPage = () => {
   return (
-    <div className='mb-6 flex flex-col gap-2'>
-      <Header />
-      <Content />
-    </div>
+    <ModerationContextWrapper>
+      <div className='mb-6 flex flex-col gap-2'>
+        <Header />
+        <Content />
+      </div>
+    </ModerationContextWrapper>
   )
 }
 

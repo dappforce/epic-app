@@ -8,14 +8,13 @@ import { cx } from '@/utils/class-names'
 import { PostData } from '@subsocial/api/types'
 import { ComponentProps } from 'react'
 import ModerationCheckbox from './Checkbox'
+import { useModerationContext } from './ModerationContext'
 
 export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   message: PostData
   messageBubbleId?: string
   chatId: string
   hubId: string
-  setSelectedPostIds: (ids: string[]) => void
-  selectedPostIds: string[]
 }
 
 export default function ModerationMemeItem({
@@ -23,10 +22,9 @@ export default function ModerationMemeItem({
   messageBubbleId,
   chatId,
   hubId,
-  selectedPostIds,
-  setSelectedPostIds,
   ...props
 }: MemeChatItemProps) {
+  const { selectedPostIds, setSelectedPostIds } = useModerationContext()
   const { ownerId } = message.struct
   const { body, extensions } = message.content || {}
 

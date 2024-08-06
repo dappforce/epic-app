@@ -3,17 +3,17 @@ import { useModerationActions } from '@/services/datahub/moderation/mutation'
 import { getModerationReasonsQuery } from '@/services/datahub/moderation/query'
 import { useApproveMessage } from '@/services/datahub/posts/mutation'
 
-type ModerationButtonsProps = {
+type BlockAndApproveButtons = {
   chatId: string
   selectedMessageIds: string[]
   onSuccess: () => void
 }
 
-const ModerationButtons = ({
+const BlockAndApproveButtons = ({
   chatId,
   selectedMessageIds,
   onSuccess,
-}: ModerationButtonsProps) => {
+}: BlockAndApproveButtons) => {
   return (
     <>
       <BlockMessageButton
@@ -33,7 +33,7 @@ const BlockMessageButton = ({
   chatId,
   selectedMessageIds,
   onSuccess,
-}: ModerationButtonsProps) => {
+}: BlockAndApproveButtons) => {
   const { mutateAsync: moderateMessage, isLoading } = useModerationActions()
   const { data: reasons } = getModerationReasonsQuery.useQuery(null)
   const firstReasonId = reasons?.[0].id
@@ -66,7 +66,7 @@ const BlockMessageButton = ({
 const ApproveMessagesButton = ({
   selectedMessageIds,
   onSuccess,
-}: Omit<ModerationButtonsProps, 'chatId'>) => {
+}: Omit<BlockAndApproveButtons, 'chatId'>) => {
   const { mutate, isLoading } = useApproveMessage()
 
   const approveMessages = async () => {
@@ -92,4 +92,4 @@ const ApproveMessagesButton = ({
   )
 }
 
-export default ModerationButtons
+export default BlockAndApproveButtons

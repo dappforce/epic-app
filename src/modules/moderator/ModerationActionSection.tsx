@@ -5,41 +5,33 @@ import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from 'react-icons/md'
+import BlockAndApproveButtons from './BlockAndApproveButtons'
 import ModerationCheckbox from './Checkbox'
-import ModerationButtons from './ModerationButtons'
+import { useModerationContext } from './ModerationContext'
 
 type ModerationActionSectionProps = {
-  setSelectedPostIds: (ids: string[]) => void
-  selectedPostIds: string[]
-  selectAll: () => void
-  messagesByPage: string[]
-  setPage: (page: number) => void
-  totalDataCount: number
-  pageSize: number
-  refetch?: () => void
   chatId: string
-  page: number
+  offset: number
+  messageIds: string[]
+  totalDataCount: number
+  refetch?: () => void
   loadMore: () => void
 }
 
 const ModerationActionSection = ({
-  selectedPostIds,
-  setSelectedPostIds,
-  selectAll,
-  messagesByPage,
   totalDataCount,
-  pageSize,
-  setPage,
+  messageIds,
+  offset,
   chatId,
-  page,
   refetch,
   loadMore,
 }: ModerationActionSectionProps) => {
+  const { selectedPostIds, setSelectedPostIds, page, setPage, pageSize } =
+    useModerationContext()
   const [enabled, setEnabled] = useState(false)
 
-  const offset = (page - 1) * pageSize
-
   const totalByPage = offset + pageSize
+  const messagesByPage = messageIds.slice(offset, offset + pageSize)
 
   useEffect(() => {
     if (selectedPostIds.length !== messagesByPage.length) {
@@ -50,6 +42,10 @@ const ModerationActionSection = ({
   const onSuccess = () => {
     setSelectedPostIds([])
     refetch?.()
+  }
+
+  const selectAll = () => {
+    setSelectedPostIds(messageIds.slice(offset, offset + pageSize))
   }
 
   return (
@@ -76,7 +72,7 @@ const ModerationActionSection = ({
           <>
             <span className='text-xl'>Selected: {selectedPostIds.length} </span>
 
-            <ModerationButtons
+            <BlockAndApproveButtons
               chatId={chatId}
               selectedMessageIds={selectedPostIds}
               onSuccess={onSuccess}
