@@ -6,39 +6,41 @@ import { useApproveMessage } from '@/services/datahub/posts/mutation'
 type ModerationButtonsProps = {
   chatId: string
   selectedMessageIds: string[]
+  onSuccess: () => void
 }
 
 const ModerationButtons = ({
   chatId,
   selectedMessageIds,
+  onSuccess,
 }: ModerationButtonsProps) => {
   return (
     <>
-      <BlockMessagessButton
+      <BlockMessageButton
         chatId={chatId}
         selectedMessageIds={selectedMessageIds}
+        onSuccess={onSuccess}
       />
-      <ApproveMessagesButton selectedMessageIds={selectedMessageIds} />
+      <ApproveMessagesButton
+        selectedMessageIds={selectedMessageIds}
+        onSuccess={onSuccess}
+      />
     </>
   )
 }
 
-type BlockMessagessButtonProps = {
-  chatId: string
-  selectedMessageIds: string[]
-}
-
-const BlockMessagessButton = ({
+const BlockMessageButton = ({
   chatId,
   selectedMessageIds,
-}: BlockMessagessButtonProps) => {
-  const { mutate: moderateMessage, isLoading } = useModerationActions()
+  onSuccess,
+}: ModerationButtonsProps) => {
+  const { mutateAsync: moderateMessage, isLoading } = useModerationActions()
   const { data: reasons } = getModerationReasonsQuery.useQuery(null)
   const firstReasonId = reasons?.[0].id
 
-  const blockMessage = () => {
-    selectedMessageIds.forEach((messageId) => {
-      moderateMessage({
+  const blockMessage = async () => {
+    const moderatePromise = selectedMessageIds.map(async (messageId) => {
+      await moderateMessage({
         callName: 'synth_moderation_block_resource',
         args: {
           reasonId: firstReasonId,
@@ -49,6 +51,10 @@ const BlockMessagessButton = ({
         chatId,
       })
     })
+
+    await Promise.all(moderatePromise)
+
+    onSuccess()
   }
   return (
     <Button variant='redOutline' onClick={blockMessage} isLoading={isLoading}>
@@ -59,16 +65,21 @@ const BlockMessagessButton = ({
 
 const ApproveMessagesButton = ({
   selectedMessageIds,
-}: Omit<BlockMessagessButtonProps, 'chatId'>) => {
+  onSuccess,
+}: Omit<ModerationButtonsProps, 'chatId'>) => {
   const { mutate, isLoading } = useApproveMessage()
 
-  const approveMessages = () => {
-    selectedMessageIds.forEach((messageId) => {
-      mutate({
+  const approveMessages = async () => {
+    const approvePromise = selectedMessageIds.map(async (messageId) => {
+      await mutate({
         approvedInRootPost: true,
         postId: messageId,
       })
     })
+
+    await Promise.all(approvePromise)
+
+    onSuccess()
   }
   return (
     <Button

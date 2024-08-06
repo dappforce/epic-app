@@ -4,7 +4,7 @@ import { FaCheck } from 'react-icons/fa6'
 
 type ModerationCheckboxProps = {
   checked: boolean
-  onChange: () => void
+  onChange: (checked: boolean) => void
   className?: string
 }
 

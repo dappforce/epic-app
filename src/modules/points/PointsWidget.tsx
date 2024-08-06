@@ -232,6 +232,8 @@ const UserStatsSection = ({
 
   const { evmAddress } = useLinkedEvmAddress()
 
+  console.log(myAddress)
+
   return (
     <>
       <div className='mb-10 flex w-full flex-col rounded-xl bg-slate-800 hover:cursor-pointer'>

@@ -14,7 +14,7 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
   const [page, setPage] = useState(1)
   const pageSize = 8
 
-  const { messageIds, hasMore, loadMore, totalDataCount } =
+  const { messageIds, hasMore, loadMore, totalDataCount, refetch, isLoading } =
     usePaginatedMessageIds({
       hubId,
       chatId,
@@ -52,11 +52,12 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
         setPage={setPage}
         totalDataCount={totalDataCount}
         pageSize={pageSize}
+        refetch={refetch}
         loadMore={() => {
           hasMore && loadMore()
         }}
       />
-      <div className='grid grid-cols-4 gap-4'>
+      <div className='grid grid-cols-3 gap-4 lg:grid-cols-4'>
         {postsIdsByPage.map(({ data: message }, index) => {
           if (!message) return null
 

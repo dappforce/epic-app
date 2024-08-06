@@ -16,6 +16,7 @@ type PaginatedData = {
   totalDataCount: number
   isLoading: boolean
   allIds: string[]
+  refetch?: () => void
 }
 
 type PaginatedConfig = {
@@ -45,7 +46,7 @@ export default function usePaginatedMessageIds({
         enabled: false,
       }
     )
-  const { data, fetchNextPage, isLoading } =
+  const { data, fetchNextPage, isLoading, refetch } =
     getPaginatedPostIdsByPostId.useInfiniteQuery(
       {
         postId: chatId,
@@ -53,7 +54,7 @@ export default function usePaginatedMessageIds({
         myAddress,
         pageSize,
       },
-      { enabled: !!myAddress, placeholderData }
+      { enabled: false, placeholderData }
     )
 
   const page = data?.pages
@@ -86,6 +87,7 @@ export default function usePaginatedMessageIds({
     hasMore: lastPage?.hasMore ?? true,
     isLoading,
     allIds: filteredPageIds,
+    refetch: () => refetch(),
   }
 }
 

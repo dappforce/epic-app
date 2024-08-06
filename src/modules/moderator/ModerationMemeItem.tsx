@@ -39,12 +39,15 @@ export default function ModerationMemeItem({
     'subsocial-image'
   )
 
+  const isSelected = selectedPostIds.includes(message.struct.id)
+
   return (
     <div
       {...props}
       className={cx(
         'relative flex h-full w-full flex-col gap-2',
         'overflow-hidden rounded-2xl bg-slate-800 pt-2',
+        { ['ring-4 ring-text-primary']: isSelected },
         props.className
       )}
       onClick={() => {
@@ -72,18 +75,9 @@ export default function ModerationMemeItem({
               hubId={hubId}
               className={cx('text-sm font-medium text-text-secondary')}
             />
-            <UnapprovedMemeCount
-              address={message.struct.ownerId}
-              chatId={chatId}
-            />
           </div>
         </div>
         <div className='flex min-w-fit items-center gap-2'>
-          <ChatRelativeTime
-            isUpdated={message.struct.isUpdated}
-            createdAtTime={displayedTime}
-            className={cx('w-fit text-xs text-text-muted')}
-          />
           <ModerationCheckbox
             checked={selectedPostIds.includes(message.struct.id)}
             onChange={() => {
@@ -107,6 +101,14 @@ export default function ModerationMemeItem({
           {body}
         </p>
       )}
+      <div className='flex items-center justify-between gap-2 p-2 pt-0'>
+        <UnapprovedMemeCount address={message.struct.ownerId} chatId={chatId} />
+        <ChatRelativeTime
+          isUpdated={message.struct.isUpdated}
+          createdAtTime={displayedTime}
+          className={cx('w-fit text-xs text-text-muted')}
+        />
+      </div>
     </div>
   )
 }

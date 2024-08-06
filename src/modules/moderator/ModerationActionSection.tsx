@@ -1,11 +1,11 @@
 import Button from '@/components/Button'
-import { Checkbox } from '@headlessui/react'
 import { useEffect, useState } from 'react'
 import { AiOutlineReload } from 'react-icons/ai'
 import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from 'react-icons/md'
+import ModerationCheckbox from './Checkbox'
 import ModerationButtons from './ModerationButtons'
 
 type ModerationActionSectionProps = {
@@ -16,6 +16,7 @@ type ModerationActionSectionProps = {
   setPage: (page: number) => void
   totalDataCount: number
   pageSize: number
+  refetch?: () => void
   chatId: string
   page: number
   loadMore: () => void
@@ -31,6 +32,7 @@ const ModerationActionSection = ({
   setPage,
   chatId,
   page,
+  refetch,
   loadMore,
 }: ModerationActionSectionProps) => {
   const [enabled, setEnabled] = useState(false)
@@ -45,31 +47,29 @@ const ModerationActionSection = ({
     }
   }, [messagesByPage.length, selectedPostIds])
 
+  const onSuccess = () => {
+    setSelectedPostIds([])
+    refetch?.()
+  }
+
   return (
     <div className='flex items-center justify-between gap-2'>
       <div className='flex items-center gap-4'>
-        <Checkbox
+        <ModerationCheckbox
           checked={enabled}
           onChange={(checked) => {
             setEnabled(checked)
             checked ? selectAll() : setSelectedPostIds([])
           }}
-          className='group block size-8 rounded bg-slate-700 data-[checked]:bg-background-primary'
+          className='h-8 w-8'
+        />
+        <Button
+          variant={'transparent'}
+          onClick={() => {
+            refetch?.()
+          }}
+          size='circle'
         >
-          <svg
-            className='stroke-white opacity-0 group-data-[checked]:opacity-100'
-            viewBox='0 0 14 14'
-            fill='none'
-          >
-            <path
-              d='M3 8L6 11L11 3.5'
-              strokeWidth={2}
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            />
-          </svg>
-        </Checkbox>
-        <Button variant={'transparent'} size='circle'>
           <AiOutlineReload />
         </Button>
         {!!selectedPostIds.length && (
@@ -79,6 +79,7 @@ const ModerationActionSection = ({
             <ModerationButtons
               chatId={chatId}
               selectedMessageIds={selectedPostIds}
+              onSuccess={onSuccess}
             />
           </>
         )}
