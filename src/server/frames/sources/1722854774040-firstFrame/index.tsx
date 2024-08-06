@@ -5,13 +5,14 @@ import { Button, Frog } from 'frog'
 import urlJoin from 'url-join'
 
 const frameName = '1722854774040-1'
-const frameRootPath = urlJoin(env.NEXT_PUBLIC_BASE_PATH, `/${frameName}`)
+const frameRootPath = `/${frameName}`
+const buttonRootPath = urlJoin(env.NEXT_PUBLIC_BASE_PATH, `/${frameName}`)
 
 const frame = {
   name: frameName,
   src: [
     {
-      path: frameRootPath,
+      path: `/${frameName}`,
       handler: (app: Frog) => {
         app.frame(frameRootPath, (c) => {
           const { buttonValue, inputText, status } = c
@@ -19,7 +20,7 @@ const frame = {
             image:
               'https://ipfs.subsocial.network/ipfs/bafybeia4tkidvvw5gmfyhnvc7a7m75eypsgmmidc7dvtgofdrjlevl7bj4',
             intents: [
-              <Button value='2' action={`${frameRootPath}/2`}>
+              <Button value='2' action={`${buttonRootPath}/2`}>
                 ➡️
               </Button>,
               // <Button value="share">Share</Button>,
@@ -38,10 +39,10 @@ const frame = {
             image:
               'https://ipfs.subsocial.network/ipfs/bafybeihamqsl2cbkmyse4pbihblclvf7dxlbkgqedcn6zysw7orsutbxuu',
             intents: [
-              <Button value='1' action={`${frameRootPath}/`}>
+              <Button value='1' action={`${buttonRootPath}/`}>
                 ⬅️
               </Button>,
-              <Button value='3' action={`${frameRootPath}/3`}>
+              <Button value='3' action={`${buttonRootPath}/3`}>
                 ➡️
               </Button>,
               // <Button.Link href={`https://warpcast.com/~/compose?text=Hello%20world!&embeds[]=https://farcaster.xyz`} >Share</Button.Link>,
@@ -60,7 +61,7 @@ const frame = {
             image:
               'https://ipfs.subsocial.network/ipfs/bafybeia6456picjr2rolhihodu47d34lg4pv6bmtfoohmc27wgezlms6ji',
             intents: [
-              <Button value='2' action={`${frameRootPath}/2`}>
+              <Button value='2' action={`${buttonRootPath}/2`}>
                 ⬅️
               </Button>,
               // <Button value="share">Share</Button>,
