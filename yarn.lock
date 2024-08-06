@@ -62,6 +62,25 @@
   resolved "https://registry.yarnpkg.com/@amplitude/analytics-types/-/analytics-types-2.1.2.tgz#7a2a7a22fba192639189bb03eda5dd8287487cf2"
   integrity sha512-ASKwH9g+5gglTHr7h7miK8J/ofIzuEtGRDCjnZAtRbE6+laoOfCLYPPJXMYz0k1x+rIhLO/6I6WWjT7zchmpyA==
 
+"@amplitude/identify@^1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@amplitude/identify/-/identify-1.10.2.tgz#25d88f9e3bedd99701c777b9e44408ac69179aa1"
+  integrity sha512-ywxeabS8ukMdJWNwx3rG/EBngXFg/4NsPhlyAxbBUcI7HzBXEJUKepiZfkz8K6Y7f0mpc23Qz1aBf48ZJDZmkQ==
+  dependencies:
+    "@amplitude/types" "^1.10.2"
+    "@amplitude/utils" "^1.10.2"
+    tslib "^2.0.0"
+
+"@amplitude/node@^1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@amplitude/node/-/node-1.10.2.tgz#79fb80e7228486521156eae510de998264e6620c"
+  integrity sha512-E3xp8DOpkF5ThjrRlAmSocnrEYsTPpd3Zg4WdBLms0ackQSgQpw6z84+YMcoPerZHJJ/LEqdo4Cg4Z5Za3D+3Q==
+  dependencies:
+    "@amplitude/identify" "^1.10.2"
+    "@amplitude/types" "^1.10.2"
+    "@amplitude/utils" "^1.10.2"
+    tslib "^2.0.0"
+
 "@amplitude/plugin-page-view-tracking-browser@^2.0.8":
   version "2.0.8"
   resolved "https://registry.yarnpkg.com/@amplitude/plugin-page-view-tracking-browser/-/plugin-page-view-tracking-browser-2.0.8.tgz#3083f90bd5f35b6125b68ac495bc91d19237a4ae"
@@ -80,6 +99,19 @@
     "@amplitude/analytics-core" "^2.0.4"
     "@amplitude/analytics-types" "^2.1.2"
     tslib "^2.4.1"
+
+"@amplitude/types@^1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@amplitude/types/-/types-1.10.2.tgz#8f3c6c3c9ee24f401ee037b351c3c67eb945eefc"
+  integrity sha512-I8qenRI7uU6wKNb9LiZrAosSHVoNHziXouKY81CrqxH9xhVTEIJFXeuCV0hbtBr0Al/8ejnGjQRx+S2SvU/pPg==
+
+"@amplitude/utils@^1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@amplitude/utils/-/utils-1.10.2.tgz#ce77dc8a54fcd3843511531cc7d56363247c7ad8"
+  integrity sha512-tVsHXu61jITEtRjB7NugQ5cVDd4QDzne8T3ifmZye7TiJeUfVRvqe44gDtf55A+7VqhDhyEIIXTA1iVcDGqlEw==
+  dependencies:
+    "@amplitude/types" "^1.10.2"
+    tslib "^2.0.0"
 
 "@ampproject/remapping@^2.2.0":
   version "2.2.1"
