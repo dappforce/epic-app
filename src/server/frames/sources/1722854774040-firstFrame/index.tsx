@@ -9,7 +9,8 @@ const frameRootPath = `/${frameName}`
 
 // TODO: remove this if staging is not using base path anymore
 const authUrl = env.NEXTAUTH_URL
-const domain = authUrl?.split('://')[1].split('/')[0]
+const [protocol, host] = authUrl?.split('://') || []
+const domain = `${protocol}://${host.split('/')[0]}`
 const getButtonRootPath = (basePath: string, path: string) =>
   urlJoin(domain, env.NEXT_PUBLIC_BASE_PATH, basePath, frameRootPath, path)
 
