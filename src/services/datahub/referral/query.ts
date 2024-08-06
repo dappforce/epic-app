@@ -64,7 +64,7 @@ const GET_REFERRAL_LEADERBOARD_BY_ALL_TIME = gql`
 
 const GET_REFERRAL_LEADERBOARD_BY_CUSTOM_RANGE_KEY = gql`
   ${REFERRAL_LEADERBOARD_FRAGMENT}
-  query GetReferralLeaderboard(
+  query GetReferralLeaderboardByCustomRangeKey(
     $customRangeKey: ReferrersRankedListCustomPeriodKey
   ) {
     referrersRankedByReferralsCountForPeriod(
@@ -137,7 +137,7 @@ const GET_REFERRER_RANK_BY_ALL_TIME = gql`
 
 const GET_REFERRER_RANK_BY_CUSTOM_RANGE_KEY = gql`
   ${REFERRER_RANK_FRAGMENT}
-  query GetReferrerRank(
+  query GetReferrerRankByCustomRangeKey(
     $address: String!
     $customRangeKey: ReferrersRankedListCustomPeriodKey
   ) {
