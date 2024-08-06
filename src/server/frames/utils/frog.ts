@@ -1,4 +1,5 @@
 import { env } from '@/env.mjs'
+import { sendServerEvent } from '@/server/analytics'
 import { Frog } from 'frog'
 import { devtools } from 'frog/dev'
 import { serveStatic } from 'frog/serve-static'
@@ -69,6 +70,9 @@ export class FrogFramesManager {
         //   },
         // ],
       },
+    })
+    sendServerEvent('frog_app_init', {
+      test: 'test',
     })
     console.log('initFrogApp')
 

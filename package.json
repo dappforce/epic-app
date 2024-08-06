@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.2.2",
+    "@amplitude/node": "^1.10.2",
     "@dicebear/bottts": "^5.3.4",
     "@dicebear/core": "^5.3.4",
     "@ethersproject/hash": "^5.7.0",
