@@ -39,7 +39,6 @@ const HowToEarnMessage = ({
     if (isHowToEarnModalClosed || !isMounted) return
 
     const handleUserActivity = (event: any) => {
-      console.log(event.type)
       clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => {
         setIsModalVisible(true)
