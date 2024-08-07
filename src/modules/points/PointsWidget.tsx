@@ -235,8 +235,8 @@ const UserStatsSection = ({
       <div className='mb-10 flex w-full flex-col rounded-xl bg-slate-800 hover:cursor-pointer'>
         <div
           className={cx(
-            'border-b border-slate-700 p-4',
-            !isLoading && 'border-none'
+            'flex flex-col gap-4 border-b border-slate-700 p-4 pb-2',
+            isLoading && 'pb-4'
           )}
           onClick={() => {
             sendEvent('open_leaderboard')
@@ -278,65 +278,65 @@ const UserStatsSection = ({
             </div>
             <IoIosArrowForward className={cx('fill-slate-400 text-2xl')} />
           </div>
-        </div>
-        {(() => {
-          if (isLoading) return null
-          if (evmAddress) {
-            return (
-              <Card className='mx-4 flex items-center justify-between gap-4 p-4 py-3'>
-                <div className='flex flex-col gap-1'>
-                  <span className='text-sm font-medium text-text-muted'>
-                    My EVM Address
-                  </span>
-                  <div className='flex items-center gap-2.5'>
-                    <span className='font-semibold'>
-                      {truncateAddress(evmAddress ?? '')}
+          {(() => {
+            if (isLoading) return null
+            if (evmAddress) {
+              return (
+                <Card className='mb-2 flex items-center justify-between gap-4 p-4 py-3'>
+                  <div className='flex flex-col gap-1'>
+                    <span className='text-sm font-medium text-text-muted'>
+                      My EVM Address
                     </span>
-                    <Button
-                      className='flex-shrink-0 text-sm text-text-muted'
-                      variant='transparent'
-                      size='circleSm'
-                      onClick={() => {
-                        sendEvent('copy_evm_address_click')
-                        copyToClipboard(evmAddress ?? '')
-                        toast.custom((t) => (
-                          <Toast t={t} title='Copied to clipboard!' />
-                        ))
-                      }}
-                    >
-                      <MdContentCopy />
-                    </Button>
+                    <div className='flex items-center gap-2.5'>
+                      <span className='font-semibold'>
+                        {truncateAddress(evmAddress ?? '')}
+                      </span>
+                      <Button
+                        className='flex-shrink-0 text-sm text-text-muted'
+                        variant='transparent'
+                        size='circleSm'
+                        onClick={() => {
+                          sendEvent('copy_evm_address_click')
+                          copyToClipboard(evmAddress ?? '')
+                          toast.custom((t) => (
+                            <Toast t={t} title='Copied to clipboard!' />
+                          ))
+                        }}
+                      >
+                        <MdContentCopy />
+                      </Button>
+                    </div>
                   </div>
+                  <LinkText
+                    variant='primary'
+                    className='mr-1'
+                    onClick={() => {
+                      sendEvent('edit_evm_address_click')
+                      setOpenEvmLinkModal(true)
+                    }}
+                  >
+                    Edit
+                  </LinkText>
+                </Card>
+              )
+            } else {
+              return (
+                <div className='pb-2'>
+                  <Button
+                    className='w-full'
+                    onClick={() => {
+                      sendEvent('connect_evm_address_click')
+                      setOpenEvmLinkModal(true)
+                    }}
+                    variant='primaryOutline'
+                  >
+                    Connect Ethereum Wallet
+                  </Button>
                 </div>
-                <LinkText
-                  variant='primary'
-                  className='mr-1'
-                  onClick={() => {
-                    sendEvent('edit_evm_address_click')
-                    setOpenEvmLinkModal(true)
-                  }}
-                >
-                  Edit
-                </LinkText>
-              </Card>
-            )
-          } else {
-            return (
-              <div className='px-4 pb-2'>
-                <Button
-                  className='w-full'
-                  onClick={() => {
-                    sendEvent('connect_evm_address_click')
-                    setOpenEvmLinkModal(true)
-                  }}
-                  variant='primaryOutline'
-                >
-                  Connect Ethereum Wallet
-                </Button>
-              </div>
-            )
-          }
-        })()}
+              )
+            }
+          })()}
+        </div>
         <div className='flex w-full items-center gap-4 px-4'>
           <div className='flex w-full flex-col gap-1 border-r border-slate-700 py-4'>
             <span className='text-text-muted'>LIKES LEFT TODAY:</span>
