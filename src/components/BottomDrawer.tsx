@@ -11,8 +11,9 @@ export default function BottomDrawer({
   closeModal,
   title,
   description,
+  withCloseButton = true,
 }: ModalFunctionalityProps &
-  Pick<ModalProps, 'title' | 'description' | 'children'>) {
+  Pick<ModalProps, 'title' | 'description' | 'children' | 'withCloseButton'>) {
   return createPortal(
     <>
       <Transition
@@ -34,14 +35,16 @@ export default function BottomDrawer({
         leaveFrom='h-auto'
         leaveTo='opacity-0 translate-y-24 !duration-150'
       >
-        <Button
-          size='circleSm'
-          variant='transparent'
-          className='absolute right-4 top-4'
-          onClick={closeModal}
-        >
-          <HiXMark className='text-lg' />
-        </Button>
+        {withCloseButton && (
+          <Button
+            size='circleSm'
+            variant='transparent'
+            className='absolute right-4 top-4'
+            onClick={closeModal}
+          >
+            <HiXMark className='text-lg' />
+          </Button>
+        )}
         <div className='mx-auto flex w-full max-w-screen-md flex-col gap-6 overflow-auto px-5 py-6 pb-6'>
           <div className='flex flex-col gap-2'>
             <span className='text-2xl font-medium'>{title}</span>
