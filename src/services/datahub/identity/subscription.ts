@@ -66,6 +66,7 @@ const SUBSCRIBE_IDENTITY = gql`
           }
         }
         externalProvider {
+          id
           externalId
           provider
           enabled
@@ -141,6 +142,7 @@ async function processSessionCreated(
     mainAddress: session.linkedIdentity.id,
     externalProviders:
       session.linkedIdentity.externalProviders?.map((p) => ({
+        id: p.id,
         externalId: p.externalId,
         provider: p.provider,
         username: p.username,
@@ -177,6 +179,7 @@ async function processExternalProviderUpdate(
       externalProviders: [
         ...data.externalProviders,
         {
+          id: externalProvider.id,
           externalId: externalProvider.externalId,
           provider: externalProvider.provider,
           enabled: externalProvider.enabled,

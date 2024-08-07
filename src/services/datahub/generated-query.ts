@@ -1639,6 +1639,7 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
   SynthUpdatePostTxRetry = 'synth_update_post_tx_retry',
   UpdatePost = 'update_post',
@@ -2460,6 +2461,7 @@ export type SubscribeIdentitySubscription = {
       } | null
       externalProvider?: {
         __typename?: 'LinkedIdentityExternalProvider'
+        id: string
         externalId: string
         provider: IdentityProvider
         enabled: boolean
@@ -2479,6 +2481,7 @@ export type GetLeaderboardTableDataByAllTimeQuery = {
   __typename?: 'Query'
   activeStakingAddressesRankedByTotalRewardsForPeriod: {
     __typename?: 'AddressesRankedByRewardsForPeriodResponseDto'
+    total: number
     data: Array<{
       __typename?: 'RankedAddressWithDetails'
       reward: string
@@ -2496,6 +2499,7 @@ export type GetLeaderboardTableDataByWeekQuery = {
   __typename?: 'Query'
   activeStakingAddressesRankedByTotalRewardsForPeriod: {
     __typename?: 'AddressesRankedByRewardsForPeriodResponseDto'
+    total: number
     data: Array<{
       __typename?: 'RankedAddressWithDetails'
       reward: string
@@ -3114,8 +3118,21 @@ export type GetReferrerIdQuery = {
   }
 }
 
+export type ReferralLeaderboardFragmentFragment = {
+  __typename?: 'ReferrersRankedByReferralsCountForPeriodResponseDto'
+  total: number
+  limit: number
+  offset: number
+  data: Array<{
+    __typename?: 'RankedReferrerWithDetails'
+    address: string
+    count: number
+    rank: number
+  }>
+}
+
 export type GetReferralLeaderboardQueryVariables = Exact<{
-  args: ReferrersRankedByReferralsCountForPeriodInput
+  [key: string]: never
 }>
 
 export type GetReferralLeaderboardQuery = {
@@ -3134,11 +3151,53 @@ export type GetReferralLeaderboardQuery = {
   }
 }
 
+export type GetReferralLeaderboardByCustomRangeKeyQueryVariables = Exact<{
+  customRangeKey?: InputMaybe<ReferrersRankedListCustomPeriodKey>
+}>
+
+export type GetReferralLeaderboardByCustomRangeKeyQuery = {
+  __typename?: 'Query'
+  referrersRankedByReferralsCountForPeriod: {
+    __typename?: 'ReferrersRankedByReferralsCountForPeriodResponseDto'
+    total: number
+    limit: number
+    offset: number
+    data: Array<{
+      __typename?: 'RankedReferrerWithDetails'
+      address: string
+      count: number
+      rank: number
+    }>
+  }
+}
+
+export type ReferrerRankFragmentFragment = {
+  __typename?: 'ReferrerRankByReferralsCountForPeriodResponseDto'
+  count?: number | null
+  maxIndex: number
+  rankIndex: number
+}
+
 export type GetReferrerRankQueryVariables = Exact<{
   address: Scalars['String']['input']
 }>
 
 export type GetReferrerRankQuery = {
+  __typename?: 'Query'
+  referrerRankByReferralsCountForPeriod?: {
+    __typename?: 'ReferrerRankByReferralsCountForPeriodResponseDto'
+    count?: number | null
+    maxIndex: number
+    rankIndex: number
+  } | null
+}
+
+export type GetReferrerRankByCustomRangeKeyQueryVariables = Exact<{
+  address: Scalars['String']['input']
+  customRangeKey?: InputMaybe<ReferrersRankedListCustomPeriodKey>
+}>
+
+export type GetReferrerRankByCustomRangeKeyQuery = {
   __typename?: 'Query'
   referrerRankByReferralsCountForPeriod?: {
     __typename?: 'ReferrerRankByReferralsCountForPeriodResponseDto'
@@ -3239,6 +3298,25 @@ export const DatahubPostFragment = gql`
       image
       extensionSchemaId
     }
+  }
+`
+export const ReferralLeaderboardFragment = gql`
+  fragment ReferralLeaderboardFragment on ReferrersRankedByReferralsCountForPeriodResponseDto {
+    total
+    limit
+    offset
+    data {
+      address
+      count
+      rank
+    }
+  }
+`
+export const ReferrerRankFragment = gql`
+  fragment ReferrerRankFragment on ReferrerRankByReferralsCountForPeriodResponseDto {
+    count
+    maxIndex
+    rankIndex
   }
 `
 export const SpaceFragment = gql`
@@ -3541,6 +3619,7 @@ export const SubscribeIdentity = gql`
           }
         }
         externalProvider {
+          id
           externalId
           provider
           enabled
@@ -3559,6 +3638,7 @@ export const GetLeaderboardTableDataByAllTime = gql`
     activeStakingAddressesRankedByTotalRewardsForPeriod(
       args: { filter: { period: ALL_TIME }, limit: 100 }
     ) {
+      total
       data {
         reward
         rank
@@ -3572,6 +3652,7 @@ export const GetLeaderboardTableDataByWeek = gql`
     activeStakingAddressesRankedByTotalRewardsForPeriod(
       args: { filter: { period: WEEK, timestamp: $timestamp }, limit: 100 }
     ) {
+      total
       data {
         reward
         rank
@@ -3964,31 +4045,53 @@ export const GetReferrerId = gql`
   }
 `
 export const GetReferralLeaderboard = gql`
-  query GetReferralLeaderboard(
-    $args: ReferrersRankedByReferralsCountForPeriodInput!
-  ) {
-    referrersRankedByReferralsCountForPeriod(args: $args) {
-      total
-      limit
-      offset
-      data {
-        address
-        count
-        rank
-      }
+  query GetReferralLeaderboard {
+    referrersRankedByReferralsCountForPeriod(
+      args: { filter: { period: ALL_TIME }, limit: 100 }
+    ) {
+      ...ReferralLeaderboardFragment
     }
   }
+  ${ReferralLeaderboardFragment}
+`
+export const GetReferralLeaderboardByCustomRangeKey = gql`
+  query GetReferralLeaderboardByCustomRangeKey(
+    $customRangeKey: ReferrersRankedListCustomPeriodKey
+  ) {
+    referrersRankedByReferralsCountForPeriod(
+      args: { filter: { customRangeKey: $customRangeKey }, limit: 100 }
+    ) {
+      ...ReferralLeaderboardFragment
+    }
+  }
+  ${ReferralLeaderboardFragment}
 `
 export const GetReferrerRank = gql`
   query GetReferrerRank($address: String!) {
     referrerRankByReferralsCountForPeriod(
       args: { address: $address, period: ALL_TIME, withCount: true }
     ) {
-      count
-      maxIndex
-      rankIndex
+      ...ReferrerRankFragment
     }
   }
+  ${ReferrerRankFragment}
+`
+export const GetReferrerRankByCustomRangeKey = gql`
+  query GetReferrerRankByCustomRangeKey(
+    $address: String!
+    $customRangeKey: ReferrersRankedListCustomPeriodKey
+  ) {
+    referrerRankByReferralsCountForPeriod(
+      args: {
+        address: $address
+        customRangeKey: $customRangeKey
+        withCount: true
+      }
+    ) {
+      ...ReferrerRankFragment
+    }
+  }
+  ${ReferrerRankFragment}
 `
 export const GetSpaces = gql`
   query getSpaces($ids: [String!]) {

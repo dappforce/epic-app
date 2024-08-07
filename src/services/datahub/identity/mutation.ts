@@ -9,9 +9,14 @@ import {
   SocialCallDataArgs,
   SynthAddLinkedIdentityExternalProviderCallParsedArgs,
   SynthInitLinkedIdentityCallParsedArgs,
+  SynthUpdateLinkedIdentityExternalProviderCallParsedArgs,
   socialCallName,
 } from '@subsocial/data-hub-sdk'
-import { DatahubParams, createSocialDataEventPayload } from '../utils'
+import {
+  DatahubParams,
+  createSignedSocialDataEvent,
+  createSocialDataEventPayload,
+} from '../utils'
 import { Identity } from './fetcher'
 import { getLinkedIdentityQuery } from './query'
 
@@ -55,10 +60,13 @@ function reloadEveryIntervalUntilLinkedIdentityFound(
       address,
       true
     )
-    if (res) {
+    if (foundChecker(res)) {
       clearInterval(intervalId)
     }
   }, 2_000)
+  setTimeout(() => {
+    clearInterval(intervalId)
+  }, 10_000)
 }
 
 export const useLinkIdentity = mutationWrapper(
@@ -107,6 +115,50 @@ async function addExternalProviderToIdentity(
 export const useAddExternalProviderToIdentity = mutationWrapper(
   async (data: SynthAddLinkedIdentityExternalProviderCallParsedArgs) => {
     await addExternalProviderToIdentity({
+      ...getCurrentWallet(),
+      args: data,
+    })
+  },
+  {
+    onSuccess: (_, { externalProvider }) => {
+      reloadEveryIntervalUntilLinkedIdentityFound(
+        (identity) =>
+          !!identity?.externalProviders.find(
+            (p) =>
+              // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
+              p.provider === externalProvider.provider &&
+              p.externalId === externalProvider.id
+          )
+      )
+    },
+  }
+)
+
+async function updateExternalProvider(
+  params: DatahubParams<
+    SocialCallDataArgs<'synth_update_linked_identity_external_provider'>
+  >
+) {
+  const input = await createSignedSocialDataEvent(
+    socialCallName.synth_update_linked_identity_external_provider,
+    params,
+    params.args
+  )
+
+  await apiInstance.post<any, any, ApiDatahubIdentityBody>(
+    '/api/datahub/identity',
+    {
+      payload: input,
+      id: params.args.externalProvider?.id ?? '',
+      provider:
+        params.args.externalProvider?.provider ?? IdentityProvider.FARCASTER,
+    }
+  )
+}
+
+export const useUpdateExternalProvider = mutationWrapper(
+  async (data: SynthUpdateLinkedIdentityExternalProviderCallParsedArgs) => {
+    await updateExternalProvider({
       ...getCurrentWallet(),
       args: data,
     })

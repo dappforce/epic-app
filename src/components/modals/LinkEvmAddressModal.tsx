@@ -1,59 +1,113 @@
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
-import { useAddExternalProviderToIdentity } from '@/services/datahub/identity/mutation'
+import useToastError from '@/hooks/useToastError'
+import {
+  useAddExternalProviderToIdentity,
+  useUpdateExternalProvider,
+} from '@/services/datahub/identity/mutation'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import { getAddress, isAddress } from 'ethers'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import BottomDrawer from '../BottomDrawer'
 import Button from '../Button'
 import Input from '../inputs/Input'
-import Modal, { ModalFunctionalityProps, ModalProps } from './Modal'
+import { ModalFunctionalityProps, ModalProps } from './Modal'
+
+export const linkEvmAddressCallbacks: {
+  onSuccessCallbacks: (() => void)[]
+  onErrorCallbacks: (() => void)[]
+} = {
+  onSuccessCallbacks: [],
+  onErrorCallbacks: [],
+}
 
 export default function LinkEvmAddressModal(
   props: ModalFunctionalityProps & Pick<ModalProps, 'title' | 'description'>
 ) {
   const [evmAddress, setEvmAddress] = useState('')
   const [evmAddressError, setEvmAddressError] = useState('')
+  const [isWaitingEvent, setIsWaitingEvent] = useState(false)
 
-  const isAfterSubmit = useRef(false)
-  const { mutate, isLoading, isSuccess, reset } =
-    useAddExternalProviderToIdentity({
-      onSuccess: () => {
-        isAfterSubmit.current = true
-      },
-    })
+  const mutationConfigs = {
+    onMutate: () => {
+      setIsWaitingEvent(true)
+    },
+    onError: () => {
+      setIsWaitingEvent(false)
+    },
+    onSuccess: () => {
+      linkEvmAddressCallbacks.onSuccessCallbacks.push(() => {
+        setIsWaitingEvent(false)
+        props.closeModal()
+        resetAdding()
+        resetUpdating()
+      })
+      linkEvmAddressCallbacks.onErrorCallbacks.push(() => {
+        setIsWaitingEvent(false)
+        resetAdding()
+        resetUpdating()
+      })
+    },
+  }
+  const {
+    mutate: addExternalProvider,
+    isLoading: loadingAdding,
+    reset: resetAdding,
+    error: errorAdding,
+  } = useAddExternalProviderToIdentity(mutationConfigs)
+  const {
+    mutate: updateExternalProvider,
+    isLoading: loadingUpdating,
+    reset: resetUpdating,
+    error: errorUpdating,
+  } = useUpdateExternalProvider(mutationConfigs)
+  useToastError(errorAdding || errorUpdating, 'Failed to link Ethereum address')
 
-  const { evmAddress: myEvmAddress } = useLinkedEvmAddress()
+  const isLoading = loadingAdding || loadingUpdating
+
+  const { evmAddress: myEvmAddress, evmAddressProviderId } =
+    useLinkedEvmAddress()
   useEffect(() => {
     if (props.isOpen && myEvmAddress) {
-      if (!isAfterSubmit.current) {
-        setEvmAddress(myEvmAddress)
-        reset()
-        isAfterSubmit.current = false
-      } else {
-        props.closeModal()
-        isAfterSubmit.current = false
-      }
+      setEvmAddress(myEvmAddress)
+      resetAdding()
+      resetUpdating()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.isOpen, myEvmAddress, reset])
+  }, [props.isOpen, myEvmAddress, resetAdding, resetUpdating])
 
   const onSubmit = (e: any) => {
     e.preventDefault()
     if (!evmAddress || !isAddress(evmAddress)) return
     const checksumAddress = getAddress(evmAddress)
-    mutate({
-      externalProvider: { id: checksumAddress, provider: IdentityProvider.EVM },
-    })
+    if (myEvmAddress) {
+      updateExternalProvider({
+        entityId: evmAddressProviderId,
+        externalProvider: {
+          id: checksumAddress,
+          provider: IdentityProvider.EVM,
+        },
+      })
+    } else {
+      addExternalProvider({
+        externalProvider: {
+          id: checksumAddress,
+          provider: IdentityProvider.EVM,
+        },
+      })
+    }
   }
 
+  const defaultTitle = myEvmAddress
+    ? 'Edit your Ethereum address for rewards'
+    : 'Your Ethereum address for rewards'
+
   return (
-    <Modal
+    <BottomDrawer
       {...props}
-      title={props.title || 'Your Ethereum address for rewards'}
+      title={props.title || defaultTitle}
       description={
         props.description ??
-        'We will send your token rewards to this address if you win this contest.'
+        'We will send your token rewards to this address if you win a contest or event.'
       }
-      withCloseButton
     >
       <form onSubmit={onSubmit} className='mt-2 flex flex-col gap-6 pb-2'>
         <Input
@@ -71,7 +125,7 @@ export default function LinkEvmAddressModal(
           }}
         />
         <Button
-          isLoading={isLoading || isSuccess}
+          isLoading={isLoading || isWaitingEvent}
           disabled={!!evmAddressError || !evmAddress}
           size='lg'
           type='submit'
@@ -79,6 +133,6 @@ export default function LinkEvmAddressModal(
           Save
         </Button>
       </form>
-    </Modal>
+    </BottomDrawer>
   )
 }
