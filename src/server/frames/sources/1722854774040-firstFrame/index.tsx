@@ -21,11 +21,10 @@ const frame = {
           })
 
           return c.res({
-            image:
-              'https://ipfs.subsocial.network/ipfs/bafybeia4tkidvvw5gmfyhnvc7a7m75eypsgmmidc7dvtgofdrjlevl7bj4',
+            image: `/memeImage/${frameName}-${1}`,
             intents: [
               <Button value='2' action={getButtonHref('/2')}>
-                ➡️
+                Next ➡️
               </Button>,
             ],
           })
@@ -41,14 +40,13 @@ const frame = {
           })
 
           return c.res({
-            image:
-              'https://ipfs.subsocial.network/ipfs/bafybeihamqsl2cbkmyse4pbihblclvf7dxlbkgqedcn6zysw7orsutbxuu',
+            image: `/memeImage/${frameName}-${2}`,
             intents: [
               <Button value='1' action={getButtonHref('/')}>
-                ⬅️
+                ⬅️ Previous
               </Button>,
               <Button value='3' action={getButtonHref('/3')}>
-                ➡️
+                Next ➡️
               </Button>,
             ],
           })
@@ -64,13 +62,64 @@ const frame = {
           })
 
           return c.res({
-            image:
-              'https://ipfs.subsocial.network/ipfs/bafybeia6456picjr2rolhihodu47d34lg4pv6bmtfoohmc27wgezlms6ji',
+            image: `/memeImage/${frameName}-${3}`,
             intents: [
               <Button value='2' action={getButtonHref('/2')}>
-                ⬅️
+                ⬅️ Previous
               </Button>,
             ],
+          })
+        })
+      },
+    },
+    {
+      path: 'memeImage',
+      handler: (app: Frog) => {
+        app.image('/memeImage/:frameImageId', async (c) => {
+          const { frameImageId } = c.req.param()
+
+          return c.res({
+            image: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  background: 'black',
+                  height: '100%',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  width: '100%',
+                  padding: '20px',
+                  borderRadius: '15px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  position: 'relative',
+                }}
+              >
+                <img
+                  src={
+                    process.env.NODE_ENV === 'development'
+                      ? `http://localhost:3000/frames/${frameImageId}.png`
+                      : `https://epicapp.net/frames/${frameImageId}.png`
+                  }
+                  alt='UNDRGRND logo'
+                  style={{
+                    position: 'absolute',
+                    top: '0',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    opacity: 1,
+                  }}
+                />
+              </div>
+            ),
+            imageOptions: {
+              headers: {
+                'Cache-Control': `public, max-age=0`,
+                'cache-control': `public, max-age=0`,
+              },
+            },
           })
         })
       },
