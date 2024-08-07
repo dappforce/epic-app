@@ -238,12 +238,14 @@ const UserStatsSection = ({
             'flex flex-col gap-4 border-b border-slate-700 p-4 pb-2',
             isLoading && 'pb-4'
           )}
-          onClick={() => {
-            sendEvent('open_leaderboard')
-            setDrawerContentState('leaderboard')
-          }}
         >
-          <div className='flex items-center justify-between gap-2'>
+          <div
+            className='flex items-center justify-between gap-2'
+            onClick={() => {
+              sendEvent('open_leaderboard')
+              setDrawerContentState('leaderboard')
+            }}
+          >
             <div className='flex items-center gap-2'>
               <AddressAvatar address={myAddress ?? ''} className='h-16 w-16' />
               <div className='flex flex-col gap-1'>
@@ -310,7 +312,7 @@ const UserStatsSection = ({
                   <LinkText
                     variant='primary'
                     className='mr-1'
-                    onClick={() => {
+                    onClick={(e) => {
                       sendEvent('edit_evm_address_click')
                       setOpenEvmLinkModal(true)
                     }}

@@ -90,7 +90,7 @@ export default function LinkEvmAddressModal(
       title={props.title || defaultTitle}
       description={
         props.description ??
-        'We will send your token rewards to this address if you win this contest.'
+        'We will send your token rewards to this address if you win a contest or event.'
       }
       withCloseButton
     >
