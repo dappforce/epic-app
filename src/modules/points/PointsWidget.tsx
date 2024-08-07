@@ -120,6 +120,8 @@ function PointsDrawerContent({
 }) {
   const [drawerContentState, setDrawerContentState] =
     useState<DrawerContentState>('stats')
+  const [openProfileModal, setOpenProfileModal] = useState(false)
+  const [openEvmLinkModal, setOpenEvmLinkModal] = useState(false)
 
   const drawerContentByState: {
     [key in DrawerContentState]: {
@@ -137,7 +139,11 @@ function PointsDrawerContent({
       title: 'My Progress',
       content: () => (
         <>
-          <UserStatsSection setDrawerContentState={setDrawerContentState} />
+          <UserStatsSection
+            setOpenEvmLinkModal={setOpenEvmLinkModal}
+            setOpenProfileModal={setOpenProfileModal}
+            setDrawerContentState={setDrawerContentState}
+          />
           <DrawerLinks
             setIsOpen={setIsOpen}
             setDrawerContentState={setDrawerContentState}
@@ -212,6 +218,17 @@ function PointsDrawerContent({
           </div>
         </div>
       </Transition>
+
+      {/* Modals or Drawers with input cannot be put in another drawer, it causes bug because of telegram apps issue */}
+      <SubsocialProfileModal
+        title='✏️ Edit Profile'
+        closeModal={() => setOpenProfileModal(false)}
+        isOpen={openProfileModal}
+      />
+      <LinkEvmAddressModal
+        isOpen={openEvmLinkModal}
+        closeModal={() => setOpenEvmLinkModal(false)}
+      />
     </>,
     document.body
   )
@@ -219,14 +236,16 @@ function PointsDrawerContent({
 
 const UserStatsSection = ({
   setDrawerContentState,
+  setOpenEvmLinkModal,
+  setOpenProfileModal,
 }: {
   setDrawerContentState: (drawerContentState: DrawerContentState) => void
+  setOpenProfileModal: (open: boolean) => void
+  setOpenEvmLinkModal: (open: boolean) => void
 }) => {
   const myAddress = useMyMainAddress()
   const sendEvent = useSendEvent()
-  const [openProfileModal, setOpenProfileModal] = useState(false)
   const [openRewardModal, setOpenRewardModal] = useState(false)
-  const [openEvmLinkModal, setOpenEvmLinkModal] = useState(false)
 
   const { evmAddress, isLoading } = useLinkedEvmAddress()
 
@@ -312,7 +331,7 @@ const UserStatsSection = ({
                   <LinkText
                     variant='primary'
                     className='mr-1'
-                    onClick={(e) => {
+                    onClick={() => {
                       sendEvent('edit_evm_address_click')
                       setOpenEvmLinkModal(true)
                     }}
@@ -380,15 +399,6 @@ const UserStatsSection = ({
         close={() => {
           setOpenRewardModal(false)
         }}
-      />
-      <SubsocialProfileModal
-        title='✏️ Edit Profile'
-        closeModal={() => setOpenProfileModal(false)}
-        isOpen={openProfileModal}
-      />
-      <LinkEvmAddressModal
-        isOpen={openEvmLinkModal}
-        closeModal={() => setOpenEvmLinkModal(false)}
       />
     </>
   )

@@ -60,10 +60,13 @@ function reloadEveryIntervalUntilLinkedIdentityFound(
       address,
       true
     )
-    if (res) {
+    if (foundChecker(res)) {
       clearInterval(intervalId)
     }
   }, 2_000)
+  setTimeout(() => {
+    clearInterval(intervalId)
+  }, 10_000)
 }
 
 export const useLinkIdentity = mutationWrapper(
