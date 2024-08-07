@@ -1,62 +1,77 @@
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useToastError from '@/hooks/useToastError'
 import {
   useAddExternalProviderToIdentity,
   useUpdateExternalProvider,
 } from '@/services/datahub/identity/mutation'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import { getAddress, isAddress } from 'ethers'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import BottomDrawer from '../BottomDrawer'
 import Button from '../Button'
 import Input from '../inputs/Input'
 import { ModalFunctionalityProps, ModalProps } from './Modal'
+
+export const linkEvmAddressCallbacks: {
+  onSuccessCallbacks: (() => void)[]
+  onErrorCallbacks: (() => void)[]
+} = {
+  onSuccessCallbacks: [],
+  onErrorCallbacks: [],
+}
 
 export default function LinkEvmAddressModal(
   props: ModalFunctionalityProps & Pick<ModalProps, 'title' | 'description'>
 ) {
   const [evmAddress, setEvmAddress] = useState('')
   const [evmAddressError, setEvmAddressError] = useState('')
+  const [isWaitingEvent, setIsWaitingEvent] = useState(false)
 
-  const isAfterSubmit = useRef(false)
+  const mutationConfigs = {
+    onMutate: () => {
+      setIsWaitingEvent(true)
+    },
+    onError: () => {
+      setIsWaitingEvent(false)
+    },
+    onSuccess: () => {
+      linkEvmAddressCallbacks.onSuccessCallbacks.push(() => {
+        setIsWaitingEvent(false)
+        props.closeModal()
+        resetAdding()
+        resetUpdating()
+      })
+      linkEvmAddressCallbacks.onErrorCallbacks.push(() => {
+        setIsWaitingEvent(false)
+        resetAdding()
+        resetUpdating()
+      })
+    },
+  }
   const {
     mutate: addExternalProvider,
     isLoading: loadingAdding,
-    isSuccess: successAdding,
     reset: resetAdding,
-  } = useAddExternalProviderToIdentity({
-    onSuccess: () => {
-      isAfterSubmit.current = true
-    },
-  })
+    error: errorAdding,
+  } = useAddExternalProviderToIdentity(mutationConfigs)
   const {
     mutate: updateExternalProvider,
     isLoading: loadingUpdating,
-    isSuccess: successUpdating,
     reset: resetUpdating,
-  } = useUpdateExternalProvider({
-    onSuccess: () => {
-      isAfterSubmit.current = true
-    },
-  })
+    error: errorUpdating,
+  } = useUpdateExternalProvider(mutationConfigs)
+  useToastError(errorAdding || errorUpdating, 'Failed to link Ethereum address')
 
   const isLoading = loadingAdding || loadingUpdating
-  const isSuccess = successAdding || successUpdating
 
   const { evmAddress: myEvmAddress, evmAddressProviderId } =
     useLinkedEvmAddress()
   useEffect(() => {
     if (props.isOpen && myEvmAddress) {
-      if (!isAfterSubmit.current) {
-        setEvmAddress(myEvmAddress)
-        resetAdding()
-        resetUpdating()
-        isAfterSubmit.current = false
-      } else {
-        props.closeModal()
-        isAfterSubmit.current = false
-      }
+      setEvmAddress(myEvmAddress)
+      resetAdding()
+      resetUpdating()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.isOpen, myEvmAddress, resetAdding, resetUpdating])
 
   const onSubmit = (e: any) => {
@@ -110,7 +125,7 @@ export default function LinkEvmAddressModal(
           }}
         />
         <Button
-          isLoading={isLoading || isSuccess}
+          isLoading={isLoading || isWaitingEvent}
           disabled={!!evmAddressError || !evmAddress}
           size='lg'
           type='submit'

@@ -1,4 +1,5 @@
 import Toast from '@/components/Toast'
+import { linkEvmAddressCallbacks } from '@/components/modals/LinkEvmAddressModal'
 import { claimTaskErrorStore } from '@/modules/telegram/TasksPage/ClaimTaskTokensModal'
 import { getPostQuery } from '@/services/api/query'
 import { deleteOptimisticData } from '@/services/subsocial/commentIds/optimistic'
@@ -19,7 +20,10 @@ import {
   SubscribeEventsSubscription,
   SubscribeEventsSubscriptionVariables,
 } from '../generated-query'
-import { getSocialProfileQuery } from '../identity/query'
+import {
+  getLinkedIdentityQuery,
+  getSocialProfileQuery,
+} from '../identity/query'
 import { callIdToPostIdMap } from '../posts/mutation'
 import { getUserPostedMemesForCountQuery } from '../posts/query'
 import { getProfileQuery } from '../profiles/query'
@@ -142,10 +146,15 @@ async function processSubscriptionEvent(
     case SocialCallName.SynthGamificationClaimEntranceDailyReward:
       action = 'claiming of daily reward'
       break
+    case SocialCallName.SynthUpdateLinkedIdentityExternalProvider:
+      action = 'updating your Ethereum address'
+      break
+    case SocialCallName.SynthAddLinkedIdentityExternalProvider:
+      action = 'connecting your Ethereum address'
+      break
   }
 
   let reason = ''
-
   switch (eventData.meta.code) {
     case ServiceMessageStatusCode.ExpiredEntranceDailyRewardClaimForbidden:
       reason = 'You already claimed the daily reward'
@@ -284,6 +293,20 @@ async function processSubscriptionEvent(
     getGamificationTasksErrorQuery.setQueryData(client, 'error', () =>
       reason ? eventData.meta.code : 'None'
     )
+  }
+
+  if (
+    eventData.meta.callName ===
+      SocialCallName.SynthUpdateLinkedIdentityExternalProvider ||
+    eventData.meta.callName ===
+      SocialCallName.SynthAddLinkedIdentityExternalProvider
+  ) {
+    if (reason) {
+      linkEvmAddressCallbacks.onErrorCallbacks.forEach((cb) => cb())
+    } else {
+      linkEvmAddressCallbacks.onSuccessCallbacks.forEach((cb) => cb())
+      getLinkedIdentityQuery.invalidate(client, getCurrentWallet().address)
+    }
   }
 
   if (reason) {
