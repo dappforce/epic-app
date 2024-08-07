@@ -54,7 +54,7 @@ export default function AirdropPage() {
           </div>
         </div>
         {isAdmin && <SearchUser />}
-        <div className='px-4'>
+        <div className='mb-4 px-4'>
           <Card className='flex flex-col items-center gap-4 bg-background-light'>
             <AddressAvatar address={myAddress ?? ''} className='h-16 w-16' />
             <div className='flex items-center gap-3'>
@@ -75,7 +75,7 @@ export default function AirdropPage() {
               if (isLoading) return null
               if (evmAddress) {
                 return (
-                  <Card className='mb-2 flex items-center justify-between gap-4 p-4 py-3'>
+                  <Card className='mb-2 flex w-full items-center justify-between gap-4 p-4 py-3'>
                     <div className='flex flex-col gap-1'>
                       <span className='text-sm font-medium text-text-muted'>
                         My EVM Address
@@ -114,7 +114,7 @@ export default function AirdropPage() {
                 )
               } else {
                 return (
-                  <div className='pb-2'>
+                  <div>
                     <Button
                       className='w-full'
                       onClick={() => {
