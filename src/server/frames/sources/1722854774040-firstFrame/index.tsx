@@ -102,7 +102,7 @@ const frame = {
                       ? `http://localhost:3000/frames/${frameImageId}.png`
                       : `https://epicapp.net/frames/${frameImageId}.png`
                   }
-                  alt='UNDRGRND logo'
+                  alt='EPIC'
                   style={{
                     position: 'absolute',
                     top: '0',
