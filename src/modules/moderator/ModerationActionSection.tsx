@@ -1,4 +1,6 @@
 import Button from '@/components/Button'
+import { getPostQuery } from '@/services/api/query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { AiOutlineReload } from 'react-icons/ai'
 import {
@@ -16,6 +18,7 @@ type ModerationActionSectionProps = {
   totalDataCount: number
   refetch?: () => void
   loadMore: () => void
+  isFetching?: boolean
 }
 
 const ModerationActionSection = ({
@@ -23,12 +26,14 @@ const ModerationActionSection = ({
   messageIds,
   offset,
   chatId,
+  isFetching,
   refetch,
   loadMore,
 }: ModerationActionSectionProps) => {
   const { selectedPostIds, setSelectedPostIds, page, setPage, pageSize } =
     useModerationContext()
   const [enabled, setEnabled] = useState(false)
+  const queryClient = useQueryClient()
 
   const totalByPage = offset + pageSize
   const messagesByPage = messageIds.slice(offset, offset + pageSize)
@@ -40,7 +45,11 @@ const ModerationActionSection = ({
   }, [messagesByPage.length, selectedPostIds])
 
   const onSuccess = () => {
+    selectedPostIds.forEach((postId) => {
+      getPostQuery.invalidate(queryClient, postId)
+    })
     setSelectedPostIds([])
+
     refetch?.()
   }
 
@@ -65,6 +74,8 @@ const ModerationActionSection = ({
             refetch?.()
           }}
           size='circle'
+          isLoading={isFetching}
+          loadingText=''
         >
           <AiOutlineReload />
         </Button>
@@ -82,8 +93,9 @@ const ModerationActionSection = ({
       </div>
       <div className='flex items-center gap-4'>
         <span>
-          {offset}-{totalByPage > totalDataCount ? totalDataCount : totalByPage}{' '}
-          from {totalDataCount}
+          {messageIds.length ? offset + 1 : 0}-
+          {totalByPage > totalDataCount ? totalDataCount : totalByPage} from{' '}
+          {totalDataCount}
         </span>
         <div className='flex items-center gap-1'>
           <Button

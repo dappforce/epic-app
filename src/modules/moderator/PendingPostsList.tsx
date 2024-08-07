@@ -13,7 +13,7 @@ type PendingPostsListProps = {
 const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
   const { setSelectedPostIds, page, pageSize } = useModerationContext()
 
-  const { messageIds, hasMore, loadMore, totalDataCount, refetch } =
+  const { messageIds, hasMore, loadMore, totalDataCount, refetch, isFetching } =
     usePaginatedMessageIds({
       hubId,
       chatId,
@@ -38,9 +38,10 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
   }, [page, setSelectedPostIds])
 
   return (
-    <div className='flex flex-col gap-6'>
+    <div className='flex flex-col gap-2'>
       <ModerationActionSection
         chatId={chatId}
+        isFetching={isFetching}
         offset={offset}
         messageIds={messageIds}
         totalDataCount={totalDataCount}

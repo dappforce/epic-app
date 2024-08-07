@@ -17,6 +17,9 @@ type PaginatedData = {
   isLoading: boolean
   allIds: string[]
   refetch?: () => void
+  isSuccess?: boolean
+  isError?: boolean
+  isFetching?: boolean
 }
 
 type PaginatedConfig = {
@@ -46,16 +49,23 @@ export default function usePaginatedMessageIds({
         enabled: false,
       }
     )
-  const { data, fetchNextPage, isLoading, refetch } =
-    getPaginatedPostIdsByPostId.useInfiniteQuery(
-      {
-        postId: chatId,
-        onlyDisplayUnapprovedMessages: !!onlyDisplayUnapprovedMessages,
-        myAddress,
-        pageSize,
-      },
-      { enabled: false, placeholderData }
-    )
+  const {
+    data,
+    fetchNextPage,
+    isLoading,
+    refetch,
+    isSuccess,
+    isError,
+    isFetching,
+  } = getPaginatedPostIdsByPostId.useInfiniteQuery(
+    {
+      postId: chatId,
+      onlyDisplayUnapprovedMessages: !!onlyDisplayUnapprovedMessages,
+      myAddress,
+      pageSize,
+    },
+    { enabled: false, placeholderData }
+  )
 
   const page = data?.pages
   let lastPage: PaginatedPostsData | null = null
@@ -88,6 +98,9 @@ export default function usePaginatedMessageIds({
     isLoading,
     allIds: filteredPageIds,
     refetch: () => refetch(),
+    isSuccess,
+    isError,
+    isFetching,
   }
 }
 

@@ -3,7 +3,7 @@ import { useModerationActions } from '@/services/datahub/moderation/mutation'
 import { getModerationReasonsQuery } from '@/services/datahub/moderation/query'
 import { useApproveMessage } from '@/services/datahub/posts/mutation'
 
-type BlockAndApproveButtons = {
+type BlockAndApproveButtonsProps = {
   chatId: string
   selectedMessageIds: string[]
   onSuccess: () => void
@@ -13,7 +13,7 @@ const BlockAndApproveButtons = ({
   chatId,
   selectedMessageIds,
   onSuccess,
-}: BlockAndApproveButtons) => {
+}: BlockAndApproveButtonsProps) => {
   return (
     <>
       <BlockMessageButton
@@ -33,7 +33,7 @@ const BlockMessageButton = ({
   chatId,
   selectedMessageIds,
   onSuccess,
-}: BlockAndApproveButtons) => {
+}: BlockAndApproveButtonsProps) => {
   const { mutateAsync: moderateMessage, isLoading } = useModerationActions()
   const { data: reasons } = getModerationReasonsQuery.useQuery(null)
   const firstReasonId = reasons?.[0].id
@@ -54,7 +54,7 @@ const BlockMessageButton = ({
 
     await Promise.all(moderatePromise)
 
-    onSuccess()
+    setTimeout(() => onSuccess(), 1000)
   }
   return (
     <Button variant='redOutline' onClick={blockMessage} isLoading={isLoading}>
@@ -66,12 +66,12 @@ const BlockMessageButton = ({
 const ApproveMessagesButton = ({
   selectedMessageIds,
   onSuccess,
-}: Omit<BlockAndApproveButtons, 'chatId'>) => {
-  const { mutate, isLoading } = useApproveMessage()
+}: Omit<BlockAndApproveButtonsProps, 'chatId'>) => {
+  const { mutateAsync, isLoading, isSuccess } = useApproveMessage()
 
   const approveMessages = async () => {
     const approvePromise = selectedMessageIds.map(async (messageId) => {
-      await mutate({
+      await mutateAsync({
         approvedInRootPost: true,
         postId: messageId,
       })
@@ -79,7 +79,7 @@ const ApproveMessagesButton = ({
 
     await Promise.all(approvePromise)
 
-    onSuccess()
+    setTimeout(() => onSuccess(), 1000)
   }
   return (
     <Button

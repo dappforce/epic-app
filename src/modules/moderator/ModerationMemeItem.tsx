@@ -31,6 +31,7 @@ export default function ModerationMemeItem({
   const displayedTime = message.struct.createdAtTime
 
   if (!body && (!extensions || extensions.length === 0)) return null
+  if (message.struct.approvedInRootPost) return null
 
   const imageExt = getPostExtensionProperties(
     extensions?.[0],
