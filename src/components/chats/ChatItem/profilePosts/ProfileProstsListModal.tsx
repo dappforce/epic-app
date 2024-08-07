@@ -11,7 +11,9 @@ import { getPaginatedPostIdsByPostIdAndAccount } from '@/services/datahub/posts/
 import { useSendEvent } from '@/stores/analytics'
 import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
+import { isTouchDevice } from '@/utils/device'
 import { Transition } from '@headlessui/react'
+import { useMiniAppRaw } from '@tma.js/sdk-react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -61,6 +63,9 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
   const sendEvent = useSendEvent()
   const isAdmin = useIsModerationAdmin()
   const { isAuthorized } = useAuthorizedForModeration(chatId)
+  const app = useMiniAppRaw(true)
+
+  const isDesktop = !isTouchDevice() && !app?.result
 
   const { data, isLoading } =
     getPaginatedPostIdsByPostIdAndAccount.useInfiniteQuery(chatId, address)
@@ -93,6 +98,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
     <>
       <Transition
         appear
+        as={'div'}
         show={isOpen}
         className='fixed inset-0 z-10 h-full w-full bg-background transition duration-300'
         enterFrom={cx('opacity-0')}
@@ -102,8 +108,12 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
       />
       <Transition
         appear
+        as={'div'}
         show={isOpen}
-        className='fixed inset-0 z-10 flex h-full w-full flex-col bg-background pb-20 transition duration-300'
+        className={cx(
+          'fixed inset-0 z-10 flex h-full w-full flex-col bg-background  transition duration-300',
+          { ['pb-20']: !isDesktop }
+        )}
         enterFrom={cx('opacity-0 -translate-y-48')}
         enterTo='opacity-100 translate-y-0'
         leaveFrom='h-auto'
@@ -114,7 +124,12 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
           closeModal={() => setIsOpenDetail(false)}
           address={address}
         />
-        <div className='mx-auto flex w-full max-w-screen-md flex-1 flex-col overflow-auto'>
+        <div
+          className={cx(
+            'mx-auto flex w-full flex-1 flex-col overflow-auto',
+            isDesktop ? 'max-w-screen-xl' : 'max-w-screen-md'
+          )}
+        >
           <div className='relative mx-auto flex w-full items-center justify-between gap-2 py-3 pl-1 pr-2'>
             <div className='flex flex-1 items-center gap-2'>
               <Button

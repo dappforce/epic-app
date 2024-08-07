@@ -11,6 +11,7 @@ import useSaveTappedPointsAndEnergy, {
   useGetEnergyStateRef,
 } from '@/modules/telegram/TapPage/useSaveTappedPointsAndEnergy'
 import { ConfigProvider } from '@/providers/config/ConfigProvider'
+import TelegramLoginProvider from '@/providers/config/TelegramLoginProvider'
 import EvmProvider from '@/providers/evm/EvmProvider'
 import { getDatahubHealthQuery } from '@/services/datahub/health/query'
 import { getLinkedIdentityQuery } from '@/services/datahub/identity/query'
@@ -47,11 +48,11 @@ export type AppCommonProps = {
 }
 
 export default function App(props: AppProps<AppCommonProps>) {
-  // useEffect(() => {
-  //   import('eruda').then(({ default: eruda }) => {
-  //     eruda.init()
-  //   })
-  // }, [])
+  useEffect(() => {
+    import('eruda').then(({ default: eruda }) => {
+      eruda.init()
+    })
+  }, [])
 
   return (
     <SessionProvider
@@ -138,23 +139,25 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
   return (
     <TelegramScriptWrapper>
       <QueryProvider dehydratedState={dehydratedState}>
-        <DatahubSubscriber />
-        <ToasterConfig />
-        <ReferralUrlChanger />
-        <GlobalModals />
-        <DatahubHealthChecker />
-        <SessionAccountChecker />
-        <div className={cx('font-sans')}>
-          <ErrorBoundary>
-            <EvmProvider>
-              <TappingHooksWrapper>
-                <ProfileModalWrapper>
-                  <Component {...props} />
-                </ProfileModalWrapper>
-              </TappingHooksWrapper>
-            </EvmProvider>
-          </ErrorBoundary>
-        </div>
+        <TelegramLoginProvider>
+          <DatahubSubscriber />
+          <ToasterConfig />
+          <ReferralUrlChanger />
+          <GlobalModals />
+          <DatahubHealthChecker />
+          <SessionAccountChecker />
+          <div className={cx('font-sans')}>
+            <ErrorBoundary>
+              <EvmProvider>
+                <TappingHooksWrapper>
+                  <ProfileModalWrapper>
+                    <Component {...props} />
+                  </ProfileModalWrapper>
+                </TappingHooksWrapper>
+              </EvmProvider>
+            </ErrorBoundary>
+          </div>
+        </TelegramLoginProvider>
       </QueryProvider>
     </TelegramScriptWrapper>
   )

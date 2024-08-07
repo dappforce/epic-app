@@ -38,6 +38,7 @@ const LeaderboardModal = ({ isOpen, close }: LeaderboardModalProps) => {
       <Transition
         appear
         show={isOpen}
+        as='div'
         className='fixed inset-0 z-10 h-full w-full bg-background transition duration-300'
         enterFrom={cx('opacity-0')}
         enterTo='opacity-100'
@@ -47,6 +48,7 @@ const LeaderboardModal = ({ isOpen, close }: LeaderboardModalProps) => {
       <Transition
         appear
         show={isOpen}
+        as='div'
         className='fixed inset-0 z-10 flex h-full w-full flex-col bg-background pb-20 transition duration-300'
         enterFrom={cx('opacity-0 -translate-y-48')}
         enterTo='opacity-100 translate-y-0'
