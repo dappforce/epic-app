@@ -20,7 +20,7 @@ const warningPropsByType: Record<
 > = {
   'missing-rewards': {
     title: `Don't Lose Your Rewards!`,
-    description: `You're earning rewards, but they are in danger. Connect your EVM address before the end of the week to claim them.`,
+    description: `You're earning rewards, but they are in danger. Connect your Ethereum address before the end of the week to claim them.`,
     buttonText: (
       <>
         <SiEthereum className='h-[16.5px] w-[16.5px] [&>path]:fill-[#A16207]' />{' '}

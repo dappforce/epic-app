@@ -78,7 +78,7 @@ export default function AirdropPage() {
                   <Card className='mb-2 flex w-full items-center justify-between gap-4 p-4 py-3'>
                     <div className='flex flex-col gap-1'>
                       <span className='text-sm font-medium text-text-muted'>
-                        My EVM Address
+                        My Ethereum Address
                       </span>
                       <div className='flex items-center gap-2.5'>
                         <span className='font-semibold'>
