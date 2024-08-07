@@ -91,7 +91,7 @@ const ModerationActionSection = ({
           </>
         )}
       </div>
-      <div className='flex items-center gap-4'>
+      <div className='flex items-center gap-4 text-xl'>
         <span>
           {messageIds.length ? offset + 1 : 0}-
           {totalByPage > totalDataCount ? totalDataCount : totalByPage} from{' '}

@@ -38,7 +38,7 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
   }, [page, setSelectedPostIds])
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex h-full flex-col gap-2'>
       <ModerationActionSection
         chatId={chatId}
         isFetching={isFetching}
@@ -50,19 +50,26 @@ const PendingPostsList = ({ hubId, chatId }: PendingPostsListProps) => {
           hasMore && loadMore()
         }}
       />
-      <div className='grid grid-cols-3 gap-4 lg:grid-cols-4'>
-        {postsIdsByPage.map(({ data: message }, index) => {
-          if (!message) return null
 
-          return (
-            <ModerationMemeItem
-              key={message?.struct.id ?? index}
-              message={message}
-              chatId={chatId}
-              hubId={hubId}
-            />
-          )
-        })}
+      {postsIdsByPage.length === 0 && (
+        <div className='flex w-fit self-center rounded-2xl bg-background-light/50 px-6 py-4 text-sm text-text-muted'>
+          No pending posts
+        </div>
+      )}
+      <div className='grid grid-cols-3 gap-4 lg:grid-cols-4'>
+        {postsIdsByPage.length !== 0 &&
+          postsIdsByPage.map(({ data: message }, index) => {
+            if (!message) return null
+
+            return (
+              <ModerationMemeItem
+                key={message?.struct.id ?? index}
+                message={message}
+                chatId={chatId}
+                hubId={hubId}
+              />
+            )
+          })}
       </div>
     </div>
   )
