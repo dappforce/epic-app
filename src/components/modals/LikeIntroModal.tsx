@@ -113,7 +113,7 @@ export default function LikeIntroModal() {
       // need to have timeout so that the scrollTo from useTgNoScroll is done first, it is using 100 so that it is opened after welcome modal
       setTimeout(() => {
         setIsOpenModal(true)
-      }, 100)
+      }, 300)
     }
   }, [sendEvent])
 

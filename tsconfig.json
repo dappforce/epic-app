@@ -17,14 +17,20 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "graphql.config.js",
-    "src/env.mjs"
+    "src/env.mjs",
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules", "integration/**.ts"]
 }

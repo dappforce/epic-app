@@ -258,8 +258,18 @@ export const getPaginatedPostIdsByPostId = {
     })
   },
   invalidateLastQuery: (client: QueryClient, data: Data) => {
-    client.invalidateQueries(getQueryKey(data), {
-      refetchPage: (_, index, allPages) => index === allPages.length - 1,
+    client.refetchQueries(getQueryKey(data), {
+      refetchPage: (_, index, allPages) => {
+        const lastPageIndex = allPages.length - 1
+        if (index !== lastPageIndex) return false
+        // only fetch if its the last page and its the real "last" page, where hasMore is false
+        if (
+          !allPages[lastPageIndex] ||
+          !(allPages[lastPageIndex] as { hasMore: boolean }).hasMore
+        )
+          return true
+        return false
+      },
     })
   },
   invalidateFirstQuery: (client: QueryClient, data: Data) => {

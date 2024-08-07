@@ -1,7 +1,7 @@
+import BottomDrawer from '@/components/BottomDrawer'
 import Button from '@/components/Button'
 import LinkText from '@/components/LinkText'
 import Input from '@/components/inputs/Input'
-import Modal from '@/components/modals/Modal'
 import useIsMounted from '@/hooks/useIsMounted'
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import { useAddExternalProviderToIdentity } from '@/services/datahub/identity/mutation'
@@ -84,7 +84,7 @@ const ContestEvmModal = () => {
   }
 
   return (
-    <Modal
+    <BottomDrawer
       isOpen={isOpen}
       closeModal={() => {}}
       title={'Your Ethereum address for rewards'}
@@ -127,7 +127,7 @@ const ContestEvmModal = () => {
           Save
         </Button>
       </form>
-    </Modal>
+    </BottomDrawer>
   )
 }
 

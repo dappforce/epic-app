@@ -7,6 +7,8 @@ import {
   LinkIdentityEvmMessageMutationVariables,
   LinkIdentityMutation,
   LinkIdentityMutationVariables,
+  UpdateExternalProviderMutation,
+  UpdateExternalProviderMutationVariables,
 } from './generated'
 import {
   backendSigWrapper,
@@ -66,6 +68,32 @@ export async function addExternalProviderToIdentity(
   throwErrorIfNotProcessed(
     res.addNewLinkedIdentityExternalProvider,
     'Failed to add external provider to identity'
+  )
+}
+
+const UPDATE_EXTERNAL_PROVIDER = gql`
+  mutation UpdateExternalProvider($args: CreateMutateLinkedIdentityInput!) {
+    updateLinkedIdentityExternalProvider(args: $args) {
+      processed
+      callId
+      message
+    }
+  }
+`
+
+export async function updateExternalProvider(input: SocialEventDataApiInput) {
+  const res = await datahubQueueRequest<
+    UpdateExternalProviderMutation,
+    UpdateExternalProviderMutationVariables
+  >({
+    document: UPDATE_EXTERNAL_PROVIDER,
+    variables: {
+      args: input as any,
+    },
+  })
+  throwErrorIfNotProcessed(
+    res.updateLinkedIdentityExternalProvider,
+    'Failed to update external provider'
   )
 }
 

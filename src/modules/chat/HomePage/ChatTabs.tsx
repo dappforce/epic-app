@@ -1,4 +1,5 @@
 import Button from '@/components/Button'
+import usePaginatedMessageIds from '@/components/chats/hooks/usePaginatedMessageIds'
 import { Skeleton } from '@/components/SkeletonFallback'
 import { env } from '@/env.mjs'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
@@ -69,6 +70,11 @@ export function Tabs({
     dayjs(serverTime ?? undefined),
     'days'
   )
+  const { totalDataCount } = usePaginatedMessageIds({
+    hubId: env.NEXT_PUBLIC_MAIN_SPACE_ID,
+    chatId: env.NEXT_PUBLIC_MAIN_CHAT_ID,
+    onlyDisplayUnapprovedMessages: true,
+  })
 
   const tabSize: 'sm' | 'md' = isAdmin ? 'sm' : 'md'
   if (!isAdmin && getIsContestEnded()) return null
@@ -90,6 +96,14 @@ export function Tabs({
             size={tabSize}
           >
             Pending
+            <span
+              className={cx(
+                selectedTab === 'not-approved' ? '' : 'text-text-muted'
+              )}
+            >
+              {' '}
+              {totalDataCount ? ` (${totalDataCount})` : ''}
+            </span>
           </TabButton>
           {!getIsContestEnded() && (
             <TabButton
