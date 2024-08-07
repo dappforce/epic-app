@@ -11,6 +11,7 @@ import MemeChatItem, { MemeChatItemProps } from '../ChatItem/MemeChatItem'
 export type ChatItemContainerProps = Omit<MemeChatItemProps, 'isMyMessage'> & {
   containerProps?: ComponentProps<'div'>
   enableProfileModal?: boolean
+  withWrapper?: boolean
   showBlockedMessage?: boolean
   chatId: string
   disableSuperLike?: boolean
@@ -27,6 +28,7 @@ function ChatItemContainer(
     showBlockedMessage,
     enableProfileModal = true,
     disableSuperLike,
+    withWrapper,
     showBlockButton,
     showApproveButton,
     ...props
@@ -62,6 +64,7 @@ function ChatItemContainer(
         chatId={chatId}
         enableProfileModal={enableProfileModal}
         disableSuperLike={disableSuperLike}
+        withWrapper={withWrapper}
         hubId={hubId}
         showApproveButton={showApproveButton}
         showBlockButton={showBlockButton}
