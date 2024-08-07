@@ -303,7 +303,7 @@ async function processSubscriptionEvent(
   ) {
     if (reason) {
       linkEvmAddressCallbacks.onErrorCallbacks.forEach((cb) => cb())
-    } else {
+    } else if (eventData.meta.code === ServiceMessageStatusCode.Processed) {
       linkEvmAddressCallbacks.onSuccessCallbacks.forEach((cb) => cb())
       getLinkedIdentityQuery.invalidate(client, getCurrentWallet().address)
     }
