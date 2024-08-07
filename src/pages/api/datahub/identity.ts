@@ -3,6 +3,7 @@ import {
   addExternalProviderToIdentity,
   getLinkIdentityMessage,
   linkIdentity,
+  updateExternalProvider,
 } from '@/server/datahub-queue/identity'
 import { datahubMutationWrapper } from '@/server/datahub-queue/utils'
 import {
@@ -73,6 +74,8 @@ async function datahubIdentityActionMapping(data: SocialEventDataApiInput) {
     await linkIdentity(data)
   } else if (callName === 'synth_add_linked_identity_external_provider') {
     await addExternalProviderToIdentity(data)
+  } else if (callName === 'synth_update_linked_identity_external_provider') {
+    await updateExternalProvider(data)
   } else {
     throw Error('Unknown identity action')
   }

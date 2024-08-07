@@ -2,6 +2,7 @@ import Tokens from '@/assets/graphics/airdrop/tokens.png'
 import AddressAvatar from '@/components/AddressAvatar'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import LinkText from '@/components/LinkText'
 import Name from '@/components/Name'
 import Toast from '@/components/Toast'
 import { CommonEVMLoginContent } from '@/components/auth/common/evm/CommonEvmModalContent'
@@ -32,11 +33,11 @@ export default function AirdropPage() {
   const [isOpenRemoveAccountModal, setIsOpenRemoveAccountModal] =
     useState(false)
   const [openProfileModal, setOpenProfileModal] = useState(false)
-  const [openAddEvmModal, setOpenAddEvmModal] = useState(false)
+  const [openEvmLinkModal, setOpenEvmLinkModal] = useState(false)
   const myAddress = useMyMainAddress()
   const sendEvent = useSendEvent()
 
-  const { evmAddress } = useLinkedEvmAddress()
+  const { evmAddress, isLoading } = useLinkedEvmAddress()
 
   return (
     <LayoutWithBottomNavigation withFixedHeight className='relative'>
@@ -53,7 +54,7 @@ export default function AirdropPage() {
           </div>
         </div>
         {isAdmin && <SearchUser />}
-        <div className='px-4'>
+        <div className='mb-4 px-4'>
           <Card className='flex flex-col items-center gap-4 bg-background-light'>
             <AddressAvatar address={myAddress ?? ''} className='h-16 w-16' />
             <div className='flex items-center gap-3'>
@@ -70,44 +71,64 @@ export default function AirdropPage() {
                 <RiPencilFill />
               </Button>
             </div>
-            {evmAddress && (
-              <Card className='mx-4 -mt-1 flex w-full items-center justify-between gap-4 p-4 py-3'>
-                <div className='flex flex-col gap-1'>
-                  <span className='text-sm font-medium text-text-muted'>
-                    My EVM Address
-                  </span>
-                  <div className='flex items-center gap-2.5'>
-                    <span className='font-semibold'>
-                      {truncateAddress(evmAddress ?? '')}
-                    </span>
-                    <Button
-                      className='flex-shrink-0 text-sm text-text-muted'
-                      variant='transparent'
-                      size='circleSm'
-                      onClick={() => {
-                        sendEvent('copy_evm_address_click')
-                        copyToClipboard(evmAddress ?? '')
-                        toast.custom((t) => (
-                          <Toast t={t} title='Copied to clipboard!' />
-                        ))
+            {(() => {
+              if (isLoading) return null
+              if (evmAddress) {
+                return (
+                  <Card className='mb-2 flex w-full items-center justify-between gap-4 p-4 py-3'>
+                    <div className='flex flex-col gap-1'>
+                      <span className='text-sm font-medium text-text-muted'>
+                        My Ethereum Address
+                      </span>
+                      <div className='flex items-center gap-2.5'>
+                        <span className='font-semibold'>
+                          {truncateAddress(evmAddress ?? '')}
+                        </span>
+                        <Button
+                          className='flex-shrink-0 text-sm text-text-muted'
+                          variant='transparent'
+                          size='circleSm'
+                          onClick={() => {
+                            sendEvent('copy_evm_address_click')
+                            copyToClipboard(evmAddress ?? '')
+                            toast.custom((t) => (
+                              <Toast t={t} title='Copied to clipboard!' />
+                            ))
+                          }}
+                        >
+                          <MdContentCopy />
+                        </Button>
+                      </div>
+                    </div>
+                    <LinkText
+                      variant='primary'
+                      className='mr-1'
+                      onClick={(e) => {
+                        sendEvent('edit_evm_address_click')
+                        setOpenEvmLinkModal(true)
                       }}
                     >
-                      <MdContentCopy />
+                      Edit
+                    </LinkText>
+                  </Card>
+                )
+              } else {
+                return (
+                  <div>
+                    <Button
+                      className='w-full'
+                      onClick={() => {
+                        sendEvent('connect_evm_address_click')
+                        setOpenEvmLinkModal(true)
+                      }}
+                      variant='primaryOutline'
+                    >
+                      Connect Ethereum Wallet
                     </Button>
                   </div>
-                </div>
-                {/* <LinkText
-                  variant='primary'
-                  className='mr-1'
-                  onClick={() => {
-                    sendEvent('edit_evm_address_click')
-                    setOpenAddEvmModal(true)
-                  }}
-                >
-                  Edit
-                </LinkText> */}
-              </Card>
-            )}
+                )
+              }
+            })()}
             {isAdmin && (
               <div className='flex flex-col gap-2'>
                 <Button
@@ -146,8 +167,8 @@ export default function AirdropPage() {
         isOpen={openProfileModal}
       />
       <LinkEvmAddressModal
-        isOpen={openAddEvmModal}
-        closeModal={() => setOpenAddEvmModal(false)}
+        isOpen={openEvmLinkModal}
+        closeModal={() => setOpenEvmLinkModal(false)}
       />
     </LayoutWithBottomNavigation>
   )

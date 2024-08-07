@@ -28,16 +28,19 @@ export default function useLinkedEvmAddress(
   )
   let latestEvmAddress = ''
   let latestEvmCreatedTime = 0
+  let latestProviderId = ''
   evmProviders?.forEach((provider) => {
     const currentCreated = new Date(provider.createdAtTime).getTime()
     if (currentCreated > latestEvmCreatedTime) {
       latestEvmAddress = provider.externalId
       latestEvmCreatedTime = currentCreated
+      latestProviderId = provider.id
     }
   })
 
   return {
     evmAddress: latestEvmAddress,
+    evmAddressProviderId: latestProviderId,
     isLoading: usedLoading,
   }
 }
