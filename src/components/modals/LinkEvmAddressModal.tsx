@@ -6,9 +6,10 @@ import {
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import { getAddress, isAddress } from 'ethers'
 import { useEffect, useRef, useState } from 'react'
+import BottomDrawer from '../BottomDrawer'
 import Button from '../Button'
 import Input from '../inputs/Input'
-import Modal, { ModalFunctionalityProps, ModalProps } from './Modal'
+import { ModalFunctionalityProps, ModalProps } from './Modal'
 
 export default function LinkEvmAddressModal(
   props: ModalFunctionalityProps & Pick<ModalProps, 'title' | 'description'>
@@ -85,14 +86,13 @@ export default function LinkEvmAddressModal(
     : 'Your Ethereum address for rewards'
 
   return (
-    <Modal
+    <BottomDrawer
       {...props}
       title={props.title || defaultTitle}
       description={
         props.description ??
         'We will send your token rewards to this address if you win a contest or event.'
       }
-      withCloseButton
     >
       <form onSubmit={onSubmit} className='mt-2 flex flex-col gap-6 pb-2'>
         <Input
@@ -118,6 +118,6 @@ export default function LinkEvmAddressModal(
           Save
         </Button>
       </form>
-    </Modal>
+    </BottomDrawer>
   )
 }
