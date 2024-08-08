@@ -12,6 +12,8 @@ export type MediaLoaderProps = Omit<ImageProps, 'src' | 'alt'> & {
   loadingClassName?: string
   placeholderClassName?: string
   withSpinner?: boolean
+  enableMaxHeight?: boolean
+  withBluredImage?: boolean
 }
 
 export default function MediaLoader({
@@ -21,6 +23,8 @@ export default function MediaLoader({
   loadingClassName,
   placeholderClassName,
   withSpinner,
+  enableMaxHeight = true,
+  withBluredImage = true,
   ...props
 }: MediaLoaderProps) {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -86,25 +90,29 @@ export default function MediaLoader({
               isLoaded && 'hidden'
             )}
           />
+          {withBluredImage && (
+            <Image
+              {...commonProps}
+              style={{ backfaceVisibility: 'hidden', ...commonProps.style }}
+              loading='eager'
+              onError={undefined}
+              onLoad={undefined}
+              width={10}
+              height={10}
+              alt={props.alt || ''}
+              className={cx(
+                commonProps.className,
+                'absolute inset-0 m-0 h-full w-full scale-110 object-cover p-0 blur-lg',
+                { ['max-h-96']: enableMaxHeight }
+              )}
+            />
+          )}
           <Image
             {...commonProps}
-            style={{ backfaceVisibility: 'hidden', ...commonProps.style }}
-            loading='eager'
-            onError={undefined}
-            onLoad={undefined}
-            width={10}
-            height={10}
-            alt={props.alt || ''}
-            className={cx(
-              commonProps.className,
-              'absolute inset-0 m-0 h-full max-h-96 w-full scale-110 object-cover p-0 blur-lg'
-            )}
-          />
-          <Image
-            {...commonProps}
             loading='eager'
             className={cx(
-              'mx-auto max-h-96 object-contain',
+              'mx-auto object-contain',
+              { ['max-h-96']: enableMaxHeight },
               commonProps.className
             )}
             style={{ backfaceVisibility: 'hidden', ...commonProps.style }}
@@ -126,7 +134,8 @@ export default function MediaLoader({
       ) : (
         <div
           className={cx(
-            'aspect-square max-h-96 w-full animate-pulse bg-background-lighter',
+            'aspect-square w-full animate-pulse bg-background-lighter',
+            { ['max-h-96']: enableMaxHeight },
             placeholderClassName
           )}
         />

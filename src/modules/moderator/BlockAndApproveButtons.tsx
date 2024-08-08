@@ -2,6 +2,7 @@ import Button from '@/components/Button'
 import { useModerationActions } from '@/services/datahub/moderation/mutation'
 import { getModerationReasonsQuery } from '@/services/datahub/moderation/query'
 import { useApproveMessage } from '@/services/datahub/posts/mutation'
+import { useMyMainAddress } from '@/stores/my-account'
 
 type BlockAndApproveButtonsProps = {
   chatId: string
@@ -35,6 +36,7 @@ const BlockMessageButton = ({
   onSuccess,
 }: BlockAndApproveButtonsProps) => {
   const { mutateAsync: moderateMessage, isLoading } = useModerationActions()
+  const myAddress = useMyMainAddress()
   const { data: reasons } = getModerationReasonsQuery.useQuery(null)
   const firstReasonId = reasons?.[0].id
 
@@ -57,7 +59,12 @@ const BlockMessageButton = ({
     setTimeout(() => onSuccess(), 1000)
   }
   return (
-    <Button variant='redOutline' onClick={blockMessage} isLoading={isLoading}>
+    <Button
+      variant='redOutline'
+      disabled={!myAddress}
+      onClick={blockMessage}
+      isLoading={isLoading}
+    >
       Block
     </Button>
   )
@@ -68,6 +75,7 @@ const ApproveMessagesButton = ({
   onSuccess,
 }: Omit<BlockAndApproveButtonsProps, 'chatId'>) => {
   const { mutateAsync, isLoading, isSuccess } = useApproveMessage()
+  const myAddress = useMyMainAddress()
 
   const approveMessages = async () => {
     const approvePromise = selectedMessageIds.map(async (messageId) => {
@@ -85,6 +93,7 @@ const ApproveMessagesButton = ({
     <Button
       variant='greenOutline'
       onClick={approveMessages}
+      disabled={!myAddress}
       isLoading={isLoading}
     >
       Approve

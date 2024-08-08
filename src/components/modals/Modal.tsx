@@ -92,7 +92,10 @@ export default function Modal({
         id={id}
         initialFocus={initialFocus}
         className={cx('relative z-40 text-text', className)}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
+        }}
         onClose={closeModal}
       >
         {!withoutOverlay && (

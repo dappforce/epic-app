@@ -1,4 +1,6 @@
 import AddressAvatar from '@/components/AddressAvatar'
+import Button from '@/components/Button'
+import ClickableMedia from '@/components/ClickableMedia'
 import MediaLoader from '@/components/MediaLoader'
 import { ProfilePreviewModalName } from '@/components/ProfilePreviewModalWrapper'
 import ChatRelativeTime from '@/components/chats/ChatItem/ChatRelativeTime'
@@ -7,6 +9,7 @@ import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { cx } from '@/utils/class-names'
 import { PostData } from '@subsocial/api/types'
 import { ComponentProps } from 'react'
+import { FaSearchPlus } from 'react-icons/fa'
 import ModerationCheckbox from './Checkbox'
 import { useModerationContext } from './ModerationContext'
 
@@ -45,7 +48,7 @@ export default function ModerationMemeItem({
       {...props}
       className={cx(
         'relative flex h-full w-full flex-col gap-2',
-        'overflow-hidden rounded-2xl bg-slate-800 pt-2',
+        'max-h-[350px] overflow-hidden rounded-2xl bg-slate-800 pt-2',
         { ['ring-4 ring-text-primary']: isSelected },
         props.className
       )}
@@ -77,6 +80,26 @@ export default function ModerationMemeItem({
           </div>
         </div>
         <div className='flex min-w-fit items-center gap-2'>
+          <ClickableMedia
+            enableMaxHeight={false}
+            withBluredImage={false}
+            src={imageExt?.image || ''}
+            alt=''
+            trigger={(onClick) => (
+              <Button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+
+                  onClick()
+                }}
+                size={'circle'}
+                variant={'transparent'}
+              >
+                <FaSearchPlus />
+              </Button>
+            )}
+          />
           <ModerationCheckbox
             checked={selectedPostIds.includes(message.struct.id)}
             onChange={() => {
@@ -89,10 +112,11 @@ export default function ModerationMemeItem({
           />
         </div>
       </div>
+
       <MediaLoader
         containerClassName='overflow-hidden w-full h-full justify-center flex items-center cursor-pointer'
         placeholderClassName={cx('w-full aspect-square')}
-        className='w-full object-contain'
+        className='h-full w-full object-contain'
         src={imageExt?.image}
       />
       {body && (
