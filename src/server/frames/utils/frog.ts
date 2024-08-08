@@ -57,14 +57,15 @@ export class FrogFramesManager {
         : {}),
       title: 'Epic Meme2Earn',
       secret: env.FRAMES_SECRET,
-      // headers: {
-      //   'Content-Type': 'public, immutable, no-transform, max-age=60',
-      // },
-      imageAspectRatio: '1:1',
-      imageOptions: {
-        width: 800,
-        height: 800,
+      headers: {
+        'Content-Type': 'public, immutable, no-transform, max-age=0',
       },
+      // imageAspectRatio: '1:1',
+      imageAspectRatio: '1.91:1',
+      // imageOptions: {
+      //   width: 800,
+      //   height: 800,
+      // },
     })
 
     this.initFrames()
