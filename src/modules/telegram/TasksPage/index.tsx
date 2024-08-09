@@ -56,7 +56,7 @@ export default function TasksPage() {
   )
 }
 
-function DailyTasks() {
+export function DailyTasks({ withTitle = true }: { withTitle?: boolean }) {
   const sendEvent = useSendEvent()
   const [isOpen, setIsOpen] = useState(false)
   const myAddress = useMyMainAddress() ?? ''
@@ -103,9 +103,11 @@ function DailyTasks() {
     <>
       <DailyRewardModal isOpen={isOpen} close={() => setIsOpen(false)} />
       <div className='flex flex-col gap-5'>
-        <span className='self-center text-lg font-bold text-slate-300'>
-          Daily
-        </span>
+        {withTitle && (
+          <span className='self-center text-lg font-bold text-slate-300'>
+            Daily
+          </span>
+        )}
         <div className='flex flex-col gap-2'>
           <TaskCard
             onClick={() => {
@@ -135,7 +137,7 @@ function DailyTasks() {
               sendEvent('tasks_like_open')
             }}
             title='Like 10 memes'
-            href='/tg'
+            href='/tg/memes'
             reward={pointsPerSuperLike * 10}
             completed={(superLikeCount?.count ?? 0) >= 10}
             customAction={
@@ -295,7 +297,7 @@ function BasicTasks() {
   )
 }
 
-function TaskCard({
+export function TaskCard({
   completed,
   image,
   reward,
@@ -350,7 +352,7 @@ function TaskCard({
         className='flex items-center gap-2.5 bg-background-light p-2.5 transition active:bg-background-lighter'
         onClick={onClick}
       >
-        <Image src={image} alt='' className='h-14 w-14' />
+        <Image src={image} alt='' className='h-[50px] w-[50px]' />
         <div className='flex flex-col gap-1'>
           <span className='font-bold'>{title}</span>
           <div className='flex items-center gap-0.5'>

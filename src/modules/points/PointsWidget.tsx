@@ -448,7 +448,7 @@ const DrawerLinks = ({
           </Button>
         </Card>
       </LinkWrapper>
-      <LinkWrapper close={onClose} href='/tg'>
+      <LinkWrapper close={onClose} href='/tg/memes'>
         <Card className={cardStyles}>
           <Image src={Laugh} alt='' className='h-12 w-12 flex-shrink-0' />
           <div className='flex flex-col gap-1'>
