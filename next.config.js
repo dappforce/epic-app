@@ -44,7 +44,6 @@ const nextConfig = {
     ]
   },
   async redirects() {
-    console.log(process.env.NEXT_PUBLIC_IS_MAINTENANCE)
     if (process.env.NEXT_PUBLIC_IS_MAINTENANCE === 'true') {
       return [
         {
