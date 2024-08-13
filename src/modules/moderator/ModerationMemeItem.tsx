@@ -18,6 +18,7 @@ export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   messageBubbleId?: string
   chatId: string
   hubId: string
+  showUnapprovedOnly?: boolean
 }
 
 export default function ModerationMemeItem({
@@ -25,6 +26,7 @@ export default function ModerationMemeItem({
   messageBubbleId,
   chatId,
   hubId,
+  showUnapprovedOnly = true,
   ...props
 }: MemeChatItemProps) {
   const { selectedPostIds, setSelectedPostIds } = useModerationContext()
@@ -34,7 +36,7 @@ export default function ModerationMemeItem({
   const displayedTime = message.struct.createdAtTime
 
   if (!body && (!extensions || extensions.length === 0)) return null
-  if (message.struct.approvedInRootPost) return null
+  if (showUnapprovedOnly && message.struct.approvedInRootPost) return null
 
   const imageExt = getPostExtensionProperties(
     extensions?.[0],

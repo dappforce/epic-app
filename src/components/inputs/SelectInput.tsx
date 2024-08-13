@@ -20,6 +20,8 @@ type SelectInputProps<AdditionalData> = {
   renderItem?: (item: ListItem<AdditionalData>, open: boolean) => JSX.Element
   placeholder?: string
   disabled?: boolean
+  buttonClassName?: string
+  optionClassName?: string
 }
 
 export default function SelectInput<AdditionalData = {}>({
@@ -31,6 +33,8 @@ export default function SelectInput<AdditionalData = {}>({
   renderItem,
   disabled,
   placeholder,
+  buttonClassName,
+  optionClassName,
 }: SelectInputProps<AdditionalData>) {
   return (
     <div>
@@ -52,7 +56,8 @@ export default function SelectInput<AdditionalData = {}>({
                   'pl-4 pr-12 text-left',
                   'appearance-none text-base ring-1 ring-border-gray',
                   'bg-background text-text',
-                  interactionRingStyles()
+                  interactionRingStyles(),
+                  buttonClassName
                 )}
               >
                 <span className='flex items-center gap-3'>
@@ -108,6 +113,7 @@ export default function SelectInput<AdditionalData = {}>({
                         item={item}
                         imgClassName={imgClassName}
                         renderedItem={renderedItem}
+                        className={optionClassName}
                       />
                     )
                   })}
@@ -125,10 +131,12 @@ type SelectListItemProps<AdditionalData> = {
   item: ListItem<AdditionalData>
   imgClassName?: string
   renderedItem?: JSX.Element
+  className?: string
 }
 
 function SelectListItem<AdditionalData>({
   item,
+  className,
   imgClassName,
   renderedItem,
 }: SelectListItemProps<AdditionalData>) {
@@ -139,7 +147,8 @@ function SelectListItem<AdditionalData>({
         cx(
           'relative flex items-center rounded-lg outline-none transition-colors',
           'gap-4 px-3 py-2 text-text hover:bg-background-lighter focus-visible:bg-background-lighter',
-          { ['hover:bg-background-light']: item.disabledItem }
+          { ['hover:bg-background-light']: item.disabledItem },
+          className
         )
       }
       value={item}

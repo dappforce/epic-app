@@ -236,6 +236,27 @@ export type AddressesRankedByTotalRewardsForPeriodInput = {
   order?: InputMaybe<ActiveStakingListOrder>
 }
 
+export type ApprovedResourcesArgsInputDto = {
+  filter: ApprovedResourcesFilter
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<QueryOrder>
+  pageSize?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type ApprovedResourcesFilter = {
+  createdByAccountAddress: Scalars['String']['input']
+  resourceType?: InputMaybe<ModerationResourceType>
+}
+
+export type ApprovedResourcesResponseDto = {
+  __typename?: 'ApprovedResourcesResponseDto'
+  data: Array<ModerationApprovedResource>
+  offset?: Maybe<Scalars['Int']['output']>
+  pageSize?: Maybe<Scalars['Int']['output']>
+  total?: Maybe<Scalars['Int']['output']>
+}
+
 export type BalancesInput = {
   where: BalancesInputWhereArgs
 }
@@ -255,6 +276,27 @@ export type BlockedResourceIdsBatchResponse = {
   byCtxAppIds: Array<BlockedResourceIdsBatchItem>
   byCtxPostIds: Array<BlockedResourceIdsBatchItem>
   byCtxSpaceIds: Array<BlockedResourceIdsBatchItem>
+}
+
+export type BlockedResourcesArgsInputDto = {
+  filter: BlockedResourcesFilter
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<QueryOrder>
+  pageSize?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type BlockedResourcesFilter = {
+  createdByAccountAddress: Scalars['String']['input']
+  resourceType?: InputMaybe<ModerationResourceType>
+}
+
+export type BlockedResourcesResponseDto = {
+  __typename?: 'BlockedResourcesResponseDto'
+  data: Array<ModerationBlockedResource>
+  offset?: Maybe<Scalars['Int']['output']>
+  pageSize?: Maybe<Scalars['Int']['output']>
+  total?: Maybe<Scalars['Int']['output']>
 }
 
 export type CanDoSuperLikeByPostInput = {
@@ -761,6 +803,25 @@ export type LinkedIdentitySubscriptionGenericPayload = {
   event: DataHubSubscriptionEventEnum
 }
 
+export type ModerationApprovedResource = {
+  __typename?: 'ModerationApprovedResource'
+  approved: Scalars['Boolean']['output']
+  comment?: Maybe<Scalars['String']['output']>
+  createdAt: Scalars['DateTime']['output']
+  ctxAppIds: Array<Scalars['String']['output']>
+  ctxPostIds: Array<Scalars['String']['output']>
+  ctxSpaceIds: Array<Scalars['String']['output']>
+  id: Scalars['String']['output']
+  moderator: Moderator
+  organization: ModerationOrganization
+  parentPostId?: Maybe<Scalars['String']['output']>
+  resourceId: Scalars['String']['output']
+  resourceType: ModerationResourceType
+  rootPostId?: Maybe<Scalars['String']['output']>
+  spaceId?: Maybe<Scalars['String']['output']>
+  updatedAt?: Maybe<Scalars['DateTime']['output']>
+}
+
 export type ModerationBlockReason = {
   __typename?: 'ModerationBlockReason'
   id: Scalars['String']['output']
@@ -858,6 +919,7 @@ export type ModerationUpdateOrganizationModeratorInput = {
 export type Moderator = {
   __typename?: 'Moderator'
   account: Account
+  approvedResources?: Maybe<Array<ModerationApprovedResource>>
   id: Scalars['String']['output']
   moderatorOrganizations?: Maybe<Array<ModerationOrganizationModerator>>
   processedResources?: Maybe<Array<ModerationBlockedResource>>
@@ -974,6 +1036,7 @@ export type Post = {
   activeStaking: Scalars['Boolean']['output']
   activeStakingSuperLikes?: Maybe<Array<ActiveStakingSuperLike>>
   activeStakingSuperLikesCount?: Maybe<Scalars['Int']['output']>
+  approvedByAccount: Account
   approvedInRootPost: Scalars['Boolean']['output']
   approvedInRootPostAtTime?: Maybe<Scalars['DateTime']['output']>
   /** is off-chain data CID backed up in blockchain */
@@ -1135,8 +1198,10 @@ export type Query = {
   gamificationTasks: FindTasksResponseDto
   isBalanceSufficientForSocialAction: IsBalanceSufficientForSocialActionResponse
   linkedIdentity?: Maybe<LinkedIdentity>
+  moderationApprovedResources: ApprovedResourcesResponseDto
   moderationBlockedResourceIds: Array<Scalars['String']['output']>
   moderationBlockedResourceIdsBatch: BlockedResourceIdsBatchResponse
+  moderationBlockedResources: BlockedResourcesResponseDto
   moderationBlockedResourcesDetailed: Array<ModerationBlockedResource>
   moderationModerator?: Maybe<Moderator>
   moderationOrganization?: Maybe<ModerationOrganization>
@@ -1261,6 +1326,10 @@ export type QueryLinkedIdentityArgs = {
   where: LinkedIdentityArgs
 }
 
+export type QueryModerationApprovedResourcesArgs = {
+  args: ApprovedResourcesArgsInputDto
+}
+
 export type QueryModerationBlockedResourceIdsArgs = {
   blocked?: InputMaybe<Scalars['Boolean']['input']>
   ctxAppIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -1279,6 +1348,10 @@ export type QueryModerationBlockedResourceIdsBatchArgs = {
   ctxAppIds?: InputMaybe<Array<Scalars['String']['input']>>
   ctxPostIds?: InputMaybe<Array<Scalars['String']['input']>>
   ctxSpaceIds?: InputMaybe<Array<Scalars['String']['input']>>
+}
+
+export type QueryModerationBlockedResourcesArgs = {
+  args: BlockedResourcesArgsInputDto
 }
 
 export type QueryModerationBlockedResourcesDetailedArgs = {
@@ -2734,6 +2807,42 @@ export type GetModeratorDataQuery = {
   } | null
 }
 
+export type GetApprovedByModeratorQueryVariables = Exact<{
+  address: Scalars['String']['input']
+  limit: Scalars['Int']['input']
+  offset: Scalars['Int']['input']
+}>
+
+export type GetApprovedByModeratorQuery = {
+  __typename?: 'Query'
+  resource: {
+    __typename?: 'ApprovedResourcesResponseDto'
+    total?: number | null
+    data: Array<{
+      __typename?: 'ModerationApprovedResource'
+      resourceId: string
+    }>
+  }
+}
+
+export type GetBlockedByModeratorQueryVariables = Exact<{
+  address: Scalars['String']['input']
+  limit: Scalars['Int']['input']
+  offset: Scalars['Int']['input']
+}>
+
+export type GetBlockedByModeratorQuery = {
+  __typename?: 'Query'
+  resource: {
+    __typename?: 'BlockedResourcesResponseDto'
+    total?: number | null
+    data: Array<{
+      __typename?: 'ModerationBlockedResource'
+      resourceId: string
+    }>
+  }
+}
+
 export type SubscribeOrganizationSubscriptionVariables = Exact<{
   [key: string]: never
 }>
@@ -3839,6 +3948,42 @@ export const GetModeratorData = gql`
           }
         }
       }
+    }
+  }
+`
+export const GetApprovedByModerator = gql`
+  query GetApprovedByModerator($address: String!, $limit: Int!, $offset: Int!) {
+    resource: moderationApprovedResources(
+      args: {
+        filter: { createdByAccountAddress: $address }
+        orderBy: "createdAt"
+        orderDirection: DESC
+        pageSize: $limit
+        offset: $offset
+      }
+    ) {
+      data {
+        resourceId
+      }
+      total
+    }
+  }
+`
+export const GetBlockedByModerator = gql`
+  query GetBlockedByModerator($address: String!, $limit: Int!, $offset: Int!) {
+    resource: moderationBlockedResources(
+      args: {
+        filter: { createdByAccountAddress: $address }
+        orderBy: "createdAt"
+        orderDirection: DESC
+        pageSize: $limit
+        offset: $offset
+      }
+    ) {
+      data {
+        resourceId
+      }
+      total
     }
   }
 `
