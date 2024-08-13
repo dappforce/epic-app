@@ -1,6 +1,7 @@
 import Button from '@/components/Button'
 import LikeIntroModal from '@/components/modals/LikeIntroModal'
 import useIsMounted from '@/hooks/useIsMounted'
+import { useSendEvent } from '@/stores/analytics'
 import { cx, mutedTextColorStyles } from '@/utils/class-names'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useEffect, useRef, useState } from 'react'
@@ -20,12 +21,15 @@ export default function HowToEarnMessage() {
   const timerRef = useRef<NodeJS.Timeout>()
   const isMounted = useIsMounted()
 
+  const sendEvent = useSendEvent()
+
   useEffect(() => {
     if (isHowToEarnMessageClosed === 'true' || !isMounted) return
 
     const handleUserActivity = () => {
       clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => {
+        sendEvent('open_how_to_earn_message')
         setIsModalVisible(true)
       }, 4000)
     }
@@ -42,7 +46,7 @@ export default function HowToEarnMessage() {
       })
       clearTimeout(timerRef.current)
     }
-  }, [isHowToEarnMessageClosed, isMounted])
+  }, [isHowToEarnMessageClosed, isMounted, sendEvent])
 
   return (
     <>
@@ -58,6 +62,8 @@ export default function HowToEarnMessage() {
               setIsModalVisible(false)
 
               setIsHowToEarnMessageClosed('true')
+
+              sendEvent('click_how_to_earn_message')
             }}
           >
             <span className='text-[40px]'>💰</span>
@@ -84,6 +90,7 @@ export default function HowToEarnMessage() {
 
                   setIsModalVisible(false)
 
+                  sendEvent('close_how_to_earn_message')
                   setIsHowToEarnMessageClosed('true')
                 }}
               >

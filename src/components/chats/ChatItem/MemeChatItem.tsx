@@ -13,6 +13,7 @@ import useIsMessageBlocked from '@/hooks/useIsMessageBlocked'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import useLongTouch from '@/hooks/useLongTouch'
 import { PostRewards } from '@/services/datahub/content-staking/query'
+import { useSendEvent } from '@/stores/analytics'
 import { cx } from '@/utils/class-names'
 import { isTouchDevice } from '@/utils/device'
 import { PostData } from '@subsocial/api/types'
@@ -126,7 +127,6 @@ export default function MemeChatItem({
                             'text-sm font-medium text-text-secondary'
                           )}
                         />
-                        {/* <SubTeamLabel address={ownerId} /> */}
                         {inView && isAdmin && !showApproveButton && (
                           <ApprovedUserChip chatId={chatId} address={ownerId} />
                         )}
@@ -258,9 +258,11 @@ const ChatItemMenuWrapper = ({
   const haptic = useHapticFeedbackRaw(true)
 
   const { hasILiked, isDisabled, handleClick } = superLikeProps
+  const sendEvent = useSendEvent()
 
   const onLongPress = useLongTouch(
     (e) => {
+      sendEvent('long_press_meme')
       if (isTouchDevice()) {
         toggleDisplay?.(e)
       }
