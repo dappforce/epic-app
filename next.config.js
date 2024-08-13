@@ -44,7 +44,22 @@ const nextConfig = {
     ]
   },
   async redirects() {
+    if (process.env.NEXT_PUBLIC_IS_MAINTENANCE === 'true') {
+      return [
+        {
+          source: '/((?!maintenance).*)',
+          destination: '/maintenance',
+          permanent: false,
+        },
+      ]
+    }
+
     return [
+      {
+        source: '/maintenance',
+        destination: '/tg',
+        permanent: false,
+      },
       {
         source: '/report',
         destination: 'https://forms.gle/Gjh3ELaNHTBotiwN7',
