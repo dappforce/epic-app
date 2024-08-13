@@ -9,6 +9,7 @@ import SuperLike, {
 } from '@/components/content-staking/SuperLike'
 import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { FloatingWrapperProps } from '@/components/floating/FloatingWrapper'
+import useIsMessageBlocked from '@/hooks/useIsMessageBlocked'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import useLongTouch from '@/hooks/useLongTouch'
 import { PostRewards } from '@/services/datahub/content-staking/query'
@@ -61,6 +62,7 @@ export default function MemeChatItem({
   const { ref, inView } = useInView()
   const { ownerId, id: messageId } = message.struct
   const { body, extensions } = message.content || {}
+  const isMessageBlocked = useIsMessageBlocked(hubId, message, chatId)
 
   const isAdmin = useIsModerationAdmin()
 
@@ -164,10 +166,12 @@ export default function MemeChatItem({
                           postId={message.id}
                           disabled={disableSuperLike}
                         />
-                      ) : (
+                      ) : !isMessageBlocked ? (
                         <div className='flex rounded-full bg-background-light px-2 py-1 text-sm text-text/80'>
                           ⌛ Pending Review
                         </div>
+                      ) : (
+                        <div />
                       )}
                       {isAdmin && (
                         <UnapprovedMemeCount
