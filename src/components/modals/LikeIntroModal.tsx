@@ -14,7 +14,7 @@ import SlotCounter from 'react-slot-counter'
 import Button from '../Button'
 import Card from '../Card'
 import MemeChatItem from '../chats/ChatItem/MemeChatItem'
-import Modal from './Modal'
+import Modal, { ModalFunctionalityProps } from './Modal'
 
 const hasOpenedModal = new LocalStorage(() => 'has-opened-like-intro-modal')
 const DUMMY_MESSAGES: { message: PostData; superLikeCount: number }[] = [
@@ -98,24 +98,21 @@ const DUMMY_MESSAGES: { message: PostData; superLikeCount: number }[] = [
   },
 ]
 
-export default function LikeIntroModal() {
+export default function LikeIntroModal({ ...props }: ModalFunctionalityProps) {
   const [step, setStep] = useState(0)
   const [pointsEarned, setPointsEarned] = useState(0)
   const [hasILiked, setHasILiked] = useState(false)
   const { data: tokenomics } = getTokenomicsMetadataQuery.useQuery(null)
 
-  const sendEvent = useSendEvent()
-  const [isOpenModal, setIsOpenModal] = useState(false)
   useEffect(() => {
-    const hasVisited = hasOpenedModal.get() === 'true'
-    if (!hasVisited) {
-      sendEvent('like_intro_modal_opened')
-      // need to have timeout so that the scrollTo from useTgNoScroll is done first, it is using 100 so that it is opened after welcome modal
-      setTimeout(() => {
-        setIsOpenModal(true)
-      }, 300)
+    if (props.isOpen) {
+      setStep(0)
+      setPointsEarned(0)
+      setHasILiked(false)
     }
-  }, [sendEvent])
+  }, [props.isOpen])
+
+  const sendEvent = useSendEvent()
 
   const splitted = useMemo(
     () => formatNumber(pointsEarned).split(''),
@@ -132,8 +129,12 @@ export default function LikeIntroModal() {
 
   return (
     <Modal
-      isOpen={isOpenModal}
-      closeModal={() => undefined}
+      {...props}
+      closeModal={() => {
+        props.closeModal()
+        sendEvent('close_like_intro_modal')
+      }}
+      withCloseButton
       title={
         isFinished ? 'Good job! Keep liking!' : 'Earn Points by liking memes!'
       }
@@ -169,7 +170,7 @@ export default function LikeIntroModal() {
             size='lg'
             onClick={() => {
               sendEvent('finish_like_intro_modal')
-              setIsOpenModal(false)
+              props.closeModal()
               hasOpenedModal.set('true')
             }}
           >
