@@ -64,7 +64,7 @@ export default function usePaginatedMessageIds({
       myAddress,
       pageSize,
     },
-    { enabled: false, placeholderData }
+    { enabled: !!myAddress, placeholderData }
   )
 
   const page = data?.pages
