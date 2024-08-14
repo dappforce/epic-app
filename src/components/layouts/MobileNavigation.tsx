@@ -82,7 +82,7 @@ const tabs: Tab[] = [
     id: 'menu',
     text: `Menu`,
     Icon: IoMenu,
-    href: '/tg/friends',
+    href: '/tg/menu',
   },
 ]
 
