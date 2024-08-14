@@ -4,7 +4,7 @@ import { FrogFramesManager } from '@/server/frames/utils/frog'
 import { Button, Frog } from 'frog'
 import urlJoin from 'url-join'
 
-const frameName = '1722854774040-1'
+const frameName = '1723056340139'
 const frameRootPath = `/${frameName}`
 
 const getButtonHref = (path: string) => urlJoin(frameRootPath, path)
@@ -28,7 +28,7 @@ const frame = {
 
           return c.res({
             image: getImageUrl(1),
-            // image: `/memeImage/${frameName}-${1}`,
+            // image: `/memeImage/${frameName}/${1}`,
             intents: [
               <Button value='2' action={getButtonHref('/2')}>
                 Next ➡️
@@ -82,8 +82,8 @@ const frame = {
     // {
     //   path: 'memeImage',
     //   handler: (app: Frog) => {
-    //     app.image('/memeImage/:frameImageId', async (c) => {
-    //       const { frameImageId } = c.req.param()
+    //     app.image(`/memeImage/${frameName}/:imageId`, async (c) => {
+    //       const { imageId } = c.req.param()
     //
     //       return c.res({
     //         image: (
@@ -106,8 +106,8 @@ const frame = {
     //             <img
     //               src={
     //                 process.env.NODE_ENV === 'development'
-    //                   ? `http://localhost:3000/frames/${frameImageId}.png`
-    //                   : `https://epicapp.net/frames/${frameImageId}.png`
+    //                   ? `http://localhost:3000/frames/${frameName}/${imageId}.png`
+    //                   : `https://epicapp.net/frames/${frameName}/${imageId}.png`
     //               }
     //               alt='EPIC'
     //               style={{

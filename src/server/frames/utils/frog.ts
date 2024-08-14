@@ -51,16 +51,21 @@ export class FrogFramesManager {
     this.frogAppInstance = new Frog({
       assetsPath: '/',
       basePath: '/api/frames',
+      browserLocation: 'https://epicapp.net/',
       ...(env.NEYNAR_API_KEY
         ? { hub: neynar({ apiKey: env.NEYNAR_API_KEY || '' }) }
         : {}),
       title: 'Epic Meme2Earn',
       secret: env.FRAMES_SECRET,
-      imageAspectRatio: '1:1',
-      imageOptions: {
-        width: 800,
-        height: 800,
+      headers: {
+        'Content-Type': 'public, immutable, no-transform, max-age=0',
       },
+      // imageAspectRatio: '1:1',
+      imageAspectRatio: '1.91:1',
+      // imageOptions: {
+      //   width: 800,
+      //   height: 800,
+      // },
     })
 
     this.initFrames()

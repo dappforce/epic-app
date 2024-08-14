@@ -47,6 +47,7 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
+            GH_NEXT_PUBLIC_IS_MAINTENANCE=false
             GH_NEXTAUTH_URL=https://epicapp.net
             GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://epic-data-hub.subsocial.network/graphql
             GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://epic-data-hub.subsocial.network/graphql-ws
@@ -95,6 +96,7 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
+            GH_NEXT_PUBLIC_IS_MAINTENANCE=true
             GH_NEXT_PUBLIC_AMP_ID=2ecd0305eaa641e48ef9a0fd6ab8a923
             GH_NEXT_PUBLIC_GA_ID=fake
             GH_IPFS_WRITE_URL=https://gw-seattle.crustcloud.io

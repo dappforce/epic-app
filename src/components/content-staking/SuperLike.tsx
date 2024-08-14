@@ -1,5 +1,6 @@
 import Thumbsup from '@/assets/emojis/thumbsup.png'
 import { useIsAddressBlockedInApp } from '@/hooks/useIsAddressBlockedInApp'
+import { useIsHowToEarnMessageClosedStorage } from '@/modules/telegram/MemesPage/HowToEarnMessage'
 import { getPostQuery, getServerTimeQuery } from '@/services/api/query'
 import { useCreateSuperLike } from '@/services/datahub/content-staking/mutation'
 import {
@@ -238,6 +239,7 @@ export default function SuperLike({
   disabled,
   ...props
 }: SuperLikeProps) {
+  const [, setIsHowToEarnMessageClosed] = useIsHowToEarnMessageClosedStorage()
   const myAddress = useMyMainAddress()
   const sendEvent = useSendEvent()
   if (currentNetwork !== 'subsocial') return null
@@ -260,6 +262,7 @@ export default function SuperLike({
             hasILiked={hasILiked}
             postId={postId}
             onClick={() => {
+              setIsHowToEarnMessageClosed('true')
               sendEventWithRef(myAddress ?? '', (refId) => {
                 sendEvent(
                   'click_superlike',
