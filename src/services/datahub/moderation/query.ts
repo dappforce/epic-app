@@ -2,6 +2,10 @@ import { env } from '@/env.mjs'
 import { createQuery, poolQuery } from '@/subsocial-query'
 import { gql } from 'graphql-request'
 import {
+  GetAllModeratorsQuery,
+  GetAllModeratorsQueryVariables,
+  GetApprovedByModeratorQuery,
+  GetApprovedByModeratorQueryVariables,
   GetBlockedInAppDetailedQuery,
   GetBlockedInAppDetailedQueryVariables,
   GetBlockedInPostIdDetailedQuery,
@@ -288,4 +292,93 @@ export const getModeratorQuery = createQuery({
   defaultConfigGenerator: (address) => ({
     enabled: !!address,
   }),
+})
+
+const GET_APPROVED_BY_MODERATOR = gql`
+  query GetApprovedByModerator($address: String!, $limit: Int!, $offset: Int!) {
+    resource: moderationApprovedResources(
+      args: {
+        filter: { createdByAccountAddress: $address, resourceType: POST }
+        orderBy: "createdAt"
+        orderDirection: DESC
+        pageSize: $limit
+        offset: $offset
+      }
+    ) {
+      data {
+        resourceId
+      }
+      total
+    }
+  }
+`
+const GET_BLOCKED_BY_MODERATOR = gql`
+  query GetBlockedByModerator($address: String!, $limit: Int!, $offset: Int!) {
+    resource: moderationBlockedResources(
+      args: {
+        filter: { createdByAccountAddress: $address, resourceType: POST }
+        orderBy: "createdAt"
+        orderDirection: DESC
+        pageSize: $limit
+        offset: $offset
+      }
+    ) {
+      data {
+        resourceId
+      }
+      total
+    }
+  }
+`
+export const getModeratedByModerator = createQuery({
+  key: 'getModeratedByModerator',
+  fetcher: async (variables: {
+    address: string
+    limit: number
+    offset: number
+    status: 'approved' | 'blocked'
+  }) => {
+    const data = await datahubQueryRequest<
+      GetApprovedByModeratorQuery,
+      GetApprovedByModeratorQueryVariables
+    >({
+      document:
+        variables.status === 'approved'
+          ? GET_APPROVED_BY_MODERATOR
+          : GET_BLOCKED_BY_MODERATOR,
+      variables: {
+        address: variables.address,
+        limit: variables.limit,
+        offset: variables.offset,
+      },
+    })
+    return {
+      ids: data.resource.data.map((res) => res.resourceId),
+      total: data.resource.total,
+    }
+  },
+})
+
+const GET_ALL_MODERATORS = gql`
+  query GetAllModerators($ctxAppId: String!) {
+    moderators(args: { where: { ctxAppIds: [$ctxAppId] } }) {
+      total
+      data {
+        id
+      }
+    }
+  }
+`
+export const getAllModeratorsQuery = createQuery({
+  key: 'getAllModerators',
+  fetcher: async () => {
+    const data = await datahubQueryRequest<
+      GetAllModeratorsQuery,
+      GetAllModeratorsQueryVariables
+    >({
+      document: GET_ALL_MODERATORS,
+      variables: { ctxAppId: env.NEXT_PUBLIC_APP_ID },
+    })
+    return data.moderators?.data.map((mod) => mod.id) ?? []
+  },
 })

@@ -4,7 +4,7 @@ import useGetTheme from '@/hooks/useGetTheme'
 import { cx } from '@/utils/class-names'
 import { BigNumber } from 'bignumber.js'
 import { formatUnits, parseUnits } from 'ethers'
-import { ChangeEventHandler, useEffect } from 'react'
+import { ChangeEventHandler, ReactNode, useEffect } from 'react'
 import { useDonateModalContext } from '../../DonateModalContext'
 import { useGetBalance } from '../../api/hooks'
 
@@ -13,7 +13,7 @@ type CommonProps = {
   inputError?: string
   setInputError: (error?: string) => void
   amount: string
-  tokenSymbol: string
+  tokenSymbol: string | ReactNode
 }
 
 type AmountInputProps = CommonProps & {
