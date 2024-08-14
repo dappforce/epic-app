@@ -73,15 +73,17 @@ const ModerationActionSection = ({
           onClick={() => {
             refetch?.()
           }}
-          size='circle'
+          size='circleSm'
           isLoading={isFetching}
           loadingText=''
         >
-          <AiOutlineReload />
+          <AiOutlineReload className='size-5' />
         </Button>
         {!!selectedPostIds.length && (
           <>
-            <span className='text-xl'>Selected: {selectedPostIds.length} </span>
+            <span className='text-base'>
+              Selected: {selectedPostIds.length}{' '}
+            </span>
 
             <BlockAndApproveButtons
               chatId={chatId}
@@ -91,7 +93,7 @@ const ModerationActionSection = ({
           </>
         )}
       </div>
-      <div className='flex items-center gap-4 text-xl'>
+      <div className='flex items-center gap-4 text-base'>
         <span>
           {messageIds.length ? offset + 1 : 0}-
           {totalByPage > totalDataCount ? totalDataCount : totalByPage} from{' '}

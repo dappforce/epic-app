@@ -9,7 +9,7 @@ import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { cx } from '@/utils/class-names'
 import { PostData } from '@subsocial/api/types'
 import { ComponentProps } from 'react'
-import { FaSearchPlus } from 'react-icons/fa'
+import { FiZoomIn } from 'react-icons/fi'
 import ModerationCheckbox from './Checkbox'
 import { useModerationContext } from './ModerationContext'
 
@@ -96,7 +96,7 @@ export default function ModerationMemeItem({
                 size={'circle'}
                 variant={'transparent'}
               >
-                <FaSearchPlus />
+                <FiZoomIn />
               </Button>
             )}
           />
