@@ -2,6 +2,8 @@ import { env } from '@/env.mjs'
 import { createQuery, poolQuery } from '@/subsocial-query'
 import { gql } from 'graphql-request'
 import {
+  GetAllModeratorsQuery,
+  GetAllModeratorsQueryVariables,
   GetApprovedByModeratorQuery,
   GetApprovedByModeratorQueryVariables,
   GetBlockedInAppDetailedQuery,
@@ -357,28 +359,26 @@ export const getModeratedByModerator = createQuery({
   },
 })
 
-// const GET_ALL_MODERATORS = gql`
-//   query GetAllModerators {
-//     moderators {
-//       data {
-//         substrateAddress
-//       }
-//     }
-//   }
-// `
-// export const getAllModeratorsQuery = createQuery({
-//   key: 'getAllModerators',
-//   fetcher: async () => {
-//     const data = await datahubQueryRequest<
-//       GetModeratorDataQuery,
-//       GetModeratorDataQueryVariables
-//     >({
-//       document: GET_MODERATOR_DATA,
-//       variables: {},
-//     })
-//     return data.moderators?.data ?? []
-//   },
-//   defaultConfigGenerator: () => ({
-//     enabled: true,
-//   }),
-// })
+const GET_ALL_MODERATORS = gql`
+  query GetAllModerators($ctxAppId: String!) {
+    moderators(args: { where: { ctxAppIds: [$ctxAppId] } }) {
+      total
+      data {
+        id
+      }
+    }
+  }
+`
+export const getAllModeratorsQuery = createQuery({
+  key: 'getAllModerators',
+  fetcher: async () => {
+    const data = await datahubQueryRequest<
+      GetAllModeratorsQuery,
+      GetAllModeratorsQueryVariables
+    >({
+      document: GET_ALL_MODERATORS,
+      variables: { ctxAppId: env.NEXT_PUBLIC_APP_ID },
+    })
+    return data.moderators?.data.map((mod) => mod.id) ?? []
+  },
+})

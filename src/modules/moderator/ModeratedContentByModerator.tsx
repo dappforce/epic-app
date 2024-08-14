@@ -18,7 +18,11 @@ const limit = 8
 
 function useModeratorSearchParams() {
   const searchParams = useSearchParams()
-  const status = searchParams?.get('status') as 'approved' | 'blocked'
+  let status = searchParams?.get('status') as 'approved' | 'blocked'
+  if (status !== 'approved' && status !== 'blocked') {
+    status = 'approved'
+  }
+
   const page = searchParams?.get('page')
     ? parseInt(searchParams.get('page') as string) || 1
     : 1
@@ -48,10 +52,12 @@ export default function ModeratedContentByModerator({
   chatId: string
 }) {
   const { status } = useModeratorSearchParams()
-  const { isFetching, refetch, data } = useModeratedResourceQuery({ moderator })
+  const { isFetching, data } = useModeratedResourceQuery({ moderator })
 
   const postQueries = getPostQuery.useQueries(data?.ids ?? [])
   const isAnyLoading = useIsAnyQueriesLoading(postQueries)
+
+  const isLoading = isFetching || isAnyLoading
 
   return (
     <div className='flex h-full flex-col gap-2'>
@@ -63,19 +69,24 @@ export default function ModeratedContentByModerator({
         </div>
       )}
       <div className='grid grid-cols-3 gap-4 lg:grid-cols-4'>
-        {postQueries.map(({ data: message }, index) => {
-          if (!message) return null
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, idx) => (
+              <Skeleton className='h-80 w-full rounded-lg' key={idx} />
+            ))
+          : postQueries.map(({ data: message }, index) => {
+              if (!message) return null
 
-          return (
-            <ModerationMemeItem
-              key={message?.struct.id ?? index}
-              message={message}
-              chatId={chatId}
-              hubId={hubId}
-              showUnapprovedOnly={false}
-            />
-          )
-        })}
+              return (
+                <ModerationMemeItem
+                  key={message?.struct.id ?? index}
+                  message={message}
+                  chatId={chatId}
+                  hubId={hubId}
+                  showUnapprovedOnly={false}
+                  withCheckbox={false}
+                />
+              )
+            })}
       </div>
     </div>
   )
@@ -118,6 +129,7 @@ function Actions({ moderator }: { moderator: string }) {
                 Array.from(searchParams?.entries() ?? [])
               )
               newSearchParams.set('status', tab === 0 ? 'approved' : 'blocked')
+              newSearchParams.delete('page')
               router.push(`?${newSearchParams.toString()}`, undefined, {
                 shallow: true,
               })
@@ -132,7 +144,7 @@ function Actions({ moderator }: { moderator: string }) {
       <div className='flex items-center gap-4 text-xl'>
         <span>
           {offset + 1}-
-          {total ? (
+          {total !== null ? (
             Math.min(total, offset + limit)
           ) : (
             <Skeleton className='inline-block w-6 align-middle' />

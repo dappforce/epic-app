@@ -1,13 +1,13 @@
 import { cx, interactionRingStyles } from '@/utils/class-names'
 import { Listbox, Transition } from '@headlessui/react'
 import Image, { ImageProps } from 'next/image'
-import { Fragment, isValidElement } from 'react'
+import React, { Fragment, isValidElement } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
 
 export type ListItem<AdditionalData = {}> = {
   id: string
   icon?: ImageProps['src'] | JSX.Element
-  label: string
+  label: string | React.ReactNode
   disabledItem?: boolean | string
 } & AdditionalData
 

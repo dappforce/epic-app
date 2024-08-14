@@ -19,6 +19,7 @@ export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   chatId: string
   hubId: string
   showUnapprovedOnly?: boolean
+  withCheckbox?: boolean
 }
 
 export default function ModerationMemeItem({
@@ -27,6 +28,7 @@ export default function ModerationMemeItem({
   chatId,
   hubId,
   showUnapprovedOnly = true,
+  withCheckbox = true,
   ...props
 }: MemeChatItemProps) {
   const { selectedPostIds, setSelectedPostIds } = useModerationContext()
@@ -55,11 +57,13 @@ export default function ModerationMemeItem({
         props.className
       )}
       onClick={() => {
-        setSelectedPostIds(
-          selectedPostIds.includes(message.struct.id)
-            ? selectedPostIds.filter((id) => id !== message.struct.id)
-            : [...selectedPostIds, message.struct.id]
-        )
+        if (withCheckbox) {
+          setSelectedPostIds(
+            selectedPostIds.includes(message.struct.id)
+              ? selectedPostIds.filter((id) => id !== message.struct.id)
+              : [...selectedPostIds, message.struct.id]
+          )
+        }
       }}
     >
       <div className='flex items-center justify-between gap-4 px-2'>
@@ -102,16 +106,18 @@ export default function ModerationMemeItem({
               </Button>
             )}
           />
-          <ModerationCheckbox
-            checked={selectedPostIds.includes(message.struct.id)}
-            onChange={() => {
-              setSelectedPostIds(
-                selectedPostIds.includes(message.struct.id)
-                  ? selectedPostIds.filter((id) => id !== message.struct.id)
-                  : [...selectedPostIds, message.struct.id]
-              )
-            }}
-          />
+          {withCheckbox && (
+            <ModerationCheckbox
+              checked={selectedPostIds.includes(message.struct.id)}
+              onChange={() => {
+                setSelectedPostIds(
+                  selectedPostIds.includes(message.struct.id)
+                    ? selectedPostIds.filter((id) => id !== message.struct.id)
+                    : [...selectedPostIds, message.struct.id]
+                )
+              }}
+            />
+          )}
         </div>
       </div>
 

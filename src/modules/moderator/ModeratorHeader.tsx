@@ -2,7 +2,9 @@ import AddressAvatar from '@/components/AddressAvatar'
 import Button from '@/components/Button'
 import SelectInput, { ListItem } from '@/components/inputs/SelectInput'
 import Logo from '@/components/Logo'
+import Name from '@/components/Name'
 import { useTelegramLogin } from '@/providers/config/TelegramLoginProvider'
+import { getAllModeratorsQuery } from '@/services/datahub/moderation/query'
 import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'
 import { useSearchParams } from 'next/navigation'
@@ -54,40 +56,44 @@ export default function ModeratorHeader() {
   )
 }
 
-const dummy: ListItem[] = [
-  {
-    id: '',
-    label: 'Not Filtered',
-    icon: (
-      <div className='flex h-7 w-7 items-center justify-center rounded-full bg-background-lightest'>
-        <MdAddModerator />
-      </div>
-    ),
-  },
-  {
-    id: '0x8719EcD89839E6dcb13E508affC4320eb021377e',
-    label: 'Teodorus Nathaniel',
-    icon: (
-      <AddressAvatar
-        address='0x8719EcD89839E6dcb13E508affC4320eb021377e'
-        className='flex h-7 w-7 items-center justify-center rounded-full bg-background-lightest'
-      />
-    ),
-  },
-]
-
 function ModeratorFilter() {
+  const { data: moderators } = getAllModeratorsQuery.useQuery(null)
+  const options: ListItem[] = [
+    {
+      id: '',
+      label: 'Not Filtered',
+      icon: (
+        <div className='flex h-7 w-7 items-center justify-center rounded-full bg-background-lightest'>
+          <MdAddModerator />
+        </div>
+      ),
+    },
+  ]
+  moderators?.forEach((address) => {
+    options.push({
+      id: address,
+      label: <Name address={address} withProfileModal={false} clipText />,
+      icon: (
+        <AddressAvatar
+          address={address}
+          className='flex h-7 w-7 items-center justify-center rounded-full bg-background-lightest'
+        />
+      ),
+    })
+  })
+
   const searchParams = useSearchParams()
   const router = useRouter()
 
   const selected =
-    dummy.find((item) => item.id === searchParams?.get('moderator')) || dummy[0]
+    options.find((item) => item.id === searchParams?.get('moderator')) ||
+    options[0]
 
   return (
     <div className='flex items-center gap-2'>
       <span className='text-text-muted'>Filter by:</span>
       <SelectInput
-        items={dummy}
+        items={options}
         selected={selected}
         setSelected={(selected) =>
           router.push(`?moderator=${selected.id}`, undefined, { shallow: true })

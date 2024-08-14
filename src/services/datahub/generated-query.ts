@@ -953,7 +953,11 @@ export type ModeratorsResponse = {
 }
 
 export type ModeratorsWhereArgs = {
+  ctxAppIds?: InputMaybe<Array<Scalars['String']['input']>>
+  ctxPostIds?: InputMaybe<Array<Scalars['String']['input']>>
+  ctxSpaceIds?: InputMaybe<Array<Scalars['String']['input']>>
   id?: InputMaybe<Scalars['String']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
   substrateAddress?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -2843,6 +2847,19 @@ export type GetBlockedByModeratorQuery = {
   }
 }
 
+export type GetAllModeratorsQueryVariables = Exact<{
+  ctxAppId: Scalars['String']['input']
+}>
+
+export type GetAllModeratorsQuery = {
+  __typename?: 'Query'
+  moderators?: {
+    __typename?: 'ModeratorsResponse'
+    total?: number | null
+    data: Array<{ __typename?: 'Moderator'; id: string }>
+  } | null
+}
+
 export type SubscribeOrganizationSubscriptionVariables = Exact<{
   [key: string]: never
 }>
@@ -3955,7 +3972,7 @@ export const GetApprovedByModerator = gql`
   query GetApprovedByModerator($address: String!, $limit: Int!, $offset: Int!) {
     resource: moderationApprovedResources(
       args: {
-        filter: { createdByAccountAddress: $address }
+        filter: { createdByAccountAddress: $address, resourceType: POST }
         orderBy: "createdAt"
         orderDirection: DESC
         pageSize: $limit
@@ -3973,7 +3990,7 @@ export const GetBlockedByModerator = gql`
   query GetBlockedByModerator($address: String!, $limit: Int!, $offset: Int!) {
     resource: moderationBlockedResources(
       args: {
-        filter: { createdByAccountAddress: $address }
+        filter: { createdByAccountAddress: $address, resourceType: POST }
         orderBy: "createdAt"
         orderDirection: DESC
         pageSize: $limit
@@ -3984,6 +4001,16 @@ export const GetBlockedByModerator = gql`
         resourceId
       }
       total
+    }
+  }
+`
+export const GetAllModerators = gql`
+  query GetAllModerators($ctxAppId: String!) {
+    moderators(args: { where: { ctxAppIds: [$ctxAppId] } }) {
+      total
+      data {
+        id
+      }
     }
   }
 `
