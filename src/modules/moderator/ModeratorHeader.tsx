@@ -72,7 +72,8 @@ function ModeratorFilter() {
   moderators?.forEach((address) => {
     options.push({
       id: address,
-      label: <Name address={address} withProfileModal={false} clipText />,
+      label: address,
+      customLabel: <Name address={address} withProfileModal={false} clipText />,
       icon: (
         <AddressAvatar
           address={address}
@@ -103,7 +104,9 @@ function ModeratorFilter() {
         renderItem={(item) => (
           <div className='flex cursor-pointer items-center gap-2.5 text-base'>
             {isValidElement(item.icon) ? item.icon : null}
-            <span className='line-clamp-1'>{item.label}</span>
+            <span className='line-clamp-1'>
+              {item.customLabel ?? item.label}
+            </span>
           </div>
         )}
       />

@@ -1,13 +1,14 @@
 import { cx, interactionRingStyles } from '@/utils/class-names'
 import { Listbox, Transition } from '@headlessui/react'
 import Image, { ImageProps } from 'next/image'
-import React, { Fragment, isValidElement } from 'react'
+import { Fragment, ReactNode, isValidElement } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
 
 export type ListItem<AdditionalData = {}> = {
   id: string
   icon?: ImageProps['src'] | JSX.Element
-  label: string | React.ReactNode
+  label: string
+  customLabel?: ReactNode
   disabledItem?: boolean | string
 } & AdditionalData
 
@@ -76,7 +77,10 @@ export default function SelectInput<AdditionalData = {}>({
                       />
                     ))}
                   <span className='block truncate'>
-                    {selected?.label ?? placeholder ?? ''}
+                    {selected?.customLabel ??
+                      selected?.label ??
+                      placeholder ??
+                      ''}
                   </span>
                 </span>
                 {!disabled && (
@@ -179,7 +183,7 @@ function SelectListItem<AdditionalData>({
                     ['text-gray-500']: item.disabledItem,
                   })}
                 >
-                  {item.label}
+                  {item.customLabel ?? item.label}
                 </span>
               </div>
               {item.disabledItem && (
