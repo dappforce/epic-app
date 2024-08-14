@@ -6,6 +6,8 @@ import Modal from './modals/Modal'
 
 export type ClickableMediaProps = Omit<ImageProps, 'onClick'> & {
   trigger?: (onClick: () => void) => JSX.Element
+  enableMaxHeight?: boolean
+  withBluredImage?: boolean
 }
 
 export default function ClickableMedia({
@@ -29,8 +31,9 @@ export default function ClickableMedia({
       <Modal
         isOpen={isOpenModal}
         closeModal={() => setIsOpenModal(false)}
-        panelClassName='bg-transparent shadow-none'
-        contentClassName='!p-0'
+        panelClassName='bg-transparent shadow-none h-full w-fit'
+        contentClassName='!p-0 h-full'
+        containerClassName='h-full'
         size='screen-md'
       >
         <MediaLoader
@@ -39,10 +42,9 @@ export default function ClickableMedia({
           onClick={(e) => e.stopPropagation()}
           onContextMenu={(e) => e.stopPropagation()}
           src={props.src ?? ''}
-          className='w-full max-w-screen-md'
+          containerClassName='h-full'
+          className='h-full w-full max-w-screen-md'
           alt={props.alt ?? ''}
-          width={1024}
-          height={1024}
         />
       </Modal>
     </>

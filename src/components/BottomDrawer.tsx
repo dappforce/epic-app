@@ -26,6 +26,7 @@ export default function BottomDrawer({
       <Transition
         show={isOpen}
         appear
+        as='div'
         className='fixed inset-0 z-40 h-full w-full bg-black/50 backdrop-blur-md transition duration-300'
         enterFrom={cx('opacity-0')}
         enterTo='opacity-100'
@@ -36,6 +37,7 @@ export default function BottomDrawer({
       <Transition
         show={isOpen}
         appear
+        as='div'
         className='fixed bottom-0 left-1/2 z-40 mx-auto flex h-auto w-full max-w-screen-md -translate-x-1/2 rounded-t-[10px] bg-background-light outline-none transition duration-300'
         enterFrom={cx('opacity-0 translate-y-48')}
         enterTo='opacity-100 translate-y-0'

@@ -38,6 +38,7 @@ export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   hubId: string
   showApproveButton?: boolean
   showBlockButton?: boolean
+  withWrapper?: boolean
   disableSuperLike?: boolean
   menuIdPrefix?: string
   dummySuperLike?: SuperLikeButtonProps
@@ -51,6 +52,7 @@ export default function MemeChatItem({
   enableChatMenu = true,
   chatId,
   hubId,
+  withWrapper,
   disableSuperLike,
   showApproveButton,
   showBlockButton,
@@ -101,7 +103,9 @@ export default function MemeChatItem({
                   <div
                     className={cx(
                       'flex flex-col gap-2 border-b border-border-gray py-2',
-                      noBorder && 'border-none'
+                      noBorder && 'border-none',
+                      withWrapper &&
+                        'h-full overflow-hidden rounded-2xl bg-slate-800 pt-2'
                     )}
                   >
                     <div className='flex items-center justify-between px-2'>
@@ -138,7 +142,13 @@ export default function MemeChatItem({
                       />
                     </div>
                     <MediaLoader
-                      containerClassName='overflow-hidden w-full cursor-pointer'
+                      containerClassName={cx(
+                        'overflow-hidden w-full cursor-pointer',
+                        {
+                          ['h-full flex items-center justify-center']:
+                            withWrapper,
+                        }
+                      )}
                       placeholderClassName={cx('w-full aspect-square')}
                       className='w-full object-contain'
                       src={imageExt?.image}

@@ -9,7 +9,7 @@ import { useSendEvent } from '@/stores/analytics'
 import { useLoginModal } from '@/stores/login-modal'
 import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Transition, TransitionChild } from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import { ComponentProps, Fragment, ReactNode, useState } from 'react'
 import useLoginInTelegramMiniApps from './telegramLogin/useLoginInTelegramMiniApps'
@@ -138,7 +138,7 @@ function DrawerSidebar({
         className={cx('relative z-40')}
         onClose={() => setOpenSidebar(false)}
       >
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter='ease-out duration-200'
           enterFrom='opacity-0'
@@ -148,8 +148,8 @@ function DrawerSidebar({
           leaveTo='opacity-0'
         >
           <div className='fixed top-14 z-20 h-[calc(100vh_-_3.5rem)] w-full bg-black/50 opacity-0 backdrop-blur-sm' />
-        </Transition.Child>
-        <Transition.Child
+        </TransitionChild>
+        <TransitionChild
           as={Fragment}
           enter='ease-out duration-200'
           enterFrom='opacity-0 left-[-220px]'
@@ -164,7 +164,7 @@ function DrawerSidebar({
           >
             <Sidebar />
           </Dialog.Panel>
-        </Transition.Child>
+        </TransitionChild>
       </Dialog>
     </Transition>
   )
