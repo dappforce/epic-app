@@ -35,7 +35,6 @@ dayjs.extend(duration)
 
 type Props = {
   className?: string
-  isOpenPointsModal?: boolean
 }
 
 const chatIdsBasedOnSelectedTab = {
@@ -45,7 +44,7 @@ const chatIdsBasedOnSelectedTab = {
   'not-approved-contest': env.NEXT_PUBLIC_CONTEST_CHAT_ID,
 }
 
-export default function ChatContent({ isOpenPointsModal }: Props) {
+export default function ChatContent() {
   const { query } = useRouter()
   const isAdmin = useIsModerationAdmin()
   let [selectedTab, setSelectedTab] = useLocalStorage<TabState>(
@@ -98,7 +97,6 @@ export default function ChatContent({ isOpenPointsModal }: Props) {
       <PointsWidget
         isNoTgScroll
         className={cx('sticky top-0', { ['hidden']: isAdmin })}
-        customIsOpen={isOpenPointsModal}
       />
       <Tabs
         selectedTab={selectedTab}

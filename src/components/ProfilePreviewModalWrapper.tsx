@@ -1,3 +1,4 @@
+import { useSendEvent } from '@/stores/analytics'
 import { cx } from '@/utils/class-names'
 import { useState } from 'react'
 import Name, { NameProps } from './Name'
@@ -48,6 +49,7 @@ export function ProfilePreviewModalName({
   hubId: string
   enableProfileModal?: boolean
 }) {
+  const sendEvent = useSendEvent()
   return (
     <Name
       {...props}
@@ -56,6 +58,7 @@ export function ProfilePreviewModalName({
           e.preventDefault()
           e.stopPropagation()
           props.onClick?.(e)
+          sendEvent('open_profile_modal')
         }
       }}
       className={cx('cursor-pointer', props.className)}
