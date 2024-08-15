@@ -1,13 +1,15 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/jsx-key */
 /** @jsxImportSource frog/jsx */
 import { createFramesLike } from '@/server/datahub-queue/frames'
-import { FrogFramesManager } from '@/server/frames/utils/frog'
+import { FRAME_IMAGE_SIZE, FrogFramesManager } from '@/server/frames/utils/frog'
 import {
+  DatahubParams,
   createSignedSocialDataEvent,
   createSocialDataEventPayload,
-  DatahubParams,
 } from '@/services/datahub/utils'
-import { generateAccount, loginWithSecretKey, Signer } from '@/utils/account'
+import { Signer, generateAccount, loginWithSecretKey } from '@/utils/account'
+import { formatNumber } from '@/utils/strings'
 import {
   IdentityProvider,
   SocialCallDataArgs,
@@ -15,7 +17,7 @@ import {
 } from '@subsocial/data-hub-sdk'
 import { Button, Frog } from 'frog'
 import urlJoin from 'url-join'
-import { linkIdentityWithResult } from '../../utils/identity'
+import { getAddressBalance, linkIdentityWithResult } from '../../utils/identity'
 
 const frameName = '1723117763252'
 const frameRootPath = `/${frameName}`
@@ -24,8 +26,8 @@ const getButtonHref = (path: string) => urlJoin(frameRootPath, path)
 
 function getImageUrl(imageId: number): string {
   return process.env.NODE_ENV === 'development'
-    ? `http://localhost:3000/frames/${frameName}/${imageId}.avif`
-    : `https://epicapp.net/frames/${frameName}/${imageId}.avif`
+    ? `http://localhost:3000/frames/${frameName}/${imageId}.jpg`
+    : `https://epicapp.net/frames/${frameName}/${imageId}.jpg`
 }
 
 const sessions: Map<number, { parentProxyAddress: string; signer: Signer }> =
@@ -130,7 +132,7 @@ const frame = {
               intents.push(
                 <Button
                   value={i.toString()}
-                  action={getButtonHref(i > 0 ? `/${i}` : '/')}
+                  action={getButtonHref(i > 1 ? `/${i}` : '/')}
                 >
                   ⬅️ Previous
                 </Button>
@@ -145,8 +147,40 @@ const frame = {
               </Button>
             )
 
+            // first frame needs to be small, so it just shows the image
+            if (i === 0) {
+              return c.res({
+                image: getImageUrl(i + 1),
+                intents,
+              })
+            }
             return c.res({
-              image: getImageUrl(i + 1),
+              image: (
+                <div style={{ display: 'flex', position: 'relative' }}>
+                  <img
+                    src={getImageUrl(i + 1)}
+                    alt=''
+                    width={FRAME_IMAGE_SIZE}
+                    height={FRAME_IMAGE_SIZE}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      objectFit: 'cover',
+                      filter: 'blur(30px)',
+                    }}
+                  />
+                  <img
+                    src={getImageUrl(i + 1)}
+                    alt=''
+                    width={FRAME_IMAGE_SIZE}
+                    height={FRAME_IMAGE_SIZE}
+                    style={{
+                      objectFit: 'contain',
+                      position: 'relative',
+                    }}
+                  />
+                </div>
+              ),
               intents,
             })
           })
@@ -168,14 +202,36 @@ const frame = {
             previousClickedValue &&
             parseInt(previousClickedValue) <= memesAmount
           ) {
-            await getSignerAndCreateFramesLike(
-              fid,
-              parseInt(previousClickedValue)
-            )
+            getSignerAndCreateFramesLike(fid, parseInt(previousClickedValue))
+          }
+
+          let balance = 0
+          if (fid) {
+            const session = await getSession(fid)
+            balance = await getAddressBalance(session.parentProxyAddress)
           }
 
           return c.res({
-            image: <div>asdfasdfsfd</div>,
+            image: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: FRAME_IMAGE_SIZE,
+                  width: FRAME_IMAGE_SIZE,
+                  padding: '20px',
+                  color: 'white',
+                  textAlign: 'center',
+                }}
+              >
+                <span style={{ fontSize: '20px' }}>You have earned</span>
+                <span style={{ fontSize: '32px', fontWeight: 700 }}>
+                  {formatNumber(balance)} points 💎
+                </span>
+              </div>
+            ),
             intents: [
               <Button
                 value={memesAmount.toString()}

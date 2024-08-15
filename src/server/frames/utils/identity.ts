@@ -102,30 +102,17 @@ export async function linkIdentityWithResult(
     setTimeout(async () => {
       // if no response from subscription
       if (sessionCallbacks.has(sessionAddress)) {
-        const res = await datahubQueryRequest<{
-          linkedIdentity: {
-            id: string
-          }
-        }>({
-          document: gql`
-            query GetLinkedIdentityAddress($sessionAddress: String!) {
-              linkedIdentity(where: { sessionAddress: $sessionAddress }) {
-                id
-              }
-            }
-          `,
-          variables: { sessionAddress },
-        })
-        if (res.linkedIdentity.id) {
+        const address = await getLinkedIdentityAddress(sessionAddress)
+        if (address) {
           sessionCallbacks.delete(sessionAddress)
           getResolver()()
-          linkedIdentityAddress = res.linkedIdentity.id
+          linkedIdentityAddress = address
         } else {
           if (retry < 3) checkLinkedIdentityManually(retry + 1)
           else {
             sessionCallbacks.delete(sessionAddress)
             getResolver()()
-            linkedIdentityAddress = res.linkedIdentity.id
+            linkedIdentityAddress = address
           }
         }
       }
@@ -136,4 +123,40 @@ export async function linkIdentityWithResult(
   await promise
 
   return linkedIdentityAddress
+}
+
+export async function getLinkedIdentityAddress(sessionAddress: string) {
+  const res = await datahubQueryRequest<{
+    linkedIdentity: {
+      id: string
+    }
+  }>({
+    document: gql`
+      query GetLinkedIdentityAddress($sessionAddress: String!) {
+        linkedIdentity(where: { sessionAddress: $sessionAddress }) {
+          id
+        }
+      }
+    `,
+    variables: { sessionAddress },
+  })
+  return res.linkedIdentity.id
+}
+
+export async function getAddressBalance(address: string) {
+  const res = await datahubQueryRequest<{
+    socialProfileBalances: {
+      activeStakingPoints: number
+    }
+  }>({
+    document: gql`
+      query GetAddressBalance($address: String!) {
+        socialProfileBalances(args: { where: { address: $address } }) {
+          activeStakingPoints
+        }
+      }
+    `,
+    variables: { address },
+  })
+  return res.socialProfileBalances.activeStakingPoints
 }
