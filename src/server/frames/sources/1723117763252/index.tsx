@@ -24,8 +24,8 @@ const getButtonHref = (path: string) => urlJoin(frameRootPath, path)
 
 function getImageUrl(imageId: number): string {
   return process.env.NODE_ENV === 'development'
-    ? `https://f533390d5520.ngrok.app/frames/${frameName}/${imageId}.png`
-    : `https://epicapp.net/frames/${frameName}/${imageId}.png`
+    ? `http://localhost:3000/frames/${frameName}/${imageId}.avif`
+    : `https://epicapp.net/frames/${frameName}/${imageId}.avif`
 }
 
 const sessions: Map<number, { parentProxyAddress: string; signer: Signer }> =
@@ -61,9 +61,9 @@ async function getSession(
     params.args
   )
   const address = await linkIdentityWithResult(signer.address, input)
+  if (!address) return { parentProxyAddress: '', signer }
 
   sessions.set(fid, { parentProxyAddress: address, signer })
-
   return { signer, parentProxyAddress: address }
 }
 
@@ -73,6 +73,8 @@ async function getSignerAndCreateFramesLike(
 ) {
   try {
     const { signer, parentProxyAddress } = await getSession(fid)
+    if (!parentProxyAddress) return
+
     const params: DatahubParams<
       SocialCallDataArgs<'synth_active_staking_create_farcaster_frame_like'>
     > = {
@@ -98,49 +100,74 @@ async function getSignerAndCreateFramesLike(
   }
 }
 
+const memesAmount = 7
+
 const frame = {
   name: frameName,
   src: [
-    {
-      path: frameRootPath,
-      handler: (app: Frog) => {
-        app.frame(frameRootPath, async (c) => {
-          FrogFramesManager.sendAnalyticsEventOnFrameAction(frameName, c, {
-            frameStepId: 1,
-          })
+    ...Array.from({ length: memesAmount }).map((_, i) => {
+      const path = `${frameRootPath}${i > 0 ? `/${i + 1}` : ''}`
+      return {
+        path,
+        handler: (app: Frog) => {
+          app.frame(path, async (c) => {
+            FrogFramesManager.sendAnalyticsEventOnFrameAction(frameName, c, {
+              frameStepId: i + 1,
+            })
 
-          const fid = c.frameData?.fid
-          const previousClickedValue = c.buttonValue
-          if (fid && previousClickedValue) {
-            await getSignerAndCreateFramesLike(
-              fid,
-              parseInt(previousClickedValue)
-            )
-          }
+            const fid = c.frameData?.fid
+            const previousClickedValue = c.buttonValue
+            if (
+              fid &&
+              previousClickedValue &&
+              parseInt(previousClickedValue) <= memesAmount
+            ) {
+              getSignerAndCreateFramesLike(fid, parseInt(previousClickedValue))
+            }
 
-          return c.res({
-            image: getImageUrl(1),
-            // image: `/memeImage/${frameName}/${1}`,
-            intents: [
-              <Button value='2' action={getButtonHref('/2')}>
+            const intents: any[] = []
+            if (i > 0) {
+              intents.push(
+                <Button
+                  value={i.toString()}
+                  action={getButtonHref(i > 0 ? `/${i}` : '/')}
+                >
+                  ⬅️ Previous
+                </Button>
+              )
+            }
+            intents.push(
+              <Button
+                value={(i + 2).toString()}
+                action={getButtonHref(`/${i + 2}`)}
+              >
                 Next ➡️
-              </Button>,
-            ],
+              </Button>
+            )
+
+            return c.res({
+              image: getImageUrl(i + 1),
+              intents,
+            })
           })
-        })
-      },
-    },
+        },
+      }
+    }),
     {
-      path: `${frameRootPath}/2`,
+      path: `${frameRootPath}/${memesAmount + 1}`,
       handler: (app: Frog) => {
-        app.frame(`${frameRootPath}/2`, async (c) => {
+        app.frame(`${frameRootPath}/${memesAmount + 1}`, async (c) => {
           FrogFramesManager.sendAnalyticsEventOnFrameAction(frameName, c, {
-            frameStepId: 2,
+            frameStepId: memesAmount + 1,
           })
 
           const fid = c.frameData?.fid
           const previousClickedValue = c.buttonValue
-          if (fid && previousClickedValue) {
+          if (
+            fid &&
+            previousClickedValue &&
+            parseInt(previousClickedValue) <= memesAmount
+          ) {
             await getSignerAndCreateFramesLike(
               fid,
               parseInt(previousClickedValue)
@@ -148,40 +175,12 @@ const frame = {
           }
 
           return c.res({
-            image: getImageUrl(2),
+            image: <div>asdfasdfsfd</div>,
             intents: [
-              <Button value='1' action={getButtonHref('/')}>
-                ⬅️ Previous
-              </Button>,
-              <Button value='3' action={getButtonHref('/3')}>
-                Next ➡️
-              </Button>,
-            ],
-          })
-        })
-      },
-    },
-    {
-      path: `${frameRootPath}/3`,
-      handler: (app: Frog) => {
-        app.frame(`${frameRootPath}/3`, async (c) => {
-          FrogFramesManager.sendAnalyticsEventOnFrameAction(frameName, c, {
-            frameStepId: 3,
-          })
-
-          const fid = c.frameData?.fid
-          const previousClickedValue = c.buttonValue
-          if (fid && previousClickedValue) {
-            await getSignerAndCreateFramesLike(
-              fid,
-              parseInt(previousClickedValue)
-            )
-          }
-
-          return c.res({
-            image: getImageUrl(3),
-            intents: [
-              <Button value='2' action={getButtonHref('/2')}>
+              <Button
+                value={memesAmount.toString()}
+                action={getButtonHref(`/${memesAmount}`)}
+              >
                 ⬅️ Previous
               </Button>,
             ],

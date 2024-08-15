@@ -3,7 +3,7 @@ import {
   datahubQueryRequest,
   datahubSubscription,
 } from '@/services/datahub/utils'
-import { generateManuallyTriggeredPromise, wait } from '@/utils/promise'
+import { generateManuallyTriggeredPromise } from '@/utils/promise'
 import {
   DataHubSubscriptionEventEnum,
   SocialEventDataApiInput,
@@ -32,6 +32,7 @@ function subscribeToLinkingIdentity() {
   if (isActive) return false
   isActive = true
 
+  console.log('start subscription')
   const client = datahubSubscription()
   let unsub = client.subscribe<{
     linkedIdentitySubscription: {
@@ -55,12 +56,14 @@ function subscribeToLinkingIdentity() {
         const eventData = data.data?.linkedIdentitySubscription
         if (!eventData) return
 
+        console.log('GET EVENT', eventData.event)
         if (
           eventData.event ===
           DataHubSubscriptionEventEnum.LINKED_IDENTITY_SESSION_CREATED
         ) {
           const sessionAddress = eventData.entity.session.id
           const linkedIdentity = eventData.entity.session.linkedIdentity
+          console.log(sessionCallbacks.keys(), sessionAddress)
           if (sessionCallbacks.has(sessionAddress)) {
             sessionCallbacks.get(sessionAddress)!(linkedIdentity.id)
             sessionCallbacks.delete(sessionAddress)
@@ -85,12 +88,7 @@ export async function linkIdentityWithResult(
   sessionAddress: string,
   input: SocialEventDataApiInput
 ) {
-  const justSubscribed = subscribeToLinkingIdentity()
-
-  if (justSubscribed) {
-    // wait for subscription to be active
-    await wait(100)
-  }
+  subscribeToLinkingIdentity()
 
   const { getPromise, getResolver } = generateManuallyTriggeredPromise()
   const promise = getPromise()
@@ -101,28 +99,44 @@ export async function linkIdentityWithResult(
     linkedIdentityAddress = address
   })
 
+  console.log('LINK IDENTITY')
   await linkIdentity(input)
-  setTimeout(async () => {
-    // if no response from subscription
-    if (sessionCallbacks.has(sessionAddress)) {
-      const res = await datahubQueryRequest<{
-        linkedIdentity: {
-          id: string
-        }
-      }>({
-        document: gql`
-          GetLinkedIdentityAddress ($sessionAddress: String!) {
-            linkedIdentity(sessionAddress: $sessionAddress) {
-              id
-            }
+
+  function checkLinkedIdentityManually(retry: number = 0) {
+    setTimeout(async () => {
+      // if no response from subscription
+      if (sessionCallbacks.has(sessionAddress)) {
+        console.log('TIMEOUT')
+        const res = await datahubQueryRequest<{
+          linkedIdentity: {
+            id: string
           }
-        `,
-      })
-      sessionCallbacks.delete(sessionAddress)
-      getResolver()()
-      linkedIdentityAddress = res.linkedIdentity.id
-    }
-  }, 2000)
+        }>({
+          document: gql`
+            query GetLinkedIdentityAddress($sessionAddress: String!) {
+              linkedIdentity(where: { sessionAddress: $sessionAddress }) {
+                id
+              }
+            }
+          `,
+          variables: { sessionAddress },
+        })
+        if (res.linkedIdentity.id) {
+          sessionCallbacks.delete(sessionAddress)
+          getResolver()()
+          linkedIdentityAddress = res.linkedIdentity.id
+        } else {
+          if (retry < 3) checkLinkedIdentityManually(retry + 1)
+          else {
+            sessionCallbacks.delete(sessionAddress)
+            getResolver()()
+            linkedIdentityAddress = res.linkedIdentity.id
+          }
+        }
+      }
+    }, 1000)
+  }
+  checkLinkedIdentityManually()
 
   await promise
 
