@@ -3,9 +3,8 @@ import { ApiDatahubRemoveIdentityBody } from '@/pages/api/datahub/remove-identit
 import { RevalidateChatInput } from '@/pages/api/revalidation/chat'
 import { SaveFileRequest, SaveFileResponse } from '@/pages/api/save-file'
 import { SaveImageResponse } from '@/pages/api/save-image'
-import { useMyAccount } from '@/stores/my-account'
+import { signMessage, useMyAccount } from '@/stores/my-account'
 import mutationWrapper from '@/subsocial-query/base'
-import { signMessage } from '@/utils/account'
 import { apiInstance } from './utils'
 
 export async function saveFile(content: SaveFileRequest) {
