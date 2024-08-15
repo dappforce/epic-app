@@ -171,7 +171,6 @@ const frame = {
 
           const fid = c.frameData?.fid
           const previousClickedValue = c.buttonValue
-          console.log(fid, previousClickedValue)
           if (fid && previousClickedValue) {
             await getSignerAndCreateFramesLike(
               fid,
