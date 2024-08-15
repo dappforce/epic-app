@@ -32,7 +32,6 @@ function subscribeToLinkingIdentity() {
   if (isActive) return false
   isActive = true
 
-  console.log('start subscription')
   const client = datahubSubscription()
   let unsub = client.subscribe<{
     linkedIdentitySubscription: {
@@ -56,14 +55,12 @@ function subscribeToLinkingIdentity() {
         const eventData = data.data?.linkedIdentitySubscription
         if (!eventData) return
 
-        console.log('GET EVENT', eventData.event)
         if (
           eventData.event ===
           DataHubSubscriptionEventEnum.LINKED_IDENTITY_SESSION_CREATED
         ) {
           const sessionAddress = eventData.entity.session.id
           const linkedIdentity = eventData.entity.session.linkedIdentity
-          console.log(sessionCallbacks.keys(), sessionAddress)
           if (sessionCallbacks.has(sessionAddress)) {
             sessionCallbacks.get(sessionAddress)!(linkedIdentity.id)
             sessionCallbacks.delete(sessionAddress)
@@ -76,7 +73,7 @@ function subscribeToLinkingIdentity() {
         }
       },
       error: () => {
-        console.log('error subscription')
+        console.log('error subscription linking identity')
       },
     }
   )
@@ -99,14 +96,12 @@ export async function linkIdentityWithResult(
     linkedIdentityAddress = address
   })
 
-  console.log('LINK IDENTITY')
   await linkIdentity(input)
 
   function checkLinkedIdentityManually(retry: number = 0) {
     setTimeout(async () => {
       // if no response from subscription
       if (sessionCallbacks.has(sessionAddress)) {
-        console.log('TIMEOUT')
         const res = await datahubQueryRequest<{
           linkedIdentity: {
             id: string
