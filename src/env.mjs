@@ -34,6 +34,7 @@ export const env = createEnv({
     NEYNAR_API_KEY: z.string().default(''),
   },
   client: {
+    NEXT_PUBLIC_BASE_URL: z.string().default(''),
     NEXT_PUBLIC_APP_ID: z.string().default(''),
     NEXT_PUBLIC_MAIN_SPACE_ID: z
       .string()
@@ -82,6 +83,7 @@ export const env = createEnv({
     NEXT_PUBLIC_NEYNAR_CLIENT_ID: z.string().default(''),
   },
   experimental__runtimeEnv: {
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_APP_ID: process.env.NEXT_PUBLIC_APP_ID,
     NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH,
     NEXT_PUBLIC_MAIN_SPACE_ID: process.env.NEXT_PUBLIC_SPACE_IDS,

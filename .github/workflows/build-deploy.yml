@@ -49,6 +49,7 @@ jobs:
           build-args: |
             GH_NEXT_PUBLIC_IS_MAINTENANCE=false
             GH_NEXTAUTH_URL=https://epicapp.net
+            GH_NEXT_PUBLIC_BASE_URL=https://epicapp.net
             GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://epic-data-hub.subsocial.network/graphql
             GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://epic-data-hub.subsocial.network/graphql-ws
             GH_DATAHUB_QUEUE_URL=https://epic-queue-data-hub.subsocial.network/graphql
@@ -124,6 +125,7 @@ jobs:
             GH_NEXT_PUBLIC_CONTEST_RANGE_KEY=ReferrersRankedListByReferralsCountCp_20240722_20240728
             GH_NEXT_PUBLIC_TELEGRAM_NOTIFICATION_BOT=https://t.me/g_notif_staging_bot/
             GH_TELEGRAM_BOT_TOKEN="7038999347:AAGBgXTWcXpR4vZPW9A8_ia9PkWOpeyDeWA"
+            GH_NEXT_PUBLIC_BASE_URL=https://dev-${{ env.name }}-epicapp.subsocial.network
             # without base path
             GH_NEXTAUTH_URL=https://dev-${{ env.name }}-epicapp.subsocial.network
             # with base path

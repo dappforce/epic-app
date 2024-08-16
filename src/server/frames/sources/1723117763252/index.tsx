@@ -26,7 +26,7 @@ const frameRootPath = `/${frameName}`
 const getButtonHref = (path: string) => urlJoin(frameRootPath, path)
 
 function getImageUrl(imageId: number): string {
-  return `${env.NEXTAUTH_URL}/frames/${frameName}/${imageId}.jpg`
+  return `${env.NEXT_PUBLIC_BASE_URL}/frames/${frameName}/${imageId}.jpg`
 }
 
 const sessions: Map<number, { parentProxyAddress: string; signer: Signer }> =
@@ -256,7 +256,7 @@ const frame = {
               >
                 <img
                   alt=''
-                  src={`${env.NEXTAUTH_URL}/frames/epic-blue.png`}
+                  src={`${env.NEXT_PUBLIC_BASE_URL}/frames/epic-blue.png`}
                   style={{
                     position: 'absolute',
                     top: '32px',
@@ -278,7 +278,7 @@ const frame = {
                 >
                   <img
                     alt=''
-                    src={`${env.NEXTAUTH_URL}/frames/diamond.png`}
+                    src={`${env.NEXT_PUBLIC_BASE_URL}/frames/diamond.png`}
                     style={{
                       width: '92px',
                       height: '92px',
@@ -359,7 +359,7 @@ const frame = {
               >
                 <img
                   alt=''
-                  src={`${env.NEXTAUTH_URL}/frames/epic-green.png`}
+                  src={`${env.NEXT_PUBLIC_BASE_URL}/frames/epic-green.png`}
                   style={{ width: '200px' }}
                 />
                 <p
