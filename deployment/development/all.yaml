@@ -39,7 +39,7 @@ spec:
                 name: epicapp-<BRANCH>
                 port:
                   number: 3000
-            path: /c(/|$)(.*)
+            path: '/'
             pathType: Prefix
 
   tls:
