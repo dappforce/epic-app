@@ -54,6 +54,7 @@ async function getSession(
         id: fid.toString(),
         provider: IdentityProvider.FARCASTER,
       },
+      synthetic: true,
     },
   }
   const input = await createSocialDataEventPayload(
@@ -70,6 +71,12 @@ async function getSession(
 
 async function getSignerAndCreateFramesLike(
   fid: number,
+  castData:
+    | {
+        fid: number
+        hash: string
+      }
+    | undefined,
   previousClickedValue: number
 ) {
   try {
@@ -88,6 +95,8 @@ async function getSignerAndCreateFramesLike(
         frameId: parseInt(frameName),
         frameStepIndex: previousClickedValue,
         actorFid: fid,
+        castOwnerFid: castData?.fid ?? 0,
+        castHash: castData?.hash ?? '-',
       },
     }
     const input = await createSignedSocialDataEvent(
@@ -123,7 +132,11 @@ const frame = {
               previousClickedValue &&
               parseInt(previousClickedValue) <= memesAmount
             ) {
-              getSignerAndCreateFramesLike(fid, parseInt(previousClickedValue))
+              getSignerAndCreateFramesLike(
+                fid,
+                c.frameData?.castId,
+                parseInt(previousClickedValue)
+              )
             }
 
             let intents: any[] = [
@@ -211,7 +224,11 @@ const frame = {
             previousClickedValue &&
             parseInt(previousClickedValue) <= memesAmount
           ) {
-            getSignerAndCreateFramesLike(fid, parseInt(previousClickedValue))
+            getSignerAndCreateFramesLike(
+              fid,
+              c.frameData?.castId,
+              parseInt(previousClickedValue)
+            )
           }
 
           let balance = 0
@@ -315,7 +332,11 @@ const frame = {
             previousClickedValue &&
             parseInt(previousClickedValue) <= memesAmount
           ) {
-            getSignerAndCreateFramesLike(fid, parseInt(previousClickedValue))
+            getSignerAndCreateFramesLike(
+              fid,
+              c.frameData?.castId,
+              parseInt(previousClickedValue)
+            )
           }
 
           return c.res({
