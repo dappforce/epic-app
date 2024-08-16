@@ -1,4 +1,3 @@
-import { useMyAccount } from '@/stores/my-account'
 import { HDNodeWallet } from 'ethers'
 
 export type Signer = HDNodeWallet
@@ -37,18 +36,4 @@ export function decodeSecretKey(encodedSecretKey: string) {
 export async function validateAddress(address: string) {
   const { isAddress } = await import('ethers')
   return isAddress(address)
-}
-
-export async function signMessage(message: string) {
-  const { address, signer } = useMyAccount.getState()
-
-  if (!address) {
-    throw new Error('No account connected')
-  }
-
-  if (!signer) {
-    throw new Error('No signer connected')
-  }
-
-  return (await signer.signMessage(message)).toString()
 }

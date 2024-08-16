@@ -708,6 +708,7 @@ export enum IdentityProvider {
   Farcaster = 'FARCASTER',
   Google = 'GOOGLE',
   Polkadot = 'POLKADOT',
+  Solana = 'SOLANA',
   Telegram = 'TELEGRAM',
   Twitter = 'TWITTER',
 }
@@ -1688,6 +1689,7 @@ export enum SocialCallName {
   SetOuterValue = 'set_outer_value',
   SetPaymentBeneficiary = 'set_payment_beneficiary',
   SetProfile = 'set_profile',
+  SynthActiveStakingCreateFarcasterFrameLike = 'synth_active_staking_create_farcaster_frame_like',
   SynthActiveStakingCreateSuperLike = 'synth_active_staking_create_super_like',
   SynthActiveStakingDeleteSuperLike = 'synth_active_staking_delete_super_like',
   SynthAddLinkedIdentityExternalProvider = 'synth_add_linked_identity_external_provider',

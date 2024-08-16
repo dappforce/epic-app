@@ -8,6 +8,8 @@ import { FrameData } from 'frog/types/frame'
 import frames from '../sources'
 import { FrameDefinition } from './types'
 
+export const FRAME_IMAGE_SIZE = 600
+
 export class FrogFramesManager {
   private static instance: FrogFramesManager
   private frogAppInstance: Frog | null = null
@@ -60,12 +62,12 @@ export class FrogFramesManager {
       headers: {
         'Content-Type': 'public, immutable, no-transform, max-age=0',
       },
-      // imageAspectRatio: '1:1',
-      imageAspectRatio: '1.91:1',
-      // imageOptions: {
-      //   width: 800,
-      //   height: 800,
-      // },
+      imageAspectRatio: '1:1',
+      // imageAspectRatio: '1.91:1',
+      imageOptions: {
+        width: FRAME_IMAGE_SIZE,
+        height: FRAME_IMAGE_SIZE,
+      },
     })
 
     this.initFrames()
