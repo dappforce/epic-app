@@ -126,25 +126,35 @@ const frame = {
               getSignerAndCreateFramesLike(fid, parseInt(previousClickedValue))
             }
 
-            const intents: any[] = []
-            if (i > 0) {
-              intents.push(
-                <Button
-                  value={i.toString()}
-                  action={getButtonHref(i > 1 ? `/${i}` : '/')}
-                >
-                  ⬅️ Previous
-                </Button>
-              )
-            }
-            intents.push(
+            let intents: any[] = [
               <Button
                 value={(i + 2).toString()}
                 action={getButtonHref(`/${i + 2}`)}
               >
-                Next ➡️
-              </Button>
-            )
+                Next meme ➡️
+              </Button>,
+            ]
+            if (i === 0) {
+              intents.unshift(
+                <Button
+                  value='what-is-epic-from-first-frame'
+                  action={getButtonHref('/what-is-epic')}
+                >
+                  ℹ️ What is EPIC?
+                </Button>
+              )
+            } else if (i === memesAmount - 1) {
+              intents = [
+                <Button.Link
+                  href={`https://warpcast.com/~/compose?text=Check+your+replyke+power.+If+you+like+this+frame+do+share+and+follow+the+builder+%40abss&embeds%5B%5D=https%3A%2F%2Freplyke-power.basedcoder.link%2Fapi`}
+                >
+                  📢 Share memes
+                </Button.Link>,
+                <Button value='my-stats' action={getButtonHref('/my-stats')}>
+                  📊 My stats
+                </Button>,
+              ]
+            }
 
             // first frame needs to be small, so it just shows the image
             if (i === 0) {
@@ -187,11 +197,11 @@ const frame = {
       }
     }),
     {
-      path: `${frameRootPath}/${memesAmount + 1}`,
+      path: `${frameRootPath}/my-stats`,
       handler: (app: Frog) => {
-        app.frame(`${frameRootPath}/${memesAmount + 1}`, async (c) => {
+        app.frame(`${frameRootPath}/my-stats`, async (c) => {
           FrogFramesManager.sendAnalyticsEventOnFrameAction(frameName, c, {
-            frameStepId: memesAmount + 1,
+            frameStepId: 'my-stats',
           })
 
           const fid = c.frameData?.fid
@@ -221,14 +231,54 @@ const frame = {
                   height: FRAME_IMAGE_SIZE,
                   width: FRAME_IMAGE_SIZE,
                   padding: '20px',
-                  color: 'white',
+                  color: '#075255',
                   textAlign: 'center',
+                  background: '#18E6F3',
+                  gap: '8px',
                 }}
               >
-                <span style={{ fontSize: '20px' }}>You have earned</span>
-                <span style={{ fontSize: '32px', fontWeight: 700 }}>
-                  {formatNumber(balance)} points 💎
+                <img
+                  alt=''
+                  src={`${env.NEXTAUTH_URL}/frames/epic-blue.png`}
+                  style={{
+                    position: 'absolute',
+                    top: '32px',
+                    left: '32px',
+                    width: '120px',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '32px',
+                    fontFamily: 'OpenSans-Medium, sans-serif',
+                    fontWeight: 500,
+                  }}
+                >
+                  Your EPIC points:
                 </span>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
+                >
+                  <img
+                    alt=''
+                    src={`${env.NEXTAUTH_URL}/frames/diamond.png`}
+                    style={{
+                      width: '92px',
+                      height: '92px',
+                      position: 'relative',
+                      top: '2px',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: '80px',
+                      fontFamily: 'OpenSans-Bold',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {formatNumber(balance, { shorten: true })}
+                  </span>
+                </div>
               </div>
             ),
             intents: [
@@ -236,7 +286,86 @@ const frame = {
                 value={memesAmount.toString()}
                 action={getButtonHref(`/${memesAmount}`)}
               >
-                ⬅️ Previous
+                ⬅️ Back
+              </Button>,
+              <Button
+                value='what-is-epic-from-my-stats'
+                action={getButtonHref('/what-is-epic')}
+              >
+                ℹ️ What is EPIC?
+              </Button>,
+            ],
+          })
+        })
+      },
+    },
+
+    {
+      path: `${frameRootPath}/what-is-epic`,
+      handler: (app: Frog) => {
+        app.frame(`${frameRootPath}/what-is-epic`, async (c) => {
+          FrogFramesManager.sendAnalyticsEventOnFrameAction(frameName, c, {
+            frameStepId: 'what-is-epic',
+          })
+
+          const fid = c.frameData?.fid
+          const previousClickedValue = c.buttonValue
+          if (
+            fid &&
+            previousClickedValue &&
+            parseInt(previousClickedValue) <= memesAmount
+          ) {
+            getSignerAndCreateFramesLike(fid, parseInt(previousClickedValue))
+          }
+
+          return c.res({
+            image: (
+              <div
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  background: '#37F561',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '24px',
+                  height: FRAME_IMAGE_SIZE,
+                  width: FRAME_IMAGE_SIZE,
+                  padding: '20px',
+                  color: '#043D10',
+                  textAlign: 'center',
+                }}
+              >
+                <img
+                  alt=''
+                  src={`${env.NEXTAUTH_URL}/frames/epic-green.png`}
+                  style={{ width: '200px' }}
+                />
+                <p
+                  style={{
+                    fontSize: '32px',
+                    fontFamily: 'OpenSans-Medium, sans-serif',
+                    fontWeight: 500,
+                  }}
+                >
+                  EPIC is a platform for gamified content monetization where
+                  hundreds of thousands of users earn rewards by liking and
+                  posting memes.
+                </p>
+              </div>
+            ),
+            intents: [
+              <Button
+                value={memesAmount.toString()}
+                action={getButtonHref(
+                  `/${
+                    previousClickedValue?.endsWith('from-first-frame')
+                      ? ''
+                      : 'my-stats'
+                  }`
+                )}
+              >
+                ⬅️ Back
               </Button>,
             ],
           })

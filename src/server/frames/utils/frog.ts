@@ -11,6 +11,7 @@ import { FrameDefinition } from './types'
 export const FRAME_IMAGE_SIZE = 600
 
 export class FrogFramesManager {
+  private promise: Promise<Frog> | null = null
   private static instance: FrogFramesManager
   private frogAppInstance: Frog | null = null
   private frameDefinitions: { [key: string]: FrameDefinition } = {}
@@ -27,10 +28,16 @@ export class FrogFramesManager {
     this.initFrogApp()
   }
 
-  get frogApp(): Frog {
+  async getFrogApp(): Promise<Frog> {
+    if (this.promise) {
+      return await this.promise
+    }
     if (this.frogAppInstance) return this.frogAppInstance
+
     this.importFramesDefinitions()
-    this.initFrogApp()
+    this.promise = this.initFrogApp()
+    this.frogAppInstance = await this.promise
+
     return this.frogAppInstance!
   }
 
@@ -41,16 +48,25 @@ export class FrogFramesManager {
     })
   }
 
-  initFrames() {
+  initFrames(frog: Frog) {
     for (const frameDefinition in this.frameDefinitions) {
       for (const frame of this.frameDefinitions[frameDefinition].src) {
-        frame.handler(this.frogAppInstance!)
+        frame.handler(frog)
       }
     }
   }
 
-  initFrogApp() {
-    this.frogAppInstance = new Frog({
+  async initFrogApp() {
+    const [fontDataBold, fontDataMedium] = await Promise.all([
+      fetch('http://localhost:3000/fonts/OpenSans-Bold.ttf').then((res) =>
+        res.arrayBuffer()
+      ),
+      fetch('http://localhost:3000/fonts/OpenSans-Medium.ttf').then((res) =>
+        res.arrayBuffer()
+      ),
+    ])
+
+    const instance = new Frog({
       assetsPath: '/',
       basePath: '/api/frames',
       browserLocation: 'https://epicapp.net/',
@@ -62,14 +78,28 @@ export class FrogFramesManager {
       imageAspectRatio: '1:1',
       // imageAspectRatio: '1.91:1',
       imageOptions: {
+        fonts: [
+          {
+            name: 'OpenSans-Medium',
+            weight: 500,
+            data: fontDataMedium,
+          },
+          {
+            name: 'OpenSans-Bold',
+            weight: 700,
+            data: fontDataBold,
+          },
+        ],
         width: FRAME_IMAGE_SIZE,
         height: FRAME_IMAGE_SIZE,
       },
     })
 
-    this.initFrames()
+    this.initFrames(instance)
 
-    devtools(this.frogAppInstance, { serveStatic })
+    devtools(instance, { serveStatic })
+
+    return instance
   }
 
   static sendAnalyticsEventOnFrameAction<
