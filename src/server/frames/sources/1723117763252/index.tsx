@@ -174,7 +174,7 @@ const frame = {
             // first frame needs to be small, so it just shows the image
             if (i === 0) {
               return c.res({
-                image: getImageUrl(i + 1, 'avif'),
+                image: getImageUrl(i + 1),
                 intents,
               })
             }
