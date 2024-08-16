@@ -25,8 +25,8 @@ const frameRootPath = `/${frameName}`
 
 const getButtonHref = (path: string) => urlJoin(frameRootPath, path)
 
-function getImageUrl(imageId: number): string {
-  return `${env.NEXT_PUBLIC_BASE_URL}/frames/${frameName}/${imageId}.jpg`
+function getImageUrl(imageId: number, ext = 'jpg'): string {
+  return `${env.NEXT_PUBLIC_BASE_URL}/frames/${frameName}/${imageId}.${ext}`
 }
 
 const sessions: Map<number, { parentProxyAddress: string; signer: Signer }> =
@@ -172,7 +172,7 @@ const frame = {
             // first frame needs to be small, so it just shows the image
             if (i === 0) {
               return c.res({
-                image: getImageUrl(i + 1),
+                image: getImageUrl(i + 1, 'avif'),
                 intents,
               })
             }
