@@ -111,6 +111,7 @@ async function getSignerAndCreateFramesLike(
 }
 
 const memesAmount = 7
+const channelLink = 'https://warpcast.com/~/channel/meme2earn'
 
 const frame = {
   name: frameName,
@@ -158,14 +159,15 @@ const frame = {
               )
             } else if (i === memesAmount - 1) {
               intents = [
+                <Button value='my-stats' action={getButtonHref('/my-stats')}>
+                  My Stats
+                </Button>,
+                <Button.Link href={channelLink}>More</Button.Link>,
                 <Button.Link
                   href={`https://warpcast.com/~/compose?text=Step%20by%20step,%20meme%20by%20meme!%20Share,%20laugh,%20and%20track%20your%20progress.%20%F0%9F%A4%A3%F0%9F%93%88&embeds%5B%5D=${env.NEXT_PUBLIC_BASE_URL}/api/frames/${frameName}`}
                 >
-                  📢 Share memes
+                  Share
                 </Button.Link>,
-                <Button value='my-stats' action={getButtonHref('/my-stats')}>
-                  📊 My stats
-                </Button>,
               ]
             }
 
@@ -388,6 +390,7 @@ const frame = {
               >
                 ⬅️ Back
               </Button>,
+              <Button.Link href={channelLink}>👉 Follow us!</Button.Link>,
             ],
           })
         })
