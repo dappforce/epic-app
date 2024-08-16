@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/jsx-key */
 /** @jsxImportSource frog/jsx */
-import { env } from '@/env.mjs'
 import { createFramesLike } from '@/server/datahub-queue/frames'
 import { FRAME_IMAGE_SIZE, FrogFramesManager } from '@/server/frames/utils/frog'
 import {
@@ -26,7 +25,11 @@ const frameRootPath = `/${frameName}`
 const getButtonHref = (path: string) => urlJoin(frameRootPath, path)
 
 function getImageUrl(imageId: number): string {
-  return `${env.NEXTAUTH_URL}/frames/${frameName}/${imageId}.jpg`
+  return `${
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000'
+      : 'https://epicapp.net'
+  }/frames/${frameName}/${imageId}.jpg`
 }
 
 const sessions: Map<number, { parentProxyAddress: string; signer: Signer }> =
