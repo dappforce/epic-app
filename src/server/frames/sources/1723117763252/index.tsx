@@ -258,6 +258,16 @@ const frame = {
               >
                 <img
                   alt=''
+                  src={`${env.NEXT_PUBLIC_BASE_URL}/frames/gradient-blue.png`}
+                  style={{
+                    width: '100%',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                  }}
+                />
+                <img
+                  alt=''
                   src={`${env.NEXT_PUBLIC_BASE_URL}/frames/epic-blue.png`}
                   style={{
                     position: 'absolute',
@@ -271,12 +281,18 @@ const frame = {
                     fontSize: '32px',
                     fontFamily: 'OpenSans-Medium, sans-serif',
                     fontWeight: 500,
+                    position: 'relative',
                   }}
                 >
                   Your EPIC points:
                 </span>
                 <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '24px' }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '24px',
+                    position: 'relative',
+                  }}
                 >
                   <img
                     alt=''
@@ -361,14 +377,25 @@ const frame = {
               >
                 <img
                   alt=''
+                  src={`${env.NEXT_PUBLIC_BASE_URL}/frames/gradient-green.png`}
+                  style={{
+                    width: '100%',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                  }}
+                />
+                <img
+                  alt=''
                   src={`${env.NEXT_PUBLIC_BASE_URL}/frames/epic-green.png`}
-                  style={{ width: '200px' }}
+                  style={{ width: '200px', position: 'relative' }}
                 />
                 <p
                   style={{
                     fontSize: '32px',
                     fontFamily: 'OpenSans-Medium, sans-serif',
                     fontWeight: 500,
+                    position: 'relative',
                   }}
                 >
                   EPIC is a platform for gamified content monetization where
