@@ -1,13 +1,14 @@
 import { cx, interactionRingStyles } from '@/utils/class-names'
 import { Listbox, Transition } from '@headlessui/react'
 import Image, { ImageProps } from 'next/image'
-import { Fragment, isValidElement } from 'react'
+import { Fragment, ReactNode, isValidElement } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
 
 export type ListItem<AdditionalData = {}> = {
   id: string
   icon?: ImageProps['src'] | JSX.Element
   label: string
+  customLabel?: ReactNode
   disabledItem?: boolean | string
 } & AdditionalData
 
@@ -20,6 +21,8 @@ type SelectInputProps<AdditionalData> = {
   renderItem?: (item: ListItem<AdditionalData>, open: boolean) => JSX.Element
   placeholder?: string
   disabled?: boolean
+  buttonClassName?: string
+  optionClassName?: string
 }
 
 export default function SelectInput<AdditionalData = {}>({
@@ -31,6 +34,8 @@ export default function SelectInput<AdditionalData = {}>({
   renderItem,
   disabled,
   placeholder,
+  buttonClassName,
+  optionClassName,
 }: SelectInputProps<AdditionalData>) {
   return (
     <div>
@@ -52,7 +57,8 @@ export default function SelectInput<AdditionalData = {}>({
                   'pl-4 pr-12 text-left',
                   'appearance-none text-base ring-1 ring-border-gray',
                   'bg-background text-text',
-                  interactionRingStyles()
+                  interactionRingStyles(),
+                  buttonClassName
                 )}
               >
                 <span className='flex items-center gap-3'>
@@ -71,7 +77,10 @@ export default function SelectInput<AdditionalData = {}>({
                       />
                     ))}
                   <span className='block truncate'>
-                    {selected?.label ?? placeholder ?? ''}
+                    {selected?.customLabel ??
+                      selected?.label ??
+                      placeholder ??
+                      ''}
                   </span>
                 </span>
                 {!disabled && (
@@ -108,6 +117,7 @@ export default function SelectInput<AdditionalData = {}>({
                         item={item}
                         imgClassName={imgClassName}
                         renderedItem={renderedItem}
+                        className={optionClassName}
                       />
                     )
                   })}
@@ -125,10 +135,12 @@ type SelectListItemProps<AdditionalData> = {
   item: ListItem<AdditionalData>
   imgClassName?: string
   renderedItem?: JSX.Element
+  className?: string
 }
 
 function SelectListItem<AdditionalData>({
   item,
+  className,
   imgClassName,
   renderedItem,
 }: SelectListItemProps<AdditionalData>) {
@@ -139,7 +151,8 @@ function SelectListItem<AdditionalData>({
         cx(
           'relative flex items-center rounded-lg outline-none transition-colors',
           'gap-4 px-3 py-2 text-text hover:bg-background-lighter focus-visible:bg-background-lighter',
-          { ['hover:bg-background-light']: item.disabledItem }
+          { ['hover:bg-background-light']: item.disabledItem },
+          className
         )
       }
       value={item}
@@ -170,7 +183,7 @@ function SelectListItem<AdditionalData>({
                     ['text-gray-500']: item.disabledItem,
                   })}
                 >
-                  {item.label}
+                  {item.customLabel ?? item.label}
                 </span>
               </div>
               {item.disabledItem && (

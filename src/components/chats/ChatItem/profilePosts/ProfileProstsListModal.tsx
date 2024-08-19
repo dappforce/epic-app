@@ -11,7 +11,9 @@ import { getPaginatedPostIdsByPostIdAndAccount } from '@/services/datahub/posts/
 import { useSendEvent } from '@/stores/analytics'
 import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
+import { isTouchDevice } from '@/utils/device'
 import { Transition } from '@headlessui/react'
+import { useMiniAppRaw } from '@tma.js/sdk-react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -19,7 +21,6 @@ import {
   HiOutlineChevronLeft,
   HiOutlineInformationCircle,
 } from 'react-icons/hi2'
-import UnapprovedMemeCount from '../../UnapprovedMemeCount'
 import { useModerateWithSuccessToast } from '../ChatItemMenus'
 import ProfileDetailModal from './ProfileDetailModal'
 import ProfilePostsList from './ProfilePostsList'
@@ -62,6 +63,9 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
   const sendEvent = useSendEvent()
   const isAdmin = useIsModerationAdmin()
   const { isAuthorized } = useAuthorizedForModeration(chatId)
+  const app = useMiniAppRaw(true)
+
+  const isDesktop = !isTouchDevice() && !app?.result
 
   const { data, isLoading } =
     getPaginatedPostIdsByPostIdAndAccount.useInfiniteQuery(chatId, address)
@@ -94,6 +98,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
     <>
       <Transition
         appear
+        as={'div'}
         show={isOpen}
         className='fixed inset-0 z-10 h-full w-full bg-background transition duration-300'
         enterFrom={cx('opacity-0')}
@@ -103,8 +108,12 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
       />
       <Transition
         appear
+        as={'div'}
         show={isOpen}
-        className='fixed inset-0 z-10 flex h-full w-full flex-col bg-background pb-20 transition duration-300'
+        className={cx(
+          'fixed inset-0 z-10 flex h-full w-full flex-col bg-background  transition duration-300',
+          { ['pb-20']: !isDesktop }
+        )}
         enterFrom={cx('opacity-0 -translate-y-48')}
         enterTo='opacity-100 translate-y-0'
         leaveFrom='h-auto'
@@ -115,8 +124,13 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
           closeModal={() => setIsOpenDetail(false)}
           address={address}
         />
-        <div className='mx-auto flex w-full max-w-screen-md flex-1 flex-col overflow-auto'>
-          <div className='relative mx-auto flex w-full items-center justify-between gap-2 px-4 py-3'>
+        <div
+          className={cx(
+            'mx-auto flex w-full flex-1 flex-col overflow-auto',
+            isDesktop ? 'max-w-screen-xl' : 'max-w-screen-md'
+          )}
+        >
+          <div className='relative mx-auto flex w-full items-center justify-between gap-2 py-3 pl-1 pr-2'>
             <div className='flex flex-1 items-center gap-2'>
               <Button
                 variant='transparent'
@@ -133,7 +147,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
               </Button>
               <AddressAvatar
                 address={address}
-                className='flex-shrink-0 cursor-pointer'
+                className='-ml-1 flex-shrink-0 cursor-pointer'
               />
               <div
                 className='flex flex-col gap-0.5'
@@ -142,23 +156,23 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
                 }}
               >
                 <Name address={address} className='!text-text' clipText />
-                {isAdmin ? (
+                {/* {isAdmin ? (
                   <UnapprovedMemeCount
                     className='flex-shrink-0 bg-transparent p-0 text-text-muted'
                     address={address}
                     chatId={chatId}
                   />
-                ) : (
-                  <span className='flex items-center gap-1 text-xs font-medium leading-[normal] text-slate-400'>
-                    <span>Memes:</span>
-                    <SkeletonFallback
-                      isLoading={isLoading}
-                      className='my-0 w-fit min-w-8'
-                    >
-                      {totalPostsCount}
-                    </SkeletonFallback>
-                  </span>
-                )}
+                ) : ( */}
+                <span className='flex items-center gap-1 text-xs font-medium leading-[normal] text-slate-400'>
+                  <span>Memes:</span>
+                  <SkeletonFallback
+                    isLoading={isLoading}
+                    className='my-0 w-fit min-w-8'
+                  >
+                    {totalPostsCount}
+                  </SkeletonFallback>
+                </span>
+                {/* )} */}
               </div>
             </div>
 
@@ -182,7 +196,7 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
               </div>
             )}
           </div>
-          <div className='relative mx-auto flex h-full max-h-full min-h-[400px] w-full flex-col items-center px-4'>
+          <div className='relative mx-auto flex h-full max-h-full min-h-[400px] w-full flex-col items-center'>
             {tabsConfig && (
               <div className='sticky top-14 mb-2 grid h-12 w-full grid-flow-col items-center gap-4 bg-background px-4'>
                 <TabButton

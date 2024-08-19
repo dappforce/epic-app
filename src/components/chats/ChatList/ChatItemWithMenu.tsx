@@ -2,7 +2,7 @@ import { FloatingWrapperProps } from '@/components/floating/FloatingWrapper'
 import useLongTouch from '@/hooks/useLongTouch'
 import { isTouchDevice } from '@/utils/device'
 import { PostData } from '@subsocial/api/types'
-import { memo } from 'react'
+import { ComponentProps, memo } from 'react'
 import ChatItemMenus from '../ChatItem/ChatItemMenus'
 import { getMessageElementId } from '../utils'
 import ChatItemContainer from './ChatItemContainer'
@@ -15,25 +15,31 @@ export type ChatItemWithMenuProps = {
   message: PostData | null | undefined
   chatId: string
   hubId: string
+  noBorder?: boolean
   enableProfileModal?: boolean
+  withWrapper?: boolean
   showBlockedMessage?: boolean
   disableSuperLike?: boolean
   scrollToMessage?: ScrollToMessage
   showBlockButton?: boolean
   showApproveButton?: boolean
   menuIdPrefix?: string
+  containerProps?: ComponentProps<'div'>
 }
 function InnerChatItemWithMenu({
   message,
   chatItemClassName,
   chatId,
   hubId,
+  noBorder,
   enableProfileModal = true,
   showBlockedMessage,
   disableSuperLike,
   showBlockButton,
+  withWrapper,
   scrollToMessage,
   showApproveButton,
+  containerProps,
   menuIdPrefix,
 }: ChatItemWithMenuProps) {
   return message ? (
@@ -51,8 +57,10 @@ function InnerChatItemWithMenu({
             enableChatMenu={false}
             hubId={hubId}
             chatId={chatId}
+            noBorder={noBorder}
             message={message}
             showBlockedMessage={showBlockedMessage}
+            withWrapper={withWrapper}
             messageBubbleId={getMessageElementId(message.id)}
             disableSuperLike={disableSuperLike}
             enableProfileModal={enableProfileModal}
@@ -60,6 +68,7 @@ function InnerChatItemWithMenu({
             showApproveButton={showApproveButton}
             showBlockButton={showBlockButton}
             menuIdPrefix={menuIdPrefix}
+            containerProps={containerProps}
           />
         </ChatItemMenuWrapper>
       )}
@@ -90,7 +99,7 @@ const ChatItemMenuWrapper = ({
   return (
     <div
       {...referenceProps}
-      className='flex select-none flex-col'
+      className='flex h-full select-none flex-col'
       {...onLongPress}
       onContextMenu={(e) => {
         if (!isTouchDevice()) {

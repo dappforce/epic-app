@@ -15,9 +15,8 @@ import {
   ApiNotificationsLinkMessageResponse,
 } from '@/pages/api/notifications/link-message'
 import { queryClient } from '@/services/provider'
-import { useMyAccount } from '@/stores/my-account'
+import { signMessage, useMyAccount } from '@/stores/my-account'
 import mutationWrapper from '@/subsocial-query/base'
-import { signMessage } from '@/utils/account'
 import { AxiosResponse } from 'axios'
 import sortKeysRecursive from 'sort-keys-recursive'
 import { apiInstance } from '../utils'

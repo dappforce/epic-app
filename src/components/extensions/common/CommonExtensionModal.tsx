@@ -8,8 +8,6 @@ import { useMessageData } from '@/stores/message'
 import { useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'
 import { PostContentExtension } from '@subsocial/api/types'
-import { useViewportRaw } from '@tma.js/sdk-react'
-import { usePrevious } from '@uidotdev/usehooks'
 import { useEffect } from 'react'
 
 export type BeforeMessageResult = {
@@ -61,11 +59,6 @@ export default function CommonExtensionModal({
     setShowEmptyPrimaryChatInput(props.isOpen)
   }, [props.isOpen, setShowEmptyPrimaryChatInput])
 
-  const viewport = useViewportRaw(true)
-  const viewportHeight = viewport?.result?.stableHeight
-  const prevHeight = usePrevious(viewportHeight)
-  const offset = Math.max(0, (prevHeight ?? 0) - (viewportHeight ?? 0))
-
   const isUsingBigButton = !!sendButtonText
 
   return (
@@ -113,8 +106,6 @@ export default function CommonExtensionModal({
           }}
         />
       )}
-      {/* blank space offset so the input got pushed up, because in telegram apps, virtual keyboard doesn't push the content up when opened */}
-      <div style={{ height: offset }} />
     </BottomDrawer>
   )
 }

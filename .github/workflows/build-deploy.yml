@@ -47,7 +47,9 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
+            GH_NEXT_PUBLIC_IS_MAINTENANCE=false
             GH_NEXTAUTH_URL=https://epicapp.net
+            GH_NEXT_PUBLIC_BASE_URL=https://epicapp.net
             GH_NEXT_PUBLIC_DATAHUB_QUERY_URL=https://epic-data-hub.subsocial.network/graphql
             GH_NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL=wss://epic-data-hub.subsocial.network/graphql-ws
             GH_DATAHUB_QUEUE_URL=https://epic-queue-data-hub.subsocial.network/graphql
@@ -75,6 +77,8 @@ jobs:
             GH_NEXT_PUBLIC_PROPOSALS_HUB=27942
             GH_SERVER_MNEMONIC=${{ secrets.GH_SERVER_MNEMONIC }}
             GH_NEXT_PUBLIC_NEYNAR_CLIENT_ID=e8dc01b0-046c-4698-98ac-05432050961d
+            GH_FRAMES_SECRET=${{ secrets.GH_FRAMES_SECRET }}
+            GH_NEYNAR_API_KEY=${{ secrets.GH_NEYNAR_API_KEY }}
             GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=6523818125
             GH_NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=EpicAppBot
           target: runner
@@ -93,6 +97,7 @@ jobs:
           file: docker/Dockerfile
           push: true
           build-args: |
+            GH_NEXT_PUBLIC_IS_MAINTENANCE=false
             GH_NEXT_PUBLIC_AMP_ID=2ecd0305eaa641e48ef9a0fd6ab8a923
             GH_NEXT_PUBLIC_GA_ID=fake
             GH_IPFS_WRITE_URL=https://gw-seattle.crustcloud.io
@@ -120,14 +125,16 @@ jobs:
             GH_NEXT_PUBLIC_CONTEST_RANGE_KEY=ReferrersRankedListByReferralsCountCp_20240722_20240728
             GH_NEXT_PUBLIC_TELEGRAM_NOTIFICATION_BOT=https://t.me/g_notif_staging_bot/
             GH_TELEGRAM_BOT_TOKEN="7038999347:AAGBgXTWcXpR4vZPW9A8_ia9PkWOpeyDeWA"
+            GH_NEXT_PUBLIC_BASE_URL=https://dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network
             # without base path
-            # GH_NEXTAUTH_URL=https://dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network
+            GH_NEXTAUTH_URL=https://dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network
             # with base path
-            GH_NEXTAUTH_URL=https://dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network/c/api/auth
-            GH_NEXT_PUBLIC_BASE_PATH=/c
-            GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=6342977780
-            GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=subsocial_staging_bot
+            # GH_NEXTAUTH_URL=https://dev-${{ env.BRANCH_NAME }}-epicapp.subsocial.network/c/api/auth
+            # GH_NEXT_PUBLIC_BASE_PATH=/c
+            GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=1960764016
+            GH_NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=subsocial_staging_bot
             GH_NEXT_PUBLIC_NEYNAR_CLIENT_ID=e8dc01b0-046c-4698-98ac-05432050961d
+            GH_FRAMES_SECRET=JG/W96svVHQ3bdaEKWm1h8xJXqxDtqZ6t7tKCZNWhh0=
           target: runner
           tags: |
             ${{ env.image }}

@@ -9,9 +9,11 @@ import SuperLike, {
 } from '@/components/content-staking/SuperLike'
 import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { FloatingWrapperProps } from '@/components/floating/FloatingWrapper'
+import useIsMessageBlocked from '@/hooks/useIsMessageBlocked'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import useLongTouch from '@/hooks/useLongTouch'
 import { PostRewards } from '@/services/datahub/content-staking/query'
+import { useSendEvent } from '@/stores/analytics'
 import { cx } from '@/utils/class-names'
 import { isTouchDevice } from '@/utils/device'
 import { PostData } from '@subsocial/api/types'
@@ -36,6 +38,7 @@ export type MemeChatItemProps = Omit<ComponentProps<'div'>, 'children'> & {
   hubId: string
   showApproveButton?: boolean
   showBlockButton?: boolean
+  withWrapper?: boolean
   disableSuperLike?: boolean
   menuIdPrefix?: string
   dummySuperLike?: SuperLikeButtonProps
@@ -49,6 +52,7 @@ export default function MemeChatItem({
   enableChatMenu = true,
   chatId,
   hubId,
+  withWrapper,
   disableSuperLike,
   showApproveButton,
   showBlockButton,
@@ -61,6 +65,7 @@ export default function MemeChatItem({
   const { ref, inView } = useInView()
   const { ownerId, id: messageId } = message.struct
   const { body, extensions } = message.content || {}
+  const isMessageBlocked = useIsMessageBlocked(hubId, message, chatId)
 
   const isAdmin = useIsModerationAdmin()
 
@@ -98,7 +103,9 @@ export default function MemeChatItem({
                   <div
                     className={cx(
                       'flex flex-col gap-2 border-b border-border-gray py-2',
-                      noBorder && 'border-none'
+                      noBorder && 'border-none',
+                      withWrapper &&
+                        'h-full overflow-hidden rounded-2xl bg-slate-800 pt-2'
                     )}
                   >
                     <div className='flex items-center justify-between px-2'>
@@ -124,7 +131,6 @@ export default function MemeChatItem({
                             'text-sm font-medium text-text-secondary'
                           )}
                         />
-                        {/* <SubTeamLabel address={ownerId} /> */}
                         {inView && isAdmin && !showApproveButton && (
                           <ApprovedUserChip chatId={chatId} address={ownerId} />
                         )}
@@ -136,7 +142,13 @@ export default function MemeChatItem({
                       />
                     </div>
                     <MediaLoader
-                      containerClassName='overflow-hidden w-full cursor-pointer'
+                      containerClassName={cx(
+                        'overflow-hidden w-full cursor-pointer',
+                        {
+                          ['h-full flex items-center justify-center']:
+                            withWrapper,
+                        }
+                      )}
                       placeholderClassName={cx('w-full aspect-square')}
                       className='w-full object-contain'
                       src={imageExt?.image}
@@ -164,10 +176,12 @@ export default function MemeChatItem({
                           postId={message.id}
                           disabled={disableSuperLike}
                         />
-                      ) : (
+                      ) : !isMessageBlocked ? (
                         <div className='flex rounded-full bg-background-light px-2 py-1 text-sm text-text/80'>
                           ⌛ Pending Review
                         </div>
+                      ) : (
+                        <div />
                       )}
                       {isAdmin && (
                         <UnapprovedMemeCount
@@ -254,9 +268,11 @@ const ChatItemMenuWrapper = ({
   const haptic = useHapticFeedbackRaw(true)
 
   const { hasILiked, isDisabled, handleClick } = superLikeProps
+  const sendEvent = useSendEvent()
 
   const onLongPress = useLongTouch(
     (e) => {
+      sendEvent('long_press_meme')
       if (isTouchDevice()) {
         toggleDisplay?.(e)
       }

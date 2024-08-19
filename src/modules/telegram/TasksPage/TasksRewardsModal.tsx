@@ -18,6 +18,7 @@ export default function TasksRewardsModal({
       <Transition
         appear
         show
+        as='div'
         className='fixed inset-0 z-40 flex h-full w-full max-w-screen-md origin-center items-center justify-center transition duration-300'
         enterFrom={cx('opacity-0 scale-75')}
         enterTo={cx('opacity-100 scale-100')}

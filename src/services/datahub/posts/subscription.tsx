@@ -318,7 +318,7 @@ async function processMessage(
       queryClient,
       {
         postId: rootPostId,
-        onlyDisplayUnapprovedMessages: !isApproved,
+        onlyDisplayUnapprovedMessages: false,
         myAddress: getMyMainAddress() ?? '',
       },
       (oldData) => {
@@ -354,7 +354,7 @@ async function processMessage(
   } else {
     getPaginatedPostIdsByPostId.invalidateLastQuery(queryClient, {
       postId: rootPostId,
-      onlyDisplayUnapprovedMessages: !isApproved,
+      onlyDisplayUnapprovedMessages: true,
       myAddress: getMyMainAddress() ?? '',
     })
   }

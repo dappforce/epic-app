@@ -1,5 +1,12 @@
 import { cx } from '@/utils/class-names'
-import { Dialog, Transition } from '@headlessui/react'
+import {
+  Description,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from '@headlessui/react'
 import { VariantProps, cva } from 'class-variance-authority'
 import { Fragment, ReactNode } from 'react'
 import { HiOutlineChevronLeft, HiXMark } from 'react-icons/hi2'
@@ -85,11 +92,14 @@ export default function Modal({
         id={id}
         initialFocus={initialFocus}
         className={cx('relative z-40 text-text', className)}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
+        }}
         onClose={closeModal}
       >
         {!withoutOverlay && (
-          <Transition.Child
+          <TransitionChild
             as={Fragment}
             enter='ease-out duration-300'
             enterFrom='opacity-0'
@@ -99,7 +109,7 @@ export default function Modal({
             leaveTo='opacity-0'
           >
             <div className='fixed inset-0 bg-black bg-opacity-25 backdrop-blur-lg' />
-          </Transition.Child>
+          </TransitionChild>
         )}
 
         <div className='fixed inset-0 w-screen overflow-y-auto'>
@@ -109,7 +119,7 @@ export default function Modal({
               containerClassName
             )}
           >
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter='ease-out duration-300'
               enterFrom='opacity-0 scale-95'
@@ -118,7 +128,7 @@ export default function Modal({
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel
+              <DialogPanel
                 style={{ backfaceVisibility: 'hidden' }}
                 className={cx(
                   panelStyles({ size }),
@@ -144,7 +154,7 @@ export default function Modal({
                     </Button>
                   )}
                   {title && (
-                    <Dialog.Title
+                    <DialogTitle
                       as='h3'
                       className={cx(
                         'mb-2 text-2xl',
@@ -168,17 +178,17 @@ export default function Modal({
                       ) : (
                         title
                       )}
-                    </Dialog.Title>
+                    </DialogTitle>
                   )}
                   {description && (
-                    <Dialog.Description
+                    <Description
                       className={cx(
                         'mb-4 text-text-muted',
                         descriptionClassName
                       )}
                     >
                       {description}
-                    </Dialog.Description>
+                    </Description>
                   )}
 
                   {children}
@@ -217,8 +227,8 @@ export default function Modal({
                     )}
                   </div>
                 )}
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

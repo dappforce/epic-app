@@ -1,6 +1,7 @@
 import useRandomColor from '@/hooks/useRandomColor'
 import useTgLink from '@/hooks/useTgLink'
 import { getProfileQuery } from '@/services/datahub/profiles/query'
+import { useSendEvent } from '@/stores/analytics'
 import { useProfilePostsModal } from '@/stores/profile-posts-modal'
 import { cx } from '@/utils/class-names'
 import { getIpfsContentUrl } from '@/utils/ipfs'
@@ -50,6 +51,7 @@ const AddressAvatar = forwardRef<HTMLDivElement, AddressAvatarProps>(
   ) {
     const backgroundColor = useRandomColor(address)
     const { openModal } = useProfilePostsModal()
+    const sendEvent = useSendEvent()
 
     const [isAvatarError, setIsAvatarError] = useState(false)
     const onImageError = useCallback(() => setIsAvatarError(true), [])
@@ -110,7 +112,10 @@ const AddressAvatar = forwardRef<HTMLDivElement, AddressAvatarProps>(
           e.preventDefault()
           e.stopPropagation()
 
-          withProfileModal && openModal({ address })
+          if (withProfileModal) {
+            openModal({ address })
+            sendEvent('open_profile_modal')
+          }
           props.onClick?.(e as any)
         }}
         ref={ref as any}

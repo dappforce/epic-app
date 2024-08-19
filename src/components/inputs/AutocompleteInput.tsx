@@ -33,7 +33,10 @@ const AutocompleteInput = ({
 
   return (
     <div className=''>
-      <Combobox value={value} onChange={setValue}>
+      <Combobox
+        value={value}
+        onChange={(value) => setValue(value || undefined)}
+      >
         <div className='relative mt-1'>
           <Combobox.Label className='mb-2 block bg-transparent text-sm font-normal leading-4 text-text-muted'>
             {label}

@@ -236,6 +236,27 @@ export type AddressesRankedByTotalRewardsForPeriodInput = {
   order?: InputMaybe<ActiveStakingListOrder>
 }
 
+export type ApprovedResourcesArgsInputDto = {
+  filter: ApprovedResourcesFilter
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<QueryOrder>
+  pageSize?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type ApprovedResourcesFilter = {
+  createdByAccountAddress: Scalars['String']['input']
+  resourceType?: InputMaybe<ModerationResourceType>
+}
+
+export type ApprovedResourcesResponseDto = {
+  __typename?: 'ApprovedResourcesResponseDto'
+  data: Array<ModerationApprovedResource>
+  offset?: Maybe<Scalars['Int']['output']>
+  pageSize?: Maybe<Scalars['Int']['output']>
+  total?: Maybe<Scalars['Int']['output']>
+}
+
 export type BalancesInput = {
   where: BalancesInputWhereArgs
 }
@@ -255,6 +276,27 @@ export type BlockedResourceIdsBatchResponse = {
   byCtxAppIds: Array<BlockedResourceIdsBatchItem>
   byCtxPostIds: Array<BlockedResourceIdsBatchItem>
   byCtxSpaceIds: Array<BlockedResourceIdsBatchItem>
+}
+
+export type BlockedResourcesArgsInputDto = {
+  filter: BlockedResourcesFilter
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<QueryOrder>
+  pageSize?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type BlockedResourcesFilter = {
+  createdByAccountAddress: Scalars['String']['input']
+  resourceType?: InputMaybe<ModerationResourceType>
+}
+
+export type BlockedResourcesResponseDto = {
+  __typename?: 'BlockedResourcesResponseDto'
+  data: Array<ModerationBlockedResource>
+  offset?: Maybe<Scalars['Int']['output']>
+  pageSize?: Maybe<Scalars['Int']['output']>
+  total?: Maybe<Scalars['Int']['output']>
 }
 
 export type CanDoSuperLikeByPostInput = {
@@ -666,6 +708,7 @@ export enum IdentityProvider {
   Farcaster = 'FARCASTER',
   Google = 'GOOGLE',
   Polkadot = 'POLKADOT',
+  Solana = 'SOLANA',
   Telegram = 'TELEGRAM',
   Twitter = 'TWITTER',
 }
@@ -759,6 +802,25 @@ export type LinkedIdentitySubscriptionGenericPayload = {
   __typename?: 'LinkedIdentitySubscriptionGenericPayload'
   entity: LinkedIdentitySubscriptionGenericEntityPayload
   event: DataHubSubscriptionEventEnum
+}
+
+export type ModerationApprovedResource = {
+  __typename?: 'ModerationApprovedResource'
+  approved: Scalars['Boolean']['output']
+  comment?: Maybe<Scalars['String']['output']>
+  createdAt: Scalars['DateTime']['output']
+  ctxAppIds: Array<Scalars['String']['output']>
+  ctxPostIds: Array<Scalars['String']['output']>
+  ctxSpaceIds: Array<Scalars['String']['output']>
+  id: Scalars['String']['output']
+  moderator: Moderator
+  organization: ModerationOrganization
+  parentPostId?: Maybe<Scalars['String']['output']>
+  resourceId: Scalars['String']['output']
+  resourceType: ModerationResourceType
+  rootPostId?: Maybe<Scalars['String']['output']>
+  spaceId?: Maybe<Scalars['String']['output']>
+  updatedAt?: Maybe<Scalars['DateTime']['output']>
 }
 
 export type ModerationBlockReason = {
@@ -858,6 +920,7 @@ export type ModerationUpdateOrganizationModeratorInput = {
 export type Moderator = {
   __typename?: 'Moderator'
   account: Account
+  approvedResources?: Maybe<Array<ModerationApprovedResource>>
   id: Scalars['String']['output']
   moderatorOrganizations?: Maybe<Array<ModerationOrganizationModerator>>
   processedResources?: Maybe<Array<ModerationBlockedResource>>
@@ -891,7 +954,11 @@ export type ModeratorsResponse = {
 }
 
 export type ModeratorsWhereArgs = {
+  ctxAppIds?: InputMaybe<Array<Scalars['String']['input']>>
+  ctxPostIds?: InputMaybe<Array<Scalars['String']['input']>>
+  ctxSpaceIds?: InputMaybe<Array<Scalars['String']['input']>>
   id?: InputMaybe<Scalars['String']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
   substrateAddress?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -974,6 +1041,7 @@ export type Post = {
   activeStaking: Scalars['Boolean']['output']
   activeStakingSuperLikes?: Maybe<Array<ActiveStakingSuperLike>>
   activeStakingSuperLikesCount?: Maybe<Scalars['Int']['output']>
+  approvedByAccount: Account
   approvedInRootPost: Scalars['Boolean']['output']
   approvedInRootPostAtTime?: Maybe<Scalars['DateTime']['output']>
   /** is off-chain data CID backed up in blockchain */
@@ -1135,8 +1203,10 @@ export type Query = {
   gamificationTasks: FindTasksResponseDto
   isBalanceSufficientForSocialAction: IsBalanceSufficientForSocialActionResponse
   linkedIdentity?: Maybe<LinkedIdentity>
+  moderationApprovedResources: ApprovedResourcesResponseDto
   moderationBlockedResourceIds: Array<Scalars['String']['output']>
   moderationBlockedResourceIdsBatch: BlockedResourceIdsBatchResponse
+  moderationBlockedResources: BlockedResourcesResponseDto
   moderationBlockedResourcesDetailed: Array<ModerationBlockedResource>
   moderationModerator?: Maybe<Moderator>
   moderationOrganization?: Maybe<ModerationOrganization>
@@ -1261,6 +1331,10 @@ export type QueryLinkedIdentityArgs = {
   where: LinkedIdentityArgs
 }
 
+export type QueryModerationApprovedResourcesArgs = {
+  args: ApprovedResourcesArgsInputDto
+}
+
 export type QueryModerationBlockedResourceIdsArgs = {
   blocked?: InputMaybe<Scalars['Boolean']['input']>
   ctxAppIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -1279,6 +1353,10 @@ export type QueryModerationBlockedResourceIdsBatchArgs = {
   ctxAppIds?: InputMaybe<Array<Scalars['String']['input']>>
   ctxPostIds?: InputMaybe<Array<Scalars['String']['input']>>
   ctxSpaceIds?: InputMaybe<Array<Scalars['String']['input']>>
+}
+
+export type QueryModerationBlockedResourcesArgs = {
+  args: BlockedResourcesArgsInputDto
 }
 
 export type QueryModerationBlockedResourcesDetailedArgs = {
@@ -1611,6 +1689,7 @@ export enum SocialCallName {
   SetOuterValue = 'set_outer_value',
   SetPaymentBeneficiary = 'set_payment_beneficiary',
   SetProfile = 'set_profile',
+  SynthActiveStakingCreateFarcasterFrameLike = 'synth_active_staking_create_farcaster_frame_like',
   SynthActiveStakingCreateSuperLike = 'synth_active_staking_create_super_like',
   SynthActiveStakingDeleteSuperLike = 'synth_active_staking_delete_super_like',
   SynthAddLinkedIdentityExternalProvider = 'synth_add_linked_identity_external_provider',
@@ -1639,6 +1718,7 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
   SynthUpdatePostTxRetry = 'synth_update_post_tx_retry',
   UpdatePost = 'update_post',
@@ -2460,6 +2540,7 @@ export type SubscribeIdentitySubscription = {
       } | null
       externalProvider?: {
         __typename?: 'LinkedIdentityExternalProvider'
+        id: string
         externalId: string
         provider: IdentityProvider
         enabled: boolean
@@ -2479,6 +2560,7 @@ export type GetLeaderboardTableDataByAllTimeQuery = {
   __typename?: 'Query'
   activeStakingAddressesRankedByTotalRewardsForPeriod: {
     __typename?: 'AddressesRankedByRewardsForPeriodResponseDto'
+    total: number
     data: Array<{
       __typename?: 'RankedAddressWithDetails'
       reward: string
@@ -2496,6 +2578,7 @@ export type GetLeaderboardTableDataByWeekQuery = {
   __typename?: 'Query'
   activeStakingAddressesRankedByTotalRewardsForPeriod: {
     __typename?: 'AddressesRankedByRewardsForPeriodResponseDto'
+    total: number
     data: Array<{
       __typename?: 'RankedAddressWithDetails'
       reward: string
@@ -2727,6 +2810,55 @@ export type GetModeratorDataQuery = {
         }
       }> | null
     }>
+  } | null
+}
+
+export type GetApprovedByModeratorQueryVariables = Exact<{
+  address: Scalars['String']['input']
+  limit: Scalars['Int']['input']
+  offset: Scalars['Int']['input']
+}>
+
+export type GetApprovedByModeratorQuery = {
+  __typename?: 'Query'
+  resource: {
+    __typename?: 'ApprovedResourcesResponseDto'
+    total?: number | null
+    data: Array<{
+      __typename?: 'ModerationApprovedResource'
+      resourceId: string
+    }>
+  }
+}
+
+export type GetBlockedByModeratorQueryVariables = Exact<{
+  address: Scalars['String']['input']
+  limit: Scalars['Int']['input']
+  offset: Scalars['Int']['input']
+}>
+
+export type GetBlockedByModeratorQuery = {
+  __typename?: 'Query'
+  resource: {
+    __typename?: 'BlockedResourcesResponseDto'
+    total?: number | null
+    data: Array<{
+      __typename?: 'ModerationBlockedResource'
+      resourceId: string
+    }>
+  }
+}
+
+export type GetAllModeratorsQueryVariables = Exact<{
+  ctxAppId: Scalars['String']['input']
+}>
+
+export type GetAllModeratorsQuery = {
+  __typename?: 'Query'
+  moderators?: {
+    __typename?: 'ModeratorsResponse'
+    total?: number | null
+    data: Array<{ __typename?: 'Moderator'; id: string }>
   } | null
 }
 
@@ -3114,8 +3246,21 @@ export type GetReferrerIdQuery = {
   }
 }
 
+export type ReferralLeaderboardFragmentFragment = {
+  __typename?: 'ReferrersRankedByReferralsCountForPeriodResponseDto'
+  total: number
+  limit: number
+  offset: number
+  data: Array<{
+    __typename?: 'RankedReferrerWithDetails'
+    address: string
+    count: number
+    rank: number
+  }>
+}
+
 export type GetReferralLeaderboardQueryVariables = Exact<{
-  args: ReferrersRankedByReferralsCountForPeriodInput
+  [key: string]: never
 }>
 
 export type GetReferralLeaderboardQuery = {
@@ -3134,11 +3279,53 @@ export type GetReferralLeaderboardQuery = {
   }
 }
 
+export type GetReferralLeaderboardByCustomRangeKeyQueryVariables = Exact<{
+  customRangeKey?: InputMaybe<ReferrersRankedListCustomPeriodKey>
+}>
+
+export type GetReferralLeaderboardByCustomRangeKeyQuery = {
+  __typename?: 'Query'
+  referrersRankedByReferralsCountForPeriod: {
+    __typename?: 'ReferrersRankedByReferralsCountForPeriodResponseDto'
+    total: number
+    limit: number
+    offset: number
+    data: Array<{
+      __typename?: 'RankedReferrerWithDetails'
+      address: string
+      count: number
+      rank: number
+    }>
+  }
+}
+
+export type ReferrerRankFragmentFragment = {
+  __typename?: 'ReferrerRankByReferralsCountForPeriodResponseDto'
+  count?: number | null
+  maxIndex: number
+  rankIndex: number
+}
+
 export type GetReferrerRankQueryVariables = Exact<{
   address: Scalars['String']['input']
 }>
 
 export type GetReferrerRankQuery = {
+  __typename?: 'Query'
+  referrerRankByReferralsCountForPeriod?: {
+    __typename?: 'ReferrerRankByReferralsCountForPeriodResponseDto'
+    count?: number | null
+    maxIndex: number
+    rankIndex: number
+  } | null
+}
+
+export type GetReferrerRankByCustomRangeKeyQueryVariables = Exact<{
+  address: Scalars['String']['input']
+  customRangeKey?: InputMaybe<ReferrersRankedListCustomPeriodKey>
+}>
+
+export type GetReferrerRankByCustomRangeKeyQuery = {
   __typename?: 'Query'
   referrerRankByReferralsCountForPeriod?: {
     __typename?: 'ReferrerRankByReferralsCountForPeriodResponseDto'
@@ -3239,6 +3426,25 @@ export const DatahubPostFragment = gql`
       image
       extensionSchemaId
     }
+  }
+`
+export const ReferralLeaderboardFragment = gql`
+  fragment ReferralLeaderboardFragment on ReferrersRankedByReferralsCountForPeriodResponseDto {
+    total
+    limit
+    offset
+    data {
+      address
+      count
+      rank
+    }
+  }
+`
+export const ReferrerRankFragment = gql`
+  fragment ReferrerRankFragment on ReferrerRankByReferralsCountForPeriodResponseDto {
+    count
+    maxIndex
+    rankIndex
   }
 `
 export const SpaceFragment = gql`
@@ -3541,6 +3747,7 @@ export const SubscribeIdentity = gql`
           }
         }
         externalProvider {
+          id
           externalId
           provider
           enabled
@@ -3559,6 +3766,7 @@ export const GetLeaderboardTableDataByAllTime = gql`
     activeStakingAddressesRankedByTotalRewardsForPeriod(
       args: { filter: { period: ALL_TIME }, limit: 100 }
     ) {
+      total
       data {
         reward
         rank
@@ -3572,6 +3780,7 @@ export const GetLeaderboardTableDataByWeek = gql`
     activeStakingAddressesRankedByTotalRewardsForPeriod(
       args: { filter: { period: WEEK, timestamp: $timestamp }, limit: 100 }
     ) {
+      total
       data {
         reward
         rank
@@ -3757,6 +3966,52 @@ export const GetModeratorData = gql`
             ctxAppIds
           }
         }
+      }
+    }
+  }
+`
+export const GetApprovedByModerator = gql`
+  query GetApprovedByModerator($address: String!, $limit: Int!, $offset: Int!) {
+    resource: moderationApprovedResources(
+      args: {
+        filter: { createdByAccountAddress: $address, resourceType: POST }
+        orderBy: "createdAt"
+        orderDirection: DESC
+        pageSize: $limit
+        offset: $offset
+      }
+    ) {
+      data {
+        resourceId
+      }
+      total
+    }
+  }
+`
+export const GetBlockedByModerator = gql`
+  query GetBlockedByModerator($address: String!, $limit: Int!, $offset: Int!) {
+    resource: moderationBlockedResources(
+      args: {
+        filter: { createdByAccountAddress: $address, resourceType: POST }
+        orderBy: "createdAt"
+        orderDirection: DESC
+        pageSize: $limit
+        offset: $offset
+      }
+    ) {
+      data {
+        resourceId
+      }
+      total
+    }
+  }
+`
+export const GetAllModerators = gql`
+  query GetAllModerators($ctxAppId: String!) {
+    moderators(args: { where: { ctxAppIds: [$ctxAppId] } }) {
+      total
+      data {
+        id
       }
     }
   }
@@ -3964,31 +4219,53 @@ export const GetReferrerId = gql`
   }
 `
 export const GetReferralLeaderboard = gql`
-  query GetReferralLeaderboard(
-    $args: ReferrersRankedByReferralsCountForPeriodInput!
-  ) {
-    referrersRankedByReferralsCountForPeriod(args: $args) {
-      total
-      limit
-      offset
-      data {
-        address
-        count
-        rank
-      }
+  query GetReferralLeaderboard {
+    referrersRankedByReferralsCountForPeriod(
+      args: { filter: { period: ALL_TIME }, limit: 100 }
+    ) {
+      ...ReferralLeaderboardFragment
     }
   }
+  ${ReferralLeaderboardFragment}
+`
+export const GetReferralLeaderboardByCustomRangeKey = gql`
+  query GetReferralLeaderboardByCustomRangeKey(
+    $customRangeKey: ReferrersRankedListCustomPeriodKey
+  ) {
+    referrersRankedByReferralsCountForPeriod(
+      args: { filter: { customRangeKey: $customRangeKey }, limit: 100 }
+    ) {
+      ...ReferralLeaderboardFragment
+    }
+  }
+  ${ReferralLeaderboardFragment}
 `
 export const GetReferrerRank = gql`
   query GetReferrerRank($address: String!) {
     referrerRankByReferralsCountForPeriod(
       args: { address: $address, period: ALL_TIME, withCount: true }
     ) {
-      count
-      maxIndex
-      rankIndex
+      ...ReferrerRankFragment
     }
   }
+  ${ReferrerRankFragment}
+`
+export const GetReferrerRankByCustomRangeKey = gql`
+  query GetReferrerRankByCustomRangeKey(
+    $address: String!
+    $customRangeKey: ReferrersRankedListCustomPeriodKey
+  ) {
+    referrerRankByReferralsCountForPeriod(
+      args: {
+        address: $address
+        customRangeKey: $customRangeKey
+        withCount: true
+      }
+    ) {
+      ...ReferrerRankFragment
+    }
+  }
+  ${ReferrerRankFragment}
 `
 export const GetSpaces = gql`
   query getSpaces($ids: [String!]) {

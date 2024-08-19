@@ -140,6 +140,7 @@ export default function FloatingWrapper({
           <FloatingPortal>
             <Transition
               ref={refs.setFloating}
+              as='div'
               style={{
                 position: strategy,
                 top: y ?? 0,
