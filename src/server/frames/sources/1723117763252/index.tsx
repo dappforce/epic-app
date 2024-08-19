@@ -23,13 +23,7 @@ import { getAddressBalance, linkIdentityWithResult } from '../../utils/identity'
 const frameName = '1723117763252'
 const frameRootPath = `/${frameName}`
 
-const shareButton = (
-  <Button.Link
-    href={`https://warpcast.com/~/compose?text=Step%20by%20step,%20meme%20by%20meme!%20Share,%20laugh,%20and%20track%20your%20progress%20%F0%9F%A4%A3%F0%9F%93%88&embeds%5B%5D=${env.NEXT_PUBLIC_BASE_URL}/api/frames/${frameName}`}
-  >
-    Share
-  </Button.Link>
-)
+const shareLink = `https://warpcast.com/~/compose?text=Step%20by%20step,%20meme%20by%20meme!%20Share,%20laugh,%20and%20track%20your%20progress%20%F0%9F%A4%A3%F0%9F%93%88&embeds%5B%5D=${env.NEXT_PUBLIC_BASE_URL}/api/frames/${frameName}`
 
 const getButtonHref = (path: string) => urlJoin(frameRootPath, path)
 
@@ -171,10 +165,12 @@ const frame = {
                   My Stats
                 </Button>,
                 <Button.Link href={channelLink}>More</Button.Link>,
-                shareButton,
+                <Button.Link href={shareLink}>Share</Button.Link>,
               ]
             } else {
-              intents.unshift(shareButton)
+              intents.unshift(
+                <Button.Link href={shareLink}>📢 Share memes</Button.Link>
+              )
             }
 
             // first frame needs to be small, so it just shows the image
