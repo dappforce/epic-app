@@ -55,7 +55,7 @@ function MenuPageContent({ setPage }: ContentProps) {
   const menuItems = [
     [
       { title: 'My Account', icon: '👤', onClick: () => setPage('my-account') },
-      { title: 'My Memes', icon: '😂', href: '' },
+      { title: 'My Memes', icon: '😂', href: '/tg/my-memes' },
       {
         title: 'My Crypto Addresses',
         icon: '🔐',
