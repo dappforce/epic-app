@@ -58,7 +58,6 @@ export default function HideMessageModal({
             message={message}
             hubId={hubId}
             chatId={chatId}
-            isMyMessage={false}
             className='max-w-none rounded-2xl bg-background-lighter'
             noBorder
           />
