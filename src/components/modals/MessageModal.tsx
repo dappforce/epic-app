@@ -10,7 +10,7 @@ import Button from '../Button'
 import Card from '../Card'
 import ProfilePreview from '../ProfilePreview'
 import { Skeleton } from '../SkeletonFallback'
-import ChatItem from '../chats/ChatItem'
+import MemeChatItem from '../chats/ChatItem/MemeChatItem'
 import { ScrollToMessage } from '../chats/ChatList/hooks/useScrollToMessage'
 import PopOver from '../floating/PopOver'
 import Modal, { ModalFunctionalityProps } from './Modal'
@@ -72,87 +72,86 @@ export default function MessageModal({
   }
 
   return (
-    <>
-      <Modal
-        {...props}
-        isOpen={props.isOpen && !isOpenLoginModal}
-        initialFocus={buttonRef}
-        title={
-          <span className='flex items-center'>Message from {chatTitle}</span>
-        }
-      >
-        <div
-          className={cx(
-            'relative flex max-h-96 flex-col overflow-y-auto rounded-2xl bg-background p-2 pb-0 md:p-4 md:pb-0',
-            !message && 'h-28 animate-pulse'
-          )}
-        >
-          {message ? (
-            <div className='flex flex-col pb-2'>
-              <ChatItem
-                enableChatMenu={false}
-                isMyMessage={false}
-                message={message}
-                chatId={chatId}
-                hubId={hubId}
-              />
-            </div>
-          ) : (
-            <Skeleton />
-          )}
-          {(scrollToMessage || redirectTo) && (
-            <div className='sticky -bottom-px left-0 bg-background pb-4 pt-2'>
-              <Button
-                ref={buttonRef}
-                isLoading={isScrolling}
-                onClick={scrollToMessage ? handleScrollToMessage : undefined}
-                href={scrollToMessage ? undefined : redirectTo}
-                target='_blank'
-                size='lg'
-                variant='primaryOutline'
-                className='w-full'
-              >
-                {scrollToMessage ? (
-                  'Scroll to message'
-                ) : (
-                  <span>
-                    Go to message <HiArrowUpRight className='inline' />
-                  </span>
-                )}
-              </Button>
-            </div>
-          )}
-        </div>
-        {isDifferentRecipient && recipient && (
-          <Card className='mt-4 bg-background-lighter'>
-            <div className='flex items-center gap-2 text-text-muted'>
-              <span className='text-sm'>Notification recipient</span>
-              <PopOver
-                trigger={<HiOutlineInformationCircle />}
-                triggerOnHover
-                panelSize='sm'
-                yOffset={6}
-                placement='top'
-              >
-                <p>You are not currently logged in to this account.</p>
-              </PopOver>
-            </div>
-            <ProfilePreview
-              className='mt-3 gap-3'
-              address={recipient}
-              addressesContainerClassName='gap-1'
-              avatarClassName='h-9 w-9'
-            />
-            <Button
-              size='lg'
-              className='mt-4 w-full'
-              onClick={() => setIsOpenLoginModal(true)}
-            >
-              Log In
-            </Button>
-          </Card>
+    <Modal
+      {...props}
+      isOpen={props.isOpen && !isOpenLoginModal}
+      initialFocus={buttonRef}
+      title={
+        <span className='flex items-center'>Message from {chatTitle}</span>
+      }
+    >
+      <div
+        className={cx(
+          'relative flex max-h-96 flex-col overflow-y-auto rounded-2xl bg-background p-2 pb-0 md:p-4 md:pb-0',
+          !message && 'h-28 animate-pulse'
         )}
-      </Modal>
-    </>
+      >
+        {message ? (
+          <div className='flex flex-col pb-2'>
+            <MemeChatItem
+              className='max-w-none rounded-2xl bg-background-lighter'
+              noBorder
+              enableChatMenu={false}
+              message={message}
+              chatId={chatId}
+              hubId={hubId}
+            />
+          </div>
+        ) : (
+          <Skeleton />
+        )}
+        {(scrollToMessage || redirectTo) && (
+          <div className='sticky -bottom-px left-0 bg-background pb-4 pt-2'>
+            <Button
+              ref={buttonRef}
+              isLoading={isScrolling}
+              onClick={scrollToMessage ? handleScrollToMessage : undefined}
+              href={scrollToMessage ? undefined : redirectTo}
+              target='_blank'
+              size='lg'
+              variant='primaryOutline'
+              className='w-full'
+            >
+              {scrollToMessage ? (
+                'Scroll to message'
+              ) : (
+                <span>
+                  Go to message <HiArrowUpRight className='inline' />
+                </span>
+              )}
+            </Button>
+          </div>
+        )}
+      </div>
+      {isDifferentRecipient && recipient && (
+        <Card className='mt-4 bg-background-lighter'>
+          <div className='flex items-center gap-2 text-text-muted'>
+            <span className='text-sm'>Notification recipient</span>
+            <PopOver
+              trigger={<HiOutlineInformationCircle />}
+              triggerOnHover
+              panelSize='sm'
+              yOffset={6}
+              placement='top'
+            >
+              <p>You are not currently logged in to this account.</p>
+            </PopOver>
+          </div>
+          <ProfilePreview
+            className='mt-3 gap-3'
+            address={recipient}
+            addressesContainerClassName='gap-1'
+            avatarClassName='h-9 w-9'
+          />
+          <Button
+            size='lg'
+            className='mt-4 w-full'
+            onClick={() => setIsOpenLoginModal(true)}
+          >
+            Log In
+          </Button>
+        </Card>
+      )}
+    </Modal>
   )
 }
