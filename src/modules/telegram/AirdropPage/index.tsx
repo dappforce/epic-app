@@ -2,20 +2,11 @@ import Tokens from '@/assets/graphics/airdrop/tokens.png'
 import BlueGradient from '@/assets/graphics/blue-gradient.png'
 import BackButton from '@/components/layouts/BackButton'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
-import LinkEvmAddressModal from '@/components/modals/LinkEvmAddressModal'
-import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import Image from 'next/image'
-import { useState } from 'react'
-import RemoveLinkedIdentityModal from './RemoveLinkedIdentityModal'
 
 export default function AirdropPage() {
   useTgNoScroll()
-
-  const [isOpenRemoveAccountModal, setIsOpenRemoveAccountModal] =
-    useState(false)
-  const [openProfileModal, setOpenProfileModal] = useState(false)
-  const [openEvmLinkModal, setOpenEvmLinkModal] = useState(false)
 
   return (
     <LayoutWithBottomNavigation
@@ -42,19 +33,6 @@ export default function AirdropPage() {
           </div>
         </div>
       </div>
-      <RemoveLinkedIdentityModal
-        isOpen={isOpenRemoveAccountModal}
-        closeModal={() => setIsOpenRemoveAccountModal(false)}
-      />
-      <SubsocialProfileModal
-        title='✏️ Edit Profile'
-        closeModal={() => setOpenProfileModal(false)}
-        isOpen={openProfileModal}
-      />
-      <LinkEvmAddressModal
-        isOpen={openEvmLinkModal}
-        closeModal={() => setOpenEvmLinkModal(false)}
-      />
     </LayoutWithBottomNavigation>
   )
 }

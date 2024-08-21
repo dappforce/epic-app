@@ -7,6 +7,7 @@ import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNav
 import LinkEvmAddressModal from '@/components/modals/LinkEvmAddressModal'
 import { getReferralLink } from '@/components/referral/utils'
 import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
+import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import PointsWidget from '@/modules/points/PointsWidget'
@@ -20,9 +21,11 @@ import {
   CrearLocalData,
   DeleteAccountConfirmationModal,
 } from './ClearDataModals'
+import LoginAsUser from './LoginAsUser'
 import Menu from './Menu'
+import SearchUser from './SearchUser'
 
-type Page = 'menu' | 'my-account' | 'my-crypto-addresses'
+type Page = 'menu' | 'my-account' | 'my-crypto-addresses' | 'moderation-tools'
 
 type ContentProps = {
   setPage: (page: Page) => void
@@ -34,6 +37,7 @@ const contentsByPage: {
   menu: MenuPageContent,
   'my-account': MyAccountPageContent,
   'my-crypto-addresses': MyCryptoAddressesContent,
+  'moderation-tools': ModerationToolsContent,
 }
 
 const MenuPage = () => {
@@ -51,6 +55,7 @@ const MenuPage = () => {
 
 function MenuPageContent({ setPage }: ContentProps) {
   const myAddress = useMyMainAddress()
+  const isAdmin = useIsModerationAdmin()
 
   const menuItems = [
     [
@@ -67,7 +72,12 @@ function MenuPageContent({ setPage }: ContentProps) {
       { title: 'Airdrop', icon: '💰', href: '/tg/airdrop' },
       { title: 'Premium Features', icon: '🎩', href: '/tg/premium' },
       { title: 'Tap The Cat', icon: '🐈', href: '/tg/tap' },
-      { title: 'Moderation Tools', icon: '👮‍♂️', href: '' },
+      {
+        title: 'Moderation Tools',
+        icon: '👮‍♂️',
+        onClick: () => setPage('moderation-tools'),
+        hidden: !isAdmin,
+      },
     ],
   ]
 
@@ -207,6 +217,21 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
         isOpen={modaKind === 'evm'}
         closeModal={() => setModalKind(undefined)}
       />
+    </>
+  )
+}
+
+function ModerationToolsContent({ setPage }: ContentProps) {
+  return (
+    <>
+      <div className='flex flex-col gap-6 px-4 pt-4'>
+        <BackButton
+          title='Moderation Tools'
+          backClick={() => setPage('menu')}
+        />
+        <SearchUser />
+        <LoginAsUser />
+      </div>
     </>
   )
 }

@@ -41,6 +41,7 @@ type State = {
   parentProxyAddress: string | undefined
 
   address: string | null
+  readonlyUserAddress: string | null
   signer: Signer | null
   encodedSecretKey: string | null
 }
@@ -56,6 +57,7 @@ type Actions = {
   ) => Promise<string | false>
   loginAsTemporaryAccount: () => Promise<string | false>
   finalizeTemporaryAccount: () => void
+  readOnlyLoginAsUser: (address: string | null) => void
   logout: () => void
   saveProxyAddress: (address: string) => void
   disconnectProxy: () => void
@@ -67,6 +69,7 @@ const initialState: State = {
   isInitializedProxy: false,
   isTemporaryAccount: false,
   parentProxyAddress: undefined,
+  readonlyUserAddress: null,
   address: null,
   signer: null,
   encodedSecretKey: null,
@@ -141,6 +144,9 @@ const useMyAccountBase = create<State & Actions>()((set, get) => ({
   disconnectProxy: () => {
     set({ parentProxyAddress: undefined })
     parentProxyAddressStorage.remove()
+  },
+  readOnlyLoginAsUser: (address: string | null) => {
+    set({ readonlyUserAddress: address })
   },
   login: async (secretKey, config) => {
     const {
@@ -326,13 +332,18 @@ function saveLoginInfoToStorage() {
 }
 
 export function getMyMainAddress() {
-  const { address, parentProxyAddress } = useMyAccount.getState()
+  const { address, parentProxyAddress, readonlyUserAddress } =
+    useMyAccount.getState()
+
+  if (readonlyUserAddress) return readonlyUserAddress
   return parentProxyAddress || address
 }
 
 export function useMyMainAddress() {
-  const address = useMyAccount((state) => state.address)
+  const { address, readonlyUserAddress } = useMyAccount()
   const parentProxyAddress = useMyAccount((state) => state.parentProxyAddress)
+
+  if (readonlyUserAddress) return readonlyUserAddress
   return parentProxyAddress || address
 }
 

@@ -8,6 +8,7 @@ type MenuProps = {
     title: string
     desc?: React.ReactNode
     disabled?: boolean
+    hidden?: boolean
     icon: string
     href?: string
     onClick?: () => void
@@ -18,14 +19,16 @@ const Menu = ({ menuItems }: MenuProps) => {
   return (
     <>
       {menuItems.map((subItems, index) => {
+        const subItemsWithoutHidden = subItems.filter((item) => !item.hidden)
+
         return (
           <div key={index} className='rounded-2xl bg-slate-800'>
-            {subItems.map((item, index) => {
+            {subItemsWithoutHidden.map((item, index) => {
               return (
                 <MenuItem
                   key={`subitem-${index}`}
                   {...item}
-                  withBorder={index !== subItems.length - 1}
+                  withBorder={index !== subItemsWithoutHidden.length - 1}
                 />
               )
             })}
@@ -41,6 +44,7 @@ type MenuItemProps = {
   desc?: React.ReactNode
   icon: string
   disabled?: boolean
+  hidden?: boolean
   href?: string
   onClick?: () => void
   textClassName?: string
@@ -52,6 +56,7 @@ const MenuItem = ({
   desc,
   icon,
   disabled,
+  hidden,
   href,
   textClassName,
   onClick,
