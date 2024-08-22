@@ -18,7 +18,7 @@ const HomePage = () => {
         src={BlueGradient}
         priority
         alt=''
-        className='absolute -top-[180px] left-1/2 z-0 w-full -translate-x-1/2'
+        className='absolute left-1/2 top-0 z-0 w-full -translate-x-1/2'
       />
       <HomePageContent />
     </LayoutWithBottomNavigation>
@@ -27,7 +27,7 @@ const HomePage = () => {
 
 const HomePageContent = () => {
   return (
-    <div className='flex flex-col gap-10 overflow-y-auto px-4 py-6'>
+    <div className='z-10 flex flex-col gap-10 overflow-y-auto px-4 py-6'>
       <MemesPreview
         chatId={env.NEXT_PUBLIC_MAIN_CHAT_ID}
         hubId={env.NEXT_PUBLIC_MAIN_SPACE_ID}

@@ -1,5 +1,5 @@
 import Button from '@/components/Button'
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'
@@ -40,8 +40,8 @@ const MissingRewards = () => {
   // const setModalOpen = useProfileModal.use.openModal()
 
   const myAddress = useMyMainAddress()
-  const { evmAddress: myEvmAddress, isLoading: isLinkedIdentityLoading } =
-    useLinkedEvmAddress()
+  const { identityAddress: myEvmAddress, isLoading: isLinkedIdentityLoading } =
+    useLinkedAddress()
   const isNotLinkedEvm = !myEvmAddress
 
   const { data: balance, isLoading: isLoadingBalance } =

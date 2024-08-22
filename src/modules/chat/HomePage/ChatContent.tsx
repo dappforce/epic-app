@@ -3,7 +3,7 @@ import Button from '@/components/Button'
 import LinkText from '@/components/LinkText'
 import Notice from '@/components/Notice'
 import ChatRoom from '@/components/chats/ChatRoom'
-import LinkEvmAddressModal from '@/components/modals/LinkEvmAddressModal'
+import LinkAddressModal from '@/components/modals/LinkEvmAddressModal'
 import Meme2EarnIntroModal, {
   hasOpenedMeme2EarnIntroStorage,
 } from '@/components/modals/Meme2EarnIntroModal'
@@ -11,7 +11,7 @@ import Modal, { ModalFunctionalityProps } from '@/components/modals/Modal'
 import { env } from '@/env.mjs'
 import useIsAddressBlockedInChat from '@/hooks/useIsAddressBlockedInChat'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import usePostMemeThreshold from '@/hooks/usePostMemeThreshold'
 import PointsWidget from '@/modules/points/PointsWidget'
 import { getServerTimeQuery } from '@/services/api/query'
@@ -187,7 +187,8 @@ function PostMemeButton({
   const { threshold, isLoading: loadingThreshold } =
     usePostMemeThreshold(chatId)
 
-  const { evmAddress, isLoading: loadingEvmAddress } = useLinkedEvmAddress()
+  const { identityAddress: evmAddress, isLoading: loadingEvmAddress } =
+    useLinkedAddress()
   const { isBlocked, isLoading: loadingIsBlocked } = useIsAddressBlockedInChat(
     myAddress,
     chatId
@@ -278,7 +279,7 @@ function PostMemeButton({
           setIsOpenIntroModal(false)
         }}
       />
-      <LinkEvmAddressModal
+      <LinkAddressModal
         isOpen={isOpenLinkEvm}
         closeModal={() => setIsOpenLinkEvm(false)}
       />

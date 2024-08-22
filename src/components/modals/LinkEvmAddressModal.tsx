@@ -1,9 +1,11 @@
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import useToastError from '@/hooks/useToastError'
 import {
   useAddExternalProviderToIdentity,
   useUpdateExternalProvider,
 } from '@/services/datahub/identity/mutation'
+import { useMyMainAddress } from '@/stores/my-account'
+import { PublicKey } from '@solana/web3.js'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import { getAddress, isAddress } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -20,11 +22,47 @@ export const linkEvmAddressCallbacks: {
   onErrorCallbacks: [],
 }
 
-export default function LinkEvmAddressModal(
-  props: ModalFunctionalityProps & Pick<ModalProps, 'title' | 'description'>
-) {
-  const [evmAddress, setEvmAddress] = useState('')
-  const [evmAddressError, setEvmAddressError] = useState('')
+function validateSolAddress(address: string) {
+  try {
+    let pubkey = new PublicKey(address)
+    let isSolana = PublicKey.isOnCurve(pubkey.toBuffer())
+    return isSolana
+  } catch (error) {
+    return false
+  }
+}
+
+const validateFnByProvider: Record<
+  string,
+  {
+    validate: (address: string) => boolean
+    getAddress: (address: string) => string
+  }
+> = {
+  [IdentityProvider.EVM]: { validate: isAddress, getAddress },
+  [IdentityProvider.SOLANA]: {
+    validate: validateSolAddress,
+    getAddress: (address) => {
+      if (validateSolAddress(address)) {
+        return `${address}SOLANA`
+      } else {
+        throw new Error('Invalid Solana Address')
+      }
+    },
+  },
+}
+
+type LinkAddressModalProps = ModalFunctionalityProps &
+  Pick<ModalProps, 'title' | 'description'> & {
+    identityProvider?: IdentityProvider
+  }
+
+export default function LinkAddressModal({
+  identityProvider = IdentityProvider.EVM,
+  ...props
+}: LinkAddressModalProps) {
+  const [linkedAddress, setLinkedAddress] = useState('')
+  const [linkedAddressError, setLinkedAddressError] = useState('')
   const [isWaitingEvent, setIsWaitingEvent] = useState(false)
 
   const mutationConfigs = {
@@ -48,6 +86,14 @@ export default function LinkEvmAddressModal(
       })
     },
   }
+
+  useEffect(() => {
+    if (props.isOpen) {
+      setLinkedAddress('')
+      setLinkedAddressError('')
+    }
+  }, [props.isOpen])
+
   const {
     mutate: addExternalProvider,
     isLoading: loadingAdding,
@@ -61,44 +107,54 @@ export default function LinkEvmAddressModal(
     error: errorUpdating,
   } = useUpdateExternalProvider(mutationConfigs)
   useToastError(errorAdding || errorUpdating, 'Failed to link Ethereum address')
+  const myAddress = useMyMainAddress()
 
   const isLoading = loadingAdding || loadingUpdating
 
-  const { evmAddress: myEvmAddress, evmAddressProviderId } =
-    useLinkedEvmAddress()
+  const { identityAddress, identityAddressProviderId } = useLinkedAddress(
+    myAddress || '',
+    { enabled: true },
+    identityProvider
+  )
   useEffect(() => {
-    if (props.isOpen && myEvmAddress) {
-      setEvmAddress(myEvmAddress)
+    if (props.isOpen && identityAddress) {
+      setLinkedAddress(identityAddress)
       resetAdding()
       resetUpdating()
     }
-  }, [props.isOpen, myEvmAddress, resetAdding, resetUpdating])
+  }, [props.isOpen, identityAddress, resetAdding, resetUpdating])
 
   const onSubmit = (e: any) => {
     e.preventDefault()
-    if (!evmAddress || !isAddress(evmAddress)) return
-    const checksumAddress = getAddress(evmAddress)
-    if (myEvmAddress) {
+    const { validate, getAddress } = validateFnByProvider[identityProvider]
+
+    if (!linkedAddress || !validate(linkedAddress)) return
+    const checksumAddress = getAddress(linkedAddress)
+
+    if (identityAddress) {
       updateExternalProvider({
-        entityId: evmAddressProviderId,
+        entityId: identityAddressProviderId,
         externalProvider: {
           id: checksumAddress,
-          provider: IdentityProvider.EVM,
+          provider: identityProvider,
         },
       })
     } else {
       addExternalProvider({
         externalProvider: {
           id: checksumAddress,
-          provider: IdentityProvider.EVM,
+          provider: identityProvider,
         },
       })
     }
   }
 
-  const defaultTitle = myEvmAddress
-    ? 'Edit your Ethereum address for rewards'
-    : 'Your Ethereum address for rewards'
+  const networkName =
+    identityProvider === IdentityProvider.EVM ? 'Ethereum' : 'Solana'
+
+  const defaultTitle = identityAddress
+    ? `Edit your ${networkName} address for rewards`
+    : `Your ${networkName} address for rewards`
 
   return (
     <BottomDrawer
@@ -111,22 +167,24 @@ export default function LinkEvmAddressModal(
     >
       <form onSubmit={onSubmit} className='mt-2 flex flex-col gap-6 pb-2'>
         <Input
-          error={evmAddressError}
-          value={evmAddress}
-          placeholder='Your Ethereum address'
+          error={linkedAddressError}
+          value={linkedAddress}
+          placeholder={`Your ${networkName} address`}
           onChange={(e) => {
             const address = e.target.value
-            setEvmAddress(address)
-            if (!isAddress(address)) {
-              setEvmAddressError('Invalid Ethereum Address')
+            setLinkedAddress(address)
+            const { validate } = validateFnByProvider[identityProvider]
+
+            if (!validate(address)) {
+              setLinkedAddressError(`Invalid ${networkName} Address`)
             } else {
-              setEvmAddressError('')
+              setLinkedAddressError('')
             }
           }}
         />
         <Button
           isLoading={isLoading || isWaitingEvent}
-          disabled={!!evmAddressError || !evmAddress}
+          disabled={!!linkedAddressError || !linkedAddress}
           size='lg'
           type='submit'
         >

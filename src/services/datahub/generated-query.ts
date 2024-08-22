@@ -662,6 +662,7 @@ export type IdTimestampPair = {
 export enum IdentityProvider {
   Email = 'EMAIL',
   Evm = 'EVM',
+  Solana = 'SOLANA',
   Facebook = 'FACEBOOK',
   Farcaster = 'FARCASTER',
   Google = 'GOOGLE',

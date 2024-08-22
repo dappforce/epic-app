@@ -1,7 +1,7 @@
 import ProfilePreview from '@/components/ProfilePreview'
 import CommonExtensionModal from '@/components/extensions/common/CommonExtensionModal'
 import SelectInput from '@/components/inputs/SelectInput'
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import { getPostQuery } from '@/services/api/query'
 import { useExtensionModalState } from '@/stores/extension'
 import { useMessageData } from '@/stores/message'
@@ -67,7 +67,7 @@ const DonateForm = ({
 
   const { ownerId } = message?.struct || {}
 
-  const { evmAddress: messageOwnerEvmAddress } = useLinkedEvmAddress(ownerId)
+  const { identityAddress: messageOwnerEvmAddress } = useLinkedAddress(ownerId)
   const amountPreview = getAmountPreview(amount, selectedToken.label)
 
   const commonProps = {
