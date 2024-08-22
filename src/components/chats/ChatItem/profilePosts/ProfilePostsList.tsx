@@ -3,6 +3,7 @@ import Container from '@/components/Container'
 import Loading from '@/components/Loading'
 import ScrollableContainer from '@/components/ScrollableContainer'
 import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
+import useIsMounted from '@/hooks/useIsMounted'
 import { useConfigContext } from '@/providers/config/ConfigProvider'
 import { getPostQuery } from '@/services/api/query'
 import { getPostMetadataQuery } from '@/services/datahub/posts/query'
@@ -69,6 +70,7 @@ function ProfilePostsListContent({
 }: ChatListProps) {
   const { data: postMetadata } = getPostMetadataQuery.useQuery(chatId)
   const app = useMiniAppRaw(true)
+  const isMounted = useIsMounted()
 
   const isDesktop = !isTouchDevice() && !app?.result
 
@@ -91,6 +93,8 @@ function ProfilePostsListContent({
   const isMyChat = chat?.struct.ownerId === myAddress
 
   const renderedMessageQueries = getPostQuery.useQueries(messageIds)
+
+  if (!isMounted) return null
 
   return (
     <div

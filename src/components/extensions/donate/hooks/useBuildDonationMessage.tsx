@@ -1,4 +1,4 @@
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import { SendMessageParams } from '@/services/subsocial/commentIds/types'
 import { useExtensionModalState } from '@/stores/extension'
 import { DonateProperies } from '@subsocial/api/types'
@@ -38,7 +38,7 @@ export function useBuildEvmDonationMessage({
     'subsocial-donations'
   )
   const { address: myEvmAddress } = useAccount()
-  const { evmAddress: evmRecipientAddress } = useLinkedEvmAddress(
+  const { identityAddress: evmRecipientAddress } = useLinkedAddress(
     initialData.recipient
   )
 

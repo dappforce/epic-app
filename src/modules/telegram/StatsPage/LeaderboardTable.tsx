@@ -48,7 +48,7 @@ type LeaderboardTableProps = {
   >
 }
 
-type Data = {
+export type Data = {
   address: string
   rank: number | null
   reward: string
@@ -129,19 +129,7 @@ const LeaderboardTable = ({
         (isLoading ? (
           <Loading title='Loading table data' className='p-7' />
         ) : (
-          <div
-            className='flex flex-col items-center justify-center p-4 text-center'
-            style={{ gridColumn: '1/4' }}
-          >
-            <Image
-              src={MedalsImage}
-              alt=''
-              className='relative w-[70px] max-w-sm'
-            />
-            <span className={cx(mutedTextColorStyles)}>
-              Create great content and get the most likes to show up here!
-            </span>
-          </div>
+          <LeaderboardNoData />
         ))}
       {!!data.length && (
         <div className='flex w-full flex-col'>
@@ -177,6 +165,18 @@ const LeaderboardTable = ({
     </>
   )
 }
+
+export const LeaderboardNoData = () => (
+  <div
+    className='flex flex-col items-center justify-center p-4 text-center'
+    style={{ gridColumn: '1/4' }}
+  >
+    <Image src={MedalsImage} alt='' className='relative w-[70px] max-w-sm' />
+    <span className={cx(mutedTextColorStyles)}>
+      Create great content and get the most likes to show up here!
+    </span>
+  </div>
+)
 
 type UserRewardProps = {
   reward: string

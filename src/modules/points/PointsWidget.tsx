@@ -11,11 +11,11 @@ import Card from '@/components/Card'
 import LinkText from '@/components/LinkText'
 import Name from '@/components/Name'
 import Toast from '@/components/Toast'
-import LinkEvmAddressModal from '@/components/modals/LinkEvmAddressModal'
+import LinkAddressModal from '@/components/modals/LinkEvmAddressModal'
 import RewardPerDayModal from '@/components/modals/RewardPerDayModal'
 import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
 import useIsMounted from '@/hooks/useIsMounted'
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
 import { truncateAddress } from '@/utils/account'
@@ -227,7 +227,7 @@ function PointsDrawerContent({
         closeModal={() => setOpenProfileModal(false)}
         isOpen={openProfileModal}
       />
-      <LinkEvmAddressModal
+      <LinkAddressModal
         isOpen={openEvmLinkModal}
         closeModal={() => setOpenEvmLinkModal(false)}
       />
@@ -249,7 +249,7 @@ const UserStatsSection = ({
   const sendEvent = useSendEvent()
   const [openRewardModal, setOpenRewardModal] = useState(false)
 
-  const { evmAddress, isLoading } = useLinkedEvmAddress()
+  const { identityAddress: evmAddress, isLoading } = useLinkedAddress()
 
   return (
     <>
@@ -446,7 +446,7 @@ const DrawerLinks = ({
           </Button>
         </Card>
       </LinkWrapper>
-      <LinkWrapper close={onClose} href='/tg'>
+      <LinkWrapper close={onClose} href='/tg/memes'>
         <Card className={cardStyles}>
           <Image src={Laugh} alt='' className='h-12 w-12 flex-shrink-0' />
           <div className='flex flex-col gap-1'>

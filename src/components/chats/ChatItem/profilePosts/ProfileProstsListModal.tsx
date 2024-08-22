@@ -156,13 +156,6 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
                 }}
               >
                 <Name address={address} className='!text-text' clipText />
-                {/* {isAdmin ? (
-                  <UnapprovedMemeCount
-                    className='flex-shrink-0 bg-transparent p-0 text-text-muted'
-                    address={address}
-                    chatId={chatId}
-                  />
-                ) : ( */}
                 <span className='flex items-center gap-1 text-xs font-medium leading-[normal] text-slate-400'>
                   <span>Memes:</span>
                   <SkeletonFallback
