@@ -19,6 +19,9 @@
     "codegen:datahub-query": "graphql-codegen --require dotenv/config --config codegen-datahub-query.ts",
     "codegen:datahub-queue": "graphql-codegen --require dotenv/config --config codegen-datahub-queue.ts"
   },
+  "resolutions": {
+    "@babel/runtime": "^7.24.6"
+  },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.2.2",
     "@amplitude/node": "^1.10.2",
