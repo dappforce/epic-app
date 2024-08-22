@@ -4,7 +4,7 @@ import Name from '@/components/Name'
 type LeaderboardPreviewItemProps = {
   address: string
   desc?: React.ReactNode
-  value: React.ReactNode
+  value?: React.ReactNode
   showDivider?: boolean
 }
 
