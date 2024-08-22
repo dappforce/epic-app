@@ -65,8 +65,10 @@ export default function Name({
         href={telegramLink}
         ref={ref}
         onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
+          if (withProfileModal || props.onClick) {
+            e.preventDefault()
+            e.stopPropagation()
+          }
 
           withProfileModal && openModal({ address })
 

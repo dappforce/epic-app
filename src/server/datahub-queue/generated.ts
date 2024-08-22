@@ -161,6 +161,11 @@ export type LinkedIdentityExternalProviderEvmProofMsgResponse = {
   message: Scalars['String']['output'];
 };
 
+export type LinkedIdentityExternalProviderSolanaProofMsgResponse = {
+  __typename?: 'LinkedIdentityExternalProviderSolanaProofMsgResponse';
+  message: Scalars['String']['output'];
+};
+
 export type ModerationCallInput = {
   callData?: InputMaybe<SocialCallDataInput>;
   dataType: SocialEventDataType;
@@ -171,6 +176,7 @@ export type ModerationCallInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activeStakingCreateFarcasterFrameLike: IngestDataResponseDto;
   activeStakingCreateSuperLike: IngestDataResponseDto;
   addNewLinkedIdentityExternalProvider: IngestDataResponseDto;
   addPostView: IngestDataResponseDto;
@@ -188,6 +194,7 @@ export type Mutation = {
   ingestPersistentDataSquid: IngestPersistentDataFromSquidResponseDto;
   initLinkedIdentity: IngestDataResponseDto;
   linkedIdentityExternalProviderEvmProofMsg: LinkedIdentityExternalProviderEvmProofMsgResponse;
+  linkedIdentityExternalProviderSolanaProofMsg: LinkedIdentityExternalProviderSolanaProofMsgResponse;
   moderationAddContextToOrganization: IngestDataResponseDto;
   moderationBlockResource: IngestDataResponseDto;
   moderationExecuteForceCall: IngestDataResponseDto;
@@ -200,6 +207,11 @@ export type Mutation = {
   updatePostBlockchainSyncStatus: IngestDataResponseDto;
   updatePostOptimistic: IngestDataResponseDto;
   updateSpaceOffChain: IngestDataResponseDto;
+};
+
+
+export type MutationActiveStakingCreateFarcasterFrameLikeArgs = {
+  args: CreateMutateActiveStakingSuperLikeInput;
 };
 
 
@@ -284,6 +296,11 @@ export type MutationInitLinkedIdentityArgs = {
 
 
 export type MutationLinkedIdentityExternalProviderEvmProofMsgArgs = {
+  address: Scalars['String']['input'];
+};
+
+
+export type MutationLinkedIdentityExternalProviderSolanaProofMsgArgs = {
   address: Scalars['String']['input'];
 };
 
@@ -427,6 +444,7 @@ export enum SocialCallName {
   SetOuterValue = 'set_outer_value',
   SetPaymentBeneficiary = 'set_payment_beneficiary',
   SetProfile = 'set_profile',
+  SynthActiveStakingCreateFarcasterFrameLike = 'synth_active_staking_create_farcaster_frame_like',
   SynthActiveStakingCreateSuperLike = 'synth_active_staking_create_super_like',
   SynthActiveStakingDeleteSuperLike = 'synth_active_staking_delete_super_like',
   SynthAddLinkedIdentityExternalProvider = 'synth_add_linked_identity_external_provider',
@@ -528,6 +546,13 @@ export type LinkIdentityMutationVariables = Exact<{
 
 
 export type LinkIdentityMutation = { __typename?: 'Mutation', initLinkedIdentity: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
+
+export type CreateFramesLikeMutationVariables = Exact<{
+  args: CreateMutateActiveStakingSuperLikeInput;
+}>;
+
+
+export type CreateFramesLikeMutation = { __typename?: 'Mutation', activeStakingCreateFarcasterFrameLike: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
 
 export type AddExternalProviderToIdentityMutationVariables = Exact<{
   args: CreateMutateLinkedIdentityInput;
@@ -667,6 +692,15 @@ export const ClaimDailyReward = gql`
 export const LinkIdentity = gql`
     mutation LinkIdentity($args: CreateMutateLinkedIdentityInput!) {
   initLinkedIdentity(args: $args) {
+    processed
+    callId
+    message
+  }
+}
+    `;
+export const CreateFramesLike = gql`
+    mutation CreateFramesLike($args: CreateMutateActiveStakingSuperLikeInput!) {
+  activeStakingCreateFarcasterFrameLike(args: $args) {
     processed
     callId
     message

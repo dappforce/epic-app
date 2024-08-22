@@ -343,3 +343,17 @@ export function useMyGrillAddress() {
 export function getIsLoggedIn() {
   return !!accountStorage.get()
 }
+
+export async function signMessage(message: string) {
+  const { address, signer } = useMyAccount.getState()
+
+  if (!address) {
+    throw new Error('No account connected')
+  }
+
+  if (!signer) {
+    throw new Error('No signer connected')
+  }
+
+  return (await signer.signMessage(message)).toString()
+}
