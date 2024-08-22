@@ -68,7 +68,7 @@ function MenuPageContent({ setPage }: ContentProps) {
       },
     ],
     [
-      { title: 'Leaderboards', icon: '🏆', href: '' },
+      { title: 'Leaderboards', icon: '🏆', href: '/tg/leaderboards' },
       { title: 'Airdrop', icon: '💰', href: '/tg/airdrop' },
       { title: 'Premium Features', icon: '🎩', href: '/tg/premium' },
       { title: 'Tap The Cat', icon: '🐈', href: '/tg/tap' },

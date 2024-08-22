@@ -10,12 +10,11 @@ import { getUserReferralStatsQuery } from '@/services/datahub/leaderboard/query'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
 import { isTouchDevice } from '@/utils/device'
-import { copyToClipboard, formatNumber } from '@/utils/strings'
+import { copyToClipboard } from '@/utils/strings'
 import { initUtils } from '@tma.js/sdk-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import { MdCheck, MdOutlineContentCopy } from 'react-icons/md'
-import SkeletonFallback from '../../../components/SkeletonFallback'
 import ReferralTable from './ReferralTable'
 import ReferrerStats from './ReferrerStats'
 
@@ -131,41 +130,6 @@ const FriendsPageContent = () => {
           {isCopied ? <MdCheck /> : <MdOutlineContentCopy />}
         </Button>
       </div>
-    </div>
-  )
-}
-
-type ReferralCardsProps = {
-  refCount: number
-  pointsEarned: string
-  isLoading?: boolean
-}
-
-const ReferralCards = ({
-  refCount,
-  pointsEarned,
-  isLoading,
-}: ReferralCardsProps) => {
-  return (
-    <div className='flex items-center gap-4'>
-      <Card className='flex flex-col gap-2 bg-background-light px-4'>
-        <SkeletonFallback isLoading={isLoading} className='w-8'>
-          <span className='text-2xl font-bold'>{formatNumber(refCount)}</span>
-        </SkeletonFallback>
-        <span className='text-sm font-medium text-slate-400'>
-          Points earned from your friends activity
-        </span>
-      </Card>
-      <Card className='flex flex-col gap-2 bg-background-light px-4'>
-        <SkeletonFallback isLoading={isLoading} className='w-8'>
-          <span className='text-2xl font-bold'>
-            {formatNumber(pointsEarned)}
-          </span>
-        </SkeletonFallback>
-        <span className='text-sm font-medium text-slate-400'>
-          Points earned from {formatNumber(refCount)} invited friends
-        </span>
-      </Card>
     </div>
   )
 }

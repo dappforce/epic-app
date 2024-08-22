@@ -14,8 +14,6 @@ const ContestPreview = () => {
 
   const data = items?.filter(isDef).slice(0, 3) || []
 
-  console.log(data)
-
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between gap-2'>
