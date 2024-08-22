@@ -1,12 +1,16 @@
-import usePaginatedMessageIds from '@/components/chats/hooks/usePaginatedMessageIds'
-import { getPostExtensionProperties } from '@/components/extensions/utils'
 import LinkText from '@/components/LinkText'
 import MediaLoader from '@/components/MediaLoader'
+import { Skeleton } from '@/components/SkeletonFallback'
+import usePaginatedMessageIds from '@/components/chats/hooks/usePaginatedMessageIds'
+import { getPostExtensionProperties } from '@/components/extensions/utils'
 import { getPostQuery } from '@/services/api/query'
+import { getPostsCountByTodayQuery } from '@/services/datahub/posts/query'
 import { cx } from '@/utils/class-names'
 import { PostData } from '@subsocial/api/types'
+import { isEmptyArray } from '@subsocial/utils'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import SkeletonFallback from '../../../components/SkeletonFallback'
 
 const memeCardSize = 'w-[150px] h-[160px] min-w-[150px]'
 
@@ -22,9 +26,14 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
     onlyDisplayUnapprovedMessages: false,
   })
 
+  const { data: postsCount, isLoading: isPostsCountLoading } =
+    getPostsCountByTodayQuery.useQuery({ chatId })
+
   useEffect(() => {
-    loadMore()
-  }, [loadMore])
+    if (isEmptyArray(messageIds)) {
+      loadMore()
+    }
+  }, [loadMore, messageIds])
 
   const renderedMessageQueries = getPostQuery.useQueries(messageIds)
 
@@ -33,25 +42,43 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
       <div className='flex items-center justify-between gap-2'>
         <div className='flex items-center gap-2'>
           <span className='text-lg font-bold'>Memes</span>
-          <span className='font-semibold text-slate-400'>+345 today</span>
+          <SkeletonFallback
+            isLoading={isPostsCountLoading}
+            className='max-w-14'
+          >
+            <span className='font-semibold text-slate-400'>
+              +{postsCount} today
+            </span>
+          </SkeletonFallback>
         </div>
         <LinkText variant='primary' href='/tg/memes'>
           See all
         </LinkText>
       </div>
       <div className='w-full overflow-hidden'>
-        <div className='flex items-center gap-3 overflow-auto'>
-          {renderedMessageQueries
-            .slice(0, 5)
-            .map(({ data: message }, index) => {
-              if (!message) return null
+        <div className='no-scroll flex items-center gap-3 overflow-auto'>
+          {isLoading && isEmptyArray(messageIds) ? (
+            <MemesPreviewSkeleton />
+          ) : (
+            renderedMessageQueries
+              .slice(0, 5)
+              .map(({ data: message, isLoading }, index) => {
+                if (!message) return null
 
-              return <MemesPreviewItem key={index} message={message} />
-            })}
+                return isLoading ? (
+                  <Skeleton
+                    key={index}
+                    className={cx('!my-0 rounded-xl', memeCardSize)}
+                  />
+                ) : (
+                  <MemesPreviewItem key={index} message={message} />
+                )
+              })
+          )}
           <Link
             href='/tg/memes'
             className={cx(
-              'flex items-center justify-center rounded-xl bg-slate-700',
+              'flex items-center justify-center rounded-xl bg-slate-800',
               memeCardSize
             )}
           >
@@ -60,6 +87,18 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
         </div>
       </div>
     </div>
+  )
+}
+
+const MemesPreviewSkeleton = () => {
+  const items = Array.from({ length: 5 })
+
+  return (
+    <>
+      {items.map((_, i) => (
+        <Skeleton key={i} className={cx('!my-0 rounded-xl', memeCardSize)} />
+      ))}
+    </>
   )
 }
 
@@ -74,15 +113,17 @@ const MemesPreviewItem = ({ message }: { message: PostData }) => {
   )
 
   return (
-    <MediaLoader
-      containerClassName={cx(
-        'overflow-hidden rounded-xl flex-1 justify-center flex items-center cursor-pointer',
-        memeCardSize
-      )}
-      placeholderClassName={cx('w-full aspect-square')}
-      className='object-contain '
-      src={imageExt?.image}
-    />
+    <Link href='/tg/memes' className={memeCardSize}>
+      <MediaLoader
+        containerClassName={cx(
+          'overflow-hidden rounded-xl flex-1 justify-center flex items-center cursor-pointer',
+          memeCardSize
+        )}
+        placeholderClassName={cx('w-full aspect-square')}
+        className='object-contain '
+        src={imageExt?.image}
+      />
+    </Link>
   )
 }
 

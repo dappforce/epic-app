@@ -1,5 +1,7 @@
 import Button from '@/components/Button'
 import Modal from '@/components/modals/Modal'
+import { useRemoveMyLinkedIdentity } from '@/services/api/mutation'
+import { useMyAccount } from '@/stores/my-account'
 import { useEffect, useState } from 'react'
 
 type ModalProps = {
@@ -15,6 +17,14 @@ export const DeleteAccountConfirmationModal = ({
 }: ModalProps) => {
   const [isDisabled, setIsDisabled] = useState(true)
   const [timeLeft, setTimeLeft] = useState(5)
+
+  const { mutate } = useRemoveMyLinkedIdentity({
+    onSuccess: () => {
+      useMyAccount.getState().logout()
+      window.location.reload()
+      onClose()
+    },
+  })
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -66,7 +76,9 @@ export const DeleteAccountConfirmationModal = ({
             size={'lg'}
             disabled={isDisabled}
             className='w-full px-0'
-            onClick={onClose}
+            onClick={() => {
+              mutate(null)
+            }}
           >
             {isDisabled ? `⏳ ${timeLeft} seconds` : 'Yes, Delete'}
           </Button>
@@ -104,7 +116,10 @@ export const CrearLocalData = ({ isOpen, onClose }: ModalProps) => {
             variant='redOutline'
             size={'lg'}
             className='w-full px-0'
-            onClick={onClose}
+            onClick={() => {
+              localStorage.clear()
+              window.location.reload()
+            }}
           >
             Yes, Clear
           </Button>
