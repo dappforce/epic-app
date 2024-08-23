@@ -44,7 +44,7 @@ const validateFnByProvider: Record<
     validate: validateSolAddress,
     getAddress: (address) => {
       if (validateSolAddress(address)) {
-        return `${address}SOLANA`
+        return address
       } else {
         throw new Error('Invalid Solana Address')
       }
