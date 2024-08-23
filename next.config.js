@@ -5,7 +5,7 @@ const runtimeCaching = require('./cache')
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV !== 'production',
-  buildExcludes: [/chunks\/.*$/, /media\/.*$/, /middleware-manifest.json$/],
+  buildExcludes: [/chunks\/.*$/, /media\/.*$/],
   publicExcludes: ['!splashscreens/**/*', '!screenshots/**/*'],
   runtimeCaching,
 })
