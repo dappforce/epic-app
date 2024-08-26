@@ -327,6 +327,90 @@ export type CommentDataShort = {
   summary?: Maybe<Scalars['String']['output']>
 }
 
+export type ContainerConfigMetadata = {
+  __typename?: 'ContainerConfigMetadata'
+  coverImage?: Maybe<Scalars['String']['output']>
+  description?: Maybe<Scalars['String']['output']>
+  image?: Maybe<Scalars['String']['output']>
+  isExternalTokenRewardPool?: Maybe<Scalars['Boolean']['output']>
+  rewardPoolAmount?: Maybe<Scalars['String']['output']>
+  title?: Maybe<Scalars['String']['output']>
+  winnersNumber?: Maybe<Scalars['Int']['output']>
+}
+
+export type ContentContainerConfig = {
+  __typename?: 'ContentContainerConfig'
+  accessThresholdExternalTokenAmount?: Maybe<Scalars['String']['output']>
+  accessThresholdPointsAmount?: Maybe<Scalars['String']['output']>
+  addressBlockOneTimePenaltyPointsAmount?: Maybe<Scalars['String']['output']>
+  closedAt?: Maybe<Scalars['DateTime']['output']>
+  containerType: ContentContainerType
+  createdAtTime: Scalars['DateTime']['output']
+  expirationWindowFrom?: Maybe<Scalars['DateTime']['output']>
+  expirationWindowTo?: Maybe<Scalars['DateTime']['output']>
+  externalToken?: Maybe<ContentContainerExternalToken>
+  hidden: Scalars['Boolean']['output']
+  id: Scalars['String']['output']
+  isCreatorModerationPenalty?: Maybe<Scalars['Boolean']['output']>
+  isDeductionRewardsOnModeration?: Maybe<Scalars['Boolean']['output']>
+  isExpirable: Scalars['Boolean']['output']
+  isPostModerationPenalty?: Maybe<Scalars['Boolean']['output']>
+  likeThresholdExternalTokenAmount?: Maybe<Scalars['String']['output']>
+  metadata: ContainerConfigMetadata
+  openAt?: Maybe<Scalars['DateTime']['output']>
+  postBlockOneTimePenaltyPointsAmount?: Maybe<Scalars['String']['output']>
+  rootPost: Post
+  slug: Scalars['String']['output']
+  updatedAtTime?: Maybe<Scalars['DateTime']['output']>
+}
+
+export type ContentContainerConfigsArgsInputDto = {
+  filter: ContentContainerConfigsFilter
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<QueryOrder>
+  pageSize?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type ContentContainerConfigsFilter = {
+  containerType?: InputMaybe<ContentContainerType>
+  hidden?: InputMaybe<Scalars['Boolean']['input']>
+  isClosed?: InputMaybe<Scalars['Boolean']['input']>
+  isExpirable?: InputMaybe<Scalars['Boolean']['input']>
+  isOpen?: InputMaybe<Scalars['Boolean']['input']>
+  rootPostIds?: InputMaybe<Array<Scalars['String']['input']>>
+}
+
+export type ContentContainerConfigsResourcesResponseDto = {
+  __typename?: 'ContentContainerConfigsResourcesResponseDto'
+  data: Array<ContentContainerConfig>
+  offset?: Maybe<Scalars['Int']['output']>
+  pageSize?: Maybe<Scalars['Int']['output']>
+  total?: Maybe<Scalars['Int']['output']>
+}
+
+export type ContentContainerExternalToken = {
+  __typename?: 'ContentContainerExternalToken'
+  address: Scalars['String']['output']
+  chain: ContentContainerExternalTokenChain
+  decimals: Scalars['Int']['output']
+  id: Scalars['String']['output']
+  label: Scalars['String']['output']
+  name: Scalars['String']['output']
+  relatedContentContainers: Array<ContentContainerConfig>
+}
+
+export enum ContentContainerExternalTokenChain {
+  Ethereum = 'ETHEREUM',
+  Solana = 'SOLANA',
+}
+
+export enum ContentContainerType {
+  CommunityChannel = 'COMMUNITY_CHANNEL',
+  Contest = 'CONTEST',
+  PublicChannel = 'PUBLIC_CHANNEL',
+}
+
 export type ContentExtension = {
   __typename?: 'ContentExtension'
   amount?: Maybe<Scalars['String']['output']>
@@ -772,6 +856,7 @@ export type LinkedIdentityExternalProvider = {
   isAutoInitialized: Scalars['Boolean']['output']
   linkedIdentity: LinkedIdentity
   provider: IdentityProvider
+  synthetic: Scalars['Boolean']['output']
   updatedAtTime?: Maybe<Scalars['DateTime']['output']>
   username?: Maybe<Scalars['String']['output']>
 }
@@ -1053,6 +1138,7 @@ export type Post = {
   canonical?: Maybe<Scalars['String']['output']>
   /** content CID */
   content?: Maybe<Scalars['String']['output']>
+  contentContainerConfig?: Maybe<ContentContainerConfig>
   createdAtBlock?: Maybe<Scalars['Int']['output']>
   createdAtTime?: Maybe<Scalars['DateTime']['output']>
   createdByAccount: Account
@@ -1196,6 +1282,7 @@ export type Query = {
   activeStakingSuperLikesNumberGoal: Scalars['Int']['output']
   activeStakingTokenomicMetadata: TokenomicMetadataResponse
   activeStakingTotalActivityMetricsForFixedPeriod: TotalActivityMetricsForFixedPeriodResponseDto
+  contentContainerConfigs: ContentContainerConfigsResourcesResponseDto
   domains: DomainsResponse
   gamificationEntranceDailyRewardSequence?: Maybe<GamificationEntranceDailyRewardsSequence>
   gamificationTappingActivityStatsByDate: TappingActivityStatsByDateResponseDto
@@ -1301,6 +1388,10 @@ export type QueryActiveStakingSuperLikesArgs = {
 
 export type QueryActiveStakingTotalActivityMetricsForFixedPeriodArgs = {
   args: TotalActivityMetricsForFixedPeriodInput
+}
+
+export type QueryContentContainerConfigsArgs = {
+  args: ContentContainerConfigsArgsInputDto
 }
 
 export type QueryDomainsArgs = {
@@ -1695,6 +1786,7 @@ export enum SocialCallName {
   SynthAddLinkedIdentityExternalProvider = 'synth_add_linked_identity_external_provider',
   SynthAddPostView = 'synth_add_post_view',
   SynthAddPostViewsBatch = 'synth_add_post_views_batch',
+  SynthCreateContentContainerConfig = 'synth_create_content_container_config',
   SynthCreateLinkedIdentity = 'synth_create_linked_identity',
   SynthCreatePostTxFailed = 'synth_create_post_tx_failed',
   SynthCreatePostTxRetry = 'synth_create_post_tx_retry',
@@ -1718,6 +1810,7 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthUpdateContentContainerConfig = 'synth_update_content_container_config',
   SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
   SynthUpdatePostTxRetry = 'synth_update_post_tx_retry',
@@ -2214,6 +2307,46 @@ export type SubscribeBalancesSubscription = {
   }
 }
 
+export type GetContentContainersQueryVariables = Exact<{
+  args: ContentContainerConfigsArgsInputDto
+}>
+
+export type GetContentContainersQuery = {
+  __typename?: 'Query'
+  contentContainerConfigs: {
+    __typename?: 'ContentContainerConfigsResourcesResponseDto'
+    total?: number | null
+    offset?: number | null
+    data: Array<{
+      __typename?: 'ContentContainerConfig'
+      id: string
+      metadata: {
+        __typename?: 'ContainerConfigMetadata'
+        title?: string | null
+        description?: string | null
+        coverImage?: string | null
+        image?: string | null
+      }
+    }>
+  }
+}
+
+export type GetSocialProfileQueryVariables = Exact<{
+  addresses: Array<Scalars['String']['input']> | Scalars['String']['input']
+}>
+
+export type GetSocialProfileQuery = {
+  __typename?: 'Query'
+  socialProfiles: {
+    __typename?: 'SocialProfilesResponse'
+    data: Array<{
+      __typename?: 'SocialProfile'
+      id: string
+      allowedCreateCommentRootPostIds: Array<string>
+    }>
+  }
+}
+
 export type GetSuperLikeCountsQueryVariables = Exact<{
   postIds: Array<Scalars['String']['input']> | Scalars['String']['input']
 }>
@@ -2492,22 +2625,6 @@ export type GetLinkedIdentitiesFromProviderIdQuery = {
       enabled: boolean
     }> | null
   } | null
-}
-
-export type GetSocialProfileQueryVariables = Exact<{
-  addresses: Array<Scalars['String']['input']> | Scalars['String']['input']
-}>
-
-export type GetSocialProfileQuery = {
-  __typename?: 'Query'
-  socialProfiles: {
-    __typename?: 'SocialProfilesResponse'
-    data: Array<{
-      __typename?: 'SocialProfile'
-      id: string
-      allowedCreateCommentRootPostIds: Array<string>
-    }>
-  }
 }
 
 export type SubscribeIdentitySubscriptionVariables = Exact<{
@@ -3493,6 +3610,33 @@ export const SubscribeBalances = gql`
     }
   }
 `
+export const GetContentContainers = gql`
+  query GetContentContainers($args: ContentContainerConfigsArgsInputDto!) {
+    contentContainerConfigs(args: $args) {
+      data {
+        id
+        metadata {
+          title
+          description
+          coverImage
+          image
+        }
+      }
+      total
+      offset
+    }
+  }
+`
+export const GetSocialProfile = gql`
+  query GetSocialProfile($addresses: [String!]!) {
+    socialProfiles(args: { where: { substrateAddresses: $addresses } }) {
+      data {
+        id
+        allowedCreateCommentRootPostIds
+      }
+    }
+  }
+`
 export const GetSuperLikeCounts = gql`
   query GetSuperLikeCounts($postIds: [String!]!) {
     activeStakingSuperLikeCountsByPost(args: { postPersistentIds: $postIds }) {
@@ -3713,16 +3857,6 @@ export const GetLinkedIdentitiesFromProviderId = gql`
       id
       externalProviders {
         enabled
-      }
-    }
-  }
-`
-export const GetSocialProfile = gql`
-  query GetSocialProfile($addresses: [String!]!) {
-    socialProfiles(args: { where: { substrateAddresses: $addresses } }) {
-      data {
-        id
-        allowedCreateCommentRootPostIds
       }
     }
   }

@@ -7,8 +7,13 @@ import Container from '@/components/Container'
 import MediaLoader from '@/components/MediaLoader'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import PointsWidget from '@/modules/points/PointsWidget'
+import {
+  ContentContainer,
+  getContentContainersQuery,
+} from '@/services/datahub/content-containers/query'
 import { cx } from '@/utils/class-names'
 import Image, { ImageProps } from 'next/image'
+import Link from 'next/link'
 import { FaChevronRight } from 'react-icons/fa6'
 
 export default function ChannelsPage() {
@@ -31,25 +36,37 @@ export default function ChannelsPage() {
 }
 
 function ChannelsList() {
+  const { data } = getContentContainersQuery.useQuery({
+    filter: { hidden: false },
+  })
+
   return (
     <div className='flex flex-col gap-2'>
-      <Channel />
-      <Channel />
-      <Channel />
-      <Channel />
+      {data?.data.map((channel) => (
+        <Channel key={channel.id} channel={channel} />
+      ))}
     </div>
   )
 }
-function Channel() {
+function Channel({ channel }: { channel: ContentContainer }) {
   return (
-    <div className='flex items-center gap-2.5 rounded-xl bg-background-light px-2.5 py-3.5'>
-      <Image src={Author2} alt='' className='h-12 w-12 rounded-full' />
+    <Link
+      href={`/tg/channels/${channel.id}`}
+      className='flex items-center gap-2.5 rounded-xl bg-background-light px-2.5 py-3.5 transition active:bg-background-lighter'
+    >
+      <Image
+        src={channel.metadata.image ?? ''}
+        alt=''
+        width={100}
+        height={100}
+        className='h-12 w-12 rounded-full object-cover'
+      />
       <div className='flex flex-col gap-1.5'>
-        <span className='font-bold'>General</span>
+        <span className='font-bold'>{channel.metadata.title}</span>
         <span className='text-sm font-medium text-text-primary'>+23 memes</span>
       </div>
       <FaChevronRight className='ml-auto mr-1.5 text-xl text-text-muted' />
-    </div>
+    </Link>
   )
 }
 
@@ -91,7 +108,11 @@ function TopMeme({
         enableMaxHeight={false}
       />
       <div className='absolute bottom-2.5 left-2.5 flex gap-1 rounded-full bg-background-light p-0.5 pr-1.5'>
-        <Image src={authorImage} alt='' className='h-5 w-5 rounded-full' />
+        <Image
+          src={authorImage}
+          alt=''
+          className='h-5 w-5 rounded-full object-cover'
+        />
         <span className='text-sm font-medium'>{author}</span>
       </div>
     </div>
