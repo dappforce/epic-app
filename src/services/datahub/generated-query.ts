@@ -375,6 +375,7 @@ export type ContentContainerConfigsArgsInputDto = {
 export type ContentContainerConfigsFilter = {
   containerType?: InputMaybe<ContentContainerType>
   hidden?: InputMaybe<Scalars['Boolean']['input']>
+  ids?: InputMaybe<Array<Scalars['String']['input']>>
   isClosed?: InputMaybe<Scalars['Boolean']['input']>
   isExpirable?: InputMaybe<Scalars['Boolean']['input']>
   isOpen?: InputMaybe<Scalars['Boolean']['input']>
@@ -395,9 +396,9 @@ export type ContentContainerExternalToken = {
   chain: ContentContainerExternalTokenChain
   decimals: Scalars['Int']['output']
   id: Scalars['String']['output']
-  label: Scalars['String']['output']
   name: Scalars['String']['output']
   relatedContentContainers: Array<ContentContainerConfig>
+  symbol: Scalars['String']['output']
 }
 
 export enum ContentContainerExternalTokenChain {
@@ -811,6 +812,7 @@ export type InitModeratorInputDto = {
 
 export type IsBalanceSufficientForSocialActionInput = {
   address: Scalars['String']['input']
+  containerId?: InputMaybe<Scalars['String']['input']>
   socialAction: SocialAction
 }
 
@@ -1854,6 +1856,9 @@ export type SocialProfileBalances = {
   activeStakingTempReward: Scalars['String']['output']
   activeStakingTempToken: Scalars['String']['output']
   activeStakingTempTokenInitial: Scalars['String']['output']
+  externalTokenBalances?: Maybe<
+    Array<SocialProfileExternalTokenBalanceBalances>
+  >
   id: Scalars['String']['output']
 }
 
@@ -1865,6 +1870,14 @@ export type SocialProfileBalancesSubscriptionPayload = {
   __typename?: 'SocialProfileBalancesSubscriptionPayload'
   entity: SocialProfileBalances
   event: DataHubSubscriptionEventEnum
+}
+
+export type SocialProfileExternalTokenBalanceBalances = {
+  __typename?: 'SocialProfileExternalTokenBalanceBalances'
+  amount: Scalars['String']['output']
+  externalToken: ContentContainerExternalToken
+  id: Scalars['String']['output']
+  socialProfileBalance: SocialProfileBalances
 }
 
 export type SocialProfileInput = {
@@ -2331,22 +2344,6 @@ export type GetContentContainersQuery = {
   }
 }
 
-export type GetSocialProfileQueryVariables = Exact<{
-  addresses: Array<Scalars['String']['input']> | Scalars['String']['input']
-}>
-
-export type GetSocialProfileQuery = {
-  __typename?: 'Query'
-  socialProfiles: {
-    __typename?: 'SocialProfilesResponse'
-    data: Array<{
-      __typename?: 'SocialProfile'
-      id: string
-      allowedCreateCommentRootPostIds: Array<string>
-    }>
-  }
-}
-
 export type GetSuperLikeCountsQueryVariables = Exact<{
   postIds: Array<Scalars['String']['input']> | Scalars['String']['input']
 }>
@@ -2625,6 +2622,22 @@ export type GetLinkedIdentitiesFromProviderIdQuery = {
       enabled: boolean
     }> | null
   } | null
+}
+
+export type GetSocialProfileQueryVariables = Exact<{
+  addresses: Array<Scalars['String']['input']> | Scalars['String']['input']
+}>
+
+export type GetSocialProfileQuery = {
+  __typename?: 'Query'
+  socialProfiles: {
+    __typename?: 'SocialProfilesResponse'
+    data: Array<{
+      __typename?: 'SocialProfile'
+      id: string
+      allowedCreateCommentRootPostIds: Array<string>
+    }>
+  }
 }
 
 export type SubscribeIdentitySubscriptionVariables = Exact<{
@@ -3627,16 +3640,6 @@ export const GetContentContainers = gql`
     }
   }
 `
-export const GetSocialProfile = gql`
-  query GetSocialProfile($addresses: [String!]!) {
-    socialProfiles(args: { where: { substrateAddresses: $addresses } }) {
-      data {
-        id
-        allowedCreateCommentRootPostIds
-      }
-    }
-  }
-`
 export const GetSuperLikeCounts = gql`
   query GetSuperLikeCounts($postIds: [String!]!) {
     activeStakingSuperLikeCountsByPost(args: { postPersistentIds: $postIds }) {
@@ -3857,6 +3860,16 @@ export const GetLinkedIdentitiesFromProviderId = gql`
       id
       externalProviders {
         enabled
+      }
+    }
+  }
+`
+export const GetSocialProfile = gql`
+  query GetSocialProfile($addresses: [String!]!) {
+    socialProfiles(args: { where: { substrateAddresses: $addresses } }) {
+      data {
+        id
+        allowedCreateCommentRootPostIds
       }
     }
   }

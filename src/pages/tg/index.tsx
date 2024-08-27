@@ -40,7 +40,7 @@ export const getStaticProps = getCommonStaticProps<AppCommonProps>(
   }),
   async () => {
     const client = new QueryClient()
-    await Promise.all([
+    await Promise.allSettled([
       prefetchChatData(client, env.NEXT_PUBLIC_MAIN_CHAT_ID),
       prefetchChatData(client, env.NEXT_PUBLIC_CONTEST_CHAT_ID),
       prefetchBlockedEntities(
