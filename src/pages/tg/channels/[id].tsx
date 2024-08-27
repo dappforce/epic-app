@@ -1,7 +1,8 @@
 import ChannelContentPage from '@/modules/telegram/channels/ChannelContentPage'
+import { AppCommonProps } from '@/pages/_app'
 import { getContentContainersQuery } from '@/services/datahub/content-containers/query'
 import { getCommonStaticProps } from '@/utils/page'
-import { QueryClient } from '@tanstack/react-query'
+import { dehydrate, QueryClient } from '@tanstack/react-query'
 
 export function getStaticPaths() {
   return {
@@ -10,7 +11,7 @@ export function getStaticPaths() {
   }
 }
 
-export const getStaticProps = getCommonStaticProps(
+export const getStaticProps = getCommonStaticProps<AppCommonProps>(
   () => ({}),
   async (context) => {
     const containerId = context.params?.id as string
@@ -28,6 +29,7 @@ export const getStaticProps = getCommonStaticProps(
     return {
       props: {
         containerId,
+        dehydratedState: dehydrate(client),
       },
     }
   }
