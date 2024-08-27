@@ -2333,6 +2333,7 @@ export type GetContentContainersQuery = {
     data: Array<{
       __typename?: 'ContentContainerConfig'
       id: string
+      rootPost: { __typename?: 'Post'; id: string }
       metadata: {
         __typename?: 'ContainerConfigMetadata'
         title?: string | null
@@ -3628,6 +3629,9 @@ export const GetContentContainers = gql`
     contentContainerConfigs(args: $args) {
       data {
         id
+        rootPost {
+          id
+        }
         metadata {
           title
           description

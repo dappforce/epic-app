@@ -19,7 +19,7 @@ export const getStaticProps = getCommonStaticProps(
     const client = new QueryClient()
     try {
       await getContentContainersQuery.fetchQuery(client, {
-        filter: { hidden: false },
+        filter: { ids: [containerId], hidden: false },
       })
     } catch (err) {
       console.error('Error prefetching channel detail page', err)

@@ -24,7 +24,7 @@ export function ChannelContentPageProvider({
   containerId: string
 }) {
   const { data, isLoading } = getContentContainersQuery.useQuery({
-    filter: { hidden: false },
+    filter: { ids: [containerId], hidden: false },
   })
   const container = data?.data?.[0]
 

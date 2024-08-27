@@ -12,6 +12,9 @@ const GET_CONTENT_CONTAINERS = gql`
     contentContainerConfigs(args: $args) {
       data {
         id
+        rootPost {
+          id
+        }
         metadata {
           title
           description

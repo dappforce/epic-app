@@ -1,8 +1,8 @@
 import Container from '@/components/Container'
 import SkeletonFallback from '@/components/SkeletonFallback'
 import TabButtons from '@/components/TabButtons'
+import MemeChatRoom from '@/components/chats/ChatRoom/MemeChatRoom'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
-import ChatContent from '@/modules/chat/HomePage/ChatContent'
 import { Transition } from '@headlessui/react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -26,6 +26,18 @@ export default function ChannelContentPage({
         <ChatContent />
       </LayoutWithBottomNavigation>
     </ChannelContentPageProvider>
+  )
+}
+
+function ChatContent() {
+  const { contentContainer } = useChannelContentPageContext()
+  if (!contentContainer) return null
+
+  return (
+    <MemeChatRoom
+      chatId={contentContainer.rootPost.id}
+      shouldShowUnapproved={false}
+    />
   )
 }
 
