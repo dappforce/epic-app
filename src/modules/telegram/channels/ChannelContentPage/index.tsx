@@ -15,12 +15,12 @@ import {
 } from './context'
 
 export default function ChannelContentPage({
-  containerId,
+  rootPostId,
 }: {
-  containerId: string
+  rootPostId: string
 }) {
   return (
-    <ChannelContentPageProvider containerId={containerId}>
+    <ChannelContentPageProvider rootPostId={rootPostId}>
       <LayoutWithBottomNavigation withFixedHeight className='relative'>
         <ChannelNavbar />
         <ChatContent />

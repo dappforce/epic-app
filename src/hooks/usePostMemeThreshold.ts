@@ -1,18 +1,15 @@
-import { getTokenomicsMetadataQuery } from '@/services/datahub/content-staking/query'
+import { getContentContainersQuery } from '@/services/datahub/content-containers/query'
 
 export default function usePostMemeThreshold(chatId: string) {
-  const { data: tokenomics, isLoading } =
-    getTokenomicsMetadataQuery.useQuery(null)
+  const { data, isLoading } = getContentContainersQuery.useQuery({
+    filter: { hidden: false, rootPostIds: [chatId] },
+  })
+  const container = data?.data[0]
 
-  const threshold = tokenomics?.thresholdsAndRules?.find(
-    (t) => t.contextPostId === chatId
-  )
-  const thresholdForAllChats = tokenomics?.thresholdsAndRules?.find(
-    (t) => t.contextPostId === '*'
-  )
+  const threshold = container?.accessThresholdPointsAmount
 
   return {
-    threshold: threshold || thresholdForAllChats,
+    threshold,
     isLoading,
   }
 }

@@ -5,32 +5,32 @@ import {
 import { ReactNode, createContext, useContext } from 'react'
 
 type ChannelContentPageContextType = {
-  containerId: string
+  rootPostId: string
   contentContainer: ContentContainer | null | undefined
   isLoading: boolean
 }
 
 const ChannelContentPageContext = createContext<ChannelContentPageContextType>({
-  containerId: '',
+  rootPostId: '',
   contentContainer: null,
   isLoading: false,
 })
 
 export function ChannelContentPageProvider({
   children,
-  containerId,
+  rootPostId,
 }: {
   children: ReactNode
-  containerId: string
+  rootPostId: string
 }) {
   const { data, isLoading } = getContentContainersQuery.useQuery({
-    filter: { ids: [containerId], hidden: false },
+    filter: { rootPostIds: [rootPostId], hidden: false },
   })
   const container = data?.data?.[0]
 
   return (
     <ChannelContentPageContext.Provider
-      value={{ containerId, contentContainer: container, isLoading }}
+      value={{ rootPostId, contentContainer: container, isLoading }}
     >
       {children}
     </ChannelContentPageContext.Provider>

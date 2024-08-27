@@ -51,7 +51,7 @@ function ChannelsList() {
 function Channel({ channel }: { channel: ContentContainer }) {
   return (
     <Link
-      href={`/tg/channels/${channel.id}`}
+      href={`/tg/channels/${channel.rootPost.id}`}
       className='flex items-center gap-2.5 rounded-xl bg-background-light px-2.5 py-3.5 transition active:bg-background-lighter'
     >
       <Image

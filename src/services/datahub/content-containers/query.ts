@@ -21,6 +21,9 @@ const GET_CONTENT_CONTAINERS = gql`
           coverImage
           image
         }
+        accessThresholdPointsAmount
+        likeThresholdExternalTokenAmount
+        accessThresholdExternalTokenAmount
       }
       total
       offset

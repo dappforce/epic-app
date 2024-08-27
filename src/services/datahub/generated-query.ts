@@ -360,6 +360,7 @@ export type ContentContainerConfig = {
   openAt?: Maybe<Scalars['DateTime']['output']>
   postBlockOneTimePenaltyPointsAmount?: Maybe<Scalars['String']['output']>
   rootPost: Post
+  rootSpace: Space
   slug: Scalars['String']['output']
   updatedAtTime?: Maybe<Scalars['DateTime']['output']>
 }
@@ -380,6 +381,7 @@ export type ContentContainerConfigsFilter = {
   isExpirable?: InputMaybe<Scalars['Boolean']['input']>
   isOpen?: InputMaybe<Scalars['Boolean']['input']>
   rootPostIds?: InputMaybe<Array<Scalars['String']['input']>>
+  rootSpaceId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ContentContainerConfigsResourcesResponseDto = {
@@ -692,6 +694,7 @@ export type FindSpacesWithFilterResponseDto = {
 export type FindTasksFilter = {
   address: Scalars['String']['input']
   completed?: InputMaybe<Scalars['Boolean']['input']>
+  rootSpaceId: Scalars['String']['input']
 }
 
 export type FindTasksResponseDto = {
@@ -736,6 +739,7 @@ export type GamificationTask = {
   periodicityConfig?: Maybe<Scalars['String']['output']>
   periodicityType: GamificationTaskPeriodicity
   rewardPoints: Scalars['String']['output']
+  rootSpace?: Maybe<Space>
   startedAt?: Maybe<Scalars['DateTime']['output']>
   tag: Scalars['String']['output']
   updatedAt?: Maybe<Scalars['DateTime']['output']>
@@ -2333,6 +2337,9 @@ export type GetContentContainersQuery = {
     data: Array<{
       __typename?: 'ContentContainerConfig'
       id: string
+      accessThresholdPointsAmount?: string | null
+      likeThresholdExternalTokenAmount?: string | null
+      accessThresholdExternalTokenAmount?: string | null
       rootPost: { __typename?: 'Post'; id: string }
       metadata: {
         __typename?: 'ContainerConfigMetadata'
@@ -2525,11 +2532,6 @@ export type GetTokenomicsMetadataQuery = {
       __typename?: 'SocialActionPriceResponse'
       createCommentPoints: string
     }
-    thresholdsAndRules: Array<{
-      __typename?: 'ThresholdsAndRulesResponse'
-      contextPostId: string
-      thresholdPointsAmount: string
-    }>
   }
 }
 
@@ -3508,6 +3510,7 @@ export type GetSpacesQuery = {
 
 export type GetGamificationTasksQueryVariables = Exact<{
   address: Scalars['String']['input']
+  rootSpaceId: Scalars['String']['input']
 }>
 
 export type GetGamificationTasksQuery = {
@@ -3638,6 +3641,9 @@ export const GetContentContainers = gql`
           coverImage
           image
         }
+        accessThresholdPointsAmount
+        likeThresholdExternalTokenAmount
+        accessThresholdExternalTokenAmount
       }
       total
       offset
@@ -3778,10 +3784,6 @@ export const GetTokenomicsMetadata = gql`
       likerRewardDistributionPercent
       socialActionPrice {
         createCommentPoints
-      }
-      thresholdsAndRules {
-        contextPostId
-        thresholdPointsAmount
       }
     }
   }
@@ -4429,8 +4431,10 @@ export const GetSpaces = gql`
   ${SpaceFragment}
 `
 export const GetGamificationTasks = gql`
-  query GetGamificationTasks($address: String!) {
-    gamificationTasks(args: { filter: { address: $address } }) {
+  query GetGamificationTasks($address: String!, $rootSpaceId: String!) {
+    gamificationTasks(
+      args: { filter: { address: $address, rootSpaceId: $rootSpaceId } }
+    ) {
       data {
         rewardPoints
         id

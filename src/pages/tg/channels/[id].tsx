@@ -14,13 +14,13 @@ export function getStaticPaths() {
 export const getStaticProps = getCommonStaticProps<AppCommonProps>(
   () => ({}),
   async (context) => {
-    const containerId = context.params?.id as string
-    if (!containerId) return
+    const rootPostId = context.params?.id as string
+    if (!rootPostId) return
 
     const client = new QueryClient()
     try {
       await getContentContainersQuery.fetchQuery(client, {
-        filter: { ids: [containerId], hidden: false },
+        filter: { rootPostIds: [rootPostId], hidden: false },
       })
     } catch (err) {
       console.error('Error prefetching channel detail page', err)
@@ -28,7 +28,7 @@ export const getStaticProps = getCommonStaticProps<AppCommonProps>(
 
     return {
       props: {
-        containerId,
+        rootPostId,
         dehydratedState: dehydrate(client),
       },
     }

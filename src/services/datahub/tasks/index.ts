@@ -1,9 +1,15 @@
 import { gql } from 'graphql-request'
+import {
+  GetGamificationTasksQuery,
+  GetGamificationTasksQueryVariables,
+} from '../generated-query'
 import { datahubQueryRequest } from '../utils'
 
 const GET_GAMIFICATION_TASKS = gql`
-  query GetGamificationTasks($address: String!) {
-    gamificationTasks(args: { filter: { address: $address } }) {
+  query GetGamificationTasks($address: String!, $rootSpaceId: String!) {
+    gamificationTasks(
+      args: { filter: { address: $address, rootSpaceId: $rootSpaceId } }
+    ) {
       data {
         rewardPoints
         id
@@ -21,29 +27,22 @@ const GET_GAMIFICATION_TASKS = gql`
   }
 `
 
-export type GamificationTask = {
-  rewardPoints: string
-  id: string
-  name: string
-  tag: string
-  createdAt: string
-  completed: boolean
-  claimed: boolean
-  linkedIdentity: { id: string }
-}
+export type GamificationTask =
+  GetGamificationTasksQuery['gamificationTasks']['data'][0]
 
-export async function getGamificationTasks(address: string) {
+export async function getGamificationTasks({
+  address,
+  rootSpaceId,
+}: {
+  address: string
+  rootSpaceId: string
+}) {
   const res = await datahubQueryRequest<
-    {
-      gamificationTasks: {
-        data: GamificationTask[]
-        total: number
-      }
-    },
-    { address: string }
+    GetGamificationTasksQuery,
+    GetGamificationTasksQueryVariables
   >({
     document: GET_GAMIFICATION_TASKS,
-    variables: { address },
+    variables: { address, rootSpaceId },
   })
 
   return res.gamificationTasks

@@ -162,9 +162,10 @@ function InviteFriendsTasks() {
 
   const { refCount } = refStats || {}
 
-  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery(
-    myAddress || ''
-  )
+  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery({
+    address: myAddress || '',
+    rootSpaceId: '',
+  })
 
   const data =
     gamificationTasks?.data?.filter(
@@ -239,9 +240,10 @@ function BasicTasks() {
   const myAddress = useMyMainAddress()
   const client = useQueryClient()
 
-  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery(
-    myAddress || ''
-  )
+  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery({
+    address: myAddress || '',
+    rootSpaceId: '',
+  })
 
   const data =
     gamificationTasks?.data?.filter((item) =>

@@ -214,7 +214,10 @@ const ClaimTasksTokensModal = ({
 
     if (claimTaskTokensError === 'None') {
       setIsOpenAnimation(true)
-      getGamificationTasksQuery.invalidate(client, myAddress)
+      getGamificationTasksQuery.invalidate(client, {
+        address: myAddress ?? '',
+        rootSpaceId: '',
+      })
       getBalanceQuery.invalidate(client, myAddress)
     }
   }, [claimTaskTokensError, client, myAddress])
