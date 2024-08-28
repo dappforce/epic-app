@@ -2,18 +2,22 @@ import {
   ContentContainer,
   getContentContainersQuery,
 } from '@/services/datahub/content-containers/query'
-import { ReactNode, createContext, useContext } from 'react'
+import { ReactNode, createContext, useContext, useState } from 'react'
 
 type ChannelContentPageContextType = {
   rootPostId: string
   contentContainer: ContentContainer | null | undefined
   isLoading: boolean
+  setIsModerating: (isModerating: boolean) => void
+  isModerating: boolean
 }
 
 const ChannelContentPageContext = createContext<ChannelContentPageContextType>({
   rootPostId: '',
   contentContainer: null,
   isLoading: false,
+  setIsModerating: () => {},
+  isModerating: false,
 })
 
 export function ChannelContentPageProvider({
@@ -23,6 +27,7 @@ export function ChannelContentPageProvider({
   children: ReactNode
   rootPostId: string
 }) {
+  const [isModerating, setIsModerating] = useState(false)
   const { data, isLoading } = getContentContainersQuery.useQuery({
     filter: { rootPostIds: [rootPostId], hidden: false },
   })
@@ -30,7 +35,13 @@ export function ChannelContentPageProvider({
 
   return (
     <ChannelContentPageContext.Provider
-      value={{ rootPostId, contentContainer: container, isLoading }}
+      value={{
+        rootPostId,
+        contentContainer: container,
+        isLoading,
+        setIsModerating,
+        isModerating,
+      }}
     >
       {children}
     </ChannelContentPageContext.Provider>

@@ -1,8 +1,10 @@
+import Button from '@/components/Button'
 import Container from '@/components/Container'
 import SkeletonFallback from '@/components/SkeletonFallback'
 import TabButtons from '@/components/TabButtons'
 import MemeChatRoom from '@/components/chats/ChatRoom/MemeChatRoom'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
+import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
 import { getGamificationTasksQuery } from '@/services/datahub/tasks/query'
 import { useMyMainAddress } from '@/stores/my-account'
 import { Transition } from '@headlessui/react'
@@ -32,13 +34,13 @@ export default function ChannelContentPage({
 }
 
 function ChatContent() {
-  const { contentContainer } = useChannelContentPageContext()
+  const { contentContainer, isModerating } = useChannelContentPageContext()
   if (!contentContainer) return null
 
   return (
     <MemeChatRoom
       chatId={contentContainer.rootPost.id}
-      shouldShowUnapproved={false}
+      shouldShowUnapproved={isModerating}
     />
   )
 }
@@ -48,7 +50,16 @@ function ChannelNavbar() {
   const [selectedTab, setSelectedTab] = useState('Details')
   const router = useRouter()
 
-  const { contentContainer, isLoading } = useChannelContentPageContext()
+  const {
+    contentContainer,
+    isLoading,
+    rootPostId,
+    isModerating,
+    setIsModerating,
+  } = useChannelContentPageContext()
+
+  const myAddress = useMyMainAddress() ?? ''
+  const canModerate = useAuthorizedForModeration(rootPostId, myAddress)
 
   return (
     <>
@@ -76,16 +87,32 @@ function ChannelNavbar() {
               className='h-9 w-9 rounded-full'
             />
           </SkeletonFallback>
-          <span className='font-bold'>
-            {isAboutOpen && 'About '}
-            <SkeletonFallback
-              isLoading={isLoading}
-              className='inline-block w-16 align-middle'
-            >
-              {contentContainer?.metadata.title}
-            </SkeletonFallback>{' '}
-            Channel
-          </span>
+          <div className='flex flex-col gap-0.5'>
+            <span className='font-bold'>
+              {isAboutOpen && 'About '}
+              <SkeletonFallback
+                isLoading={isLoading}
+                className='inline-block w-16 align-middle'
+              >
+                {contentContainer?.metadata.title}
+              </SkeletonFallback>{' '}
+              Channel
+            </span>
+            {canModerate && (
+              <div className='flex'>
+                <Button
+                  variant={isModerating ? 'primary' : 'primaryOutline'}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsModerating(!isModerating)
+                  }}
+                  className='w-auto px-2 py-0.5 text-xs'
+                >
+                  Moderation Mode
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
         {!isAboutOpen && (
           <AiOutlineInfoCircle
