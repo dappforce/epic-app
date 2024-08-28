@@ -3,7 +3,9 @@ import Button from '@/components/Button'
 import SelectInput, { ListItem } from '@/components/inputs/SelectInput'
 import Logo from '@/components/Logo'
 import Name from '@/components/Name'
+import { env } from '@/env.mjs'
 import { useTelegramLogin } from '@/providers/config/TelegramLoginProvider'
+import { getContentContainersQuery } from '@/services/datahub/content-containers/query'
 import { getAllModeratorsQuery } from '@/services/datahub/moderation/query'
 import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'
@@ -27,6 +29,7 @@ export default function ModeratorHeader() {
           <span className='text-sm font-medium text-text-primary'>
             Moderator
           </span>
+          <ChannelFilter />
         </div>
         {myAddress ? (
           <div className='flex items-center gap-4'>
@@ -53,6 +56,46 @@ export default function ModeratorHeader() {
         )}
       </div>
     </div>
+  )
+}
+
+function ChannelFilter() {
+  const { data } = getContentContainersQuery.useQuery({
+    filter: { hidden: false },
+  })
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const options: ListItem[] =
+    data?.data.map((item) => ({
+      id: item.rootPost.id,
+      label: item.metadata.title ?? '',
+    })) ?? []
+
+  const selected =
+    options.find(
+      (item) =>
+        item.id === searchParams?.get('channel') || env.NEXT_PUBLIC_MAIN_CHAT_ID
+    ) || options[0]
+
+  return (
+    <SelectInput
+      items={options}
+      selected={selected}
+      setSelected={(selected) => {
+        const params = new URLSearchParams(searchParams?.toString())
+        params.set('channel', selected.id)
+        router.push(`?${params.toString()}`, undefined, { shallow: true })
+      }}
+      buttonClassName={cx('py-1.5 pl-3 w-44 h-10')}
+      optionClassName='p-1.5'
+      renderItem={(item) => (
+        <div className='flex cursor-pointer items-center gap-2.5 text-base'>
+          {isValidElement(item.icon) ? item.icon : null}
+          <span className='line-clamp-1'>{item.customLabel ?? item.label}</span>
+        </div>
+      )}
+    />
   )
 }
 
@@ -96,10 +139,12 @@ function ModeratorFilter() {
       <SelectInput
         items={options}
         selected={selected}
-        setSelected={(selected) =>
-          router.push(`?moderator=${selected.id}`, undefined, { shallow: true })
-        }
-        buttonClassName={cx('py-1.5 pl-3 w-44')}
+        setSelected={(selected) => {
+          const params = new URLSearchParams(searchParams?.toString())
+          params.set('moderator', selected.id)
+          router.push(`?${params.toString()}`, undefined, { shallow: true })
+        }}
+        buttonClassName={cx('py-1.5 pl-3 w-44 h-10')}
         optionClassName='p-1.5'
         renderItem={(item) => (
           <div className='flex cursor-pointer items-center gap-2.5 text-base'>
