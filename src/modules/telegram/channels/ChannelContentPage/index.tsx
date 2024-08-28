@@ -3,6 +3,8 @@ import SkeletonFallback from '@/components/SkeletonFallback'
 import TabButtons from '@/components/TabButtons'
 import MemeChatRoom from '@/components/chats/ChatRoom/MemeChatRoom'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
+import { getGamificationTasksQuery } from '@/services/datahub/tasks/query'
+import { useMyMainAddress } from '@/stores/my-account'
 import { Transition } from '@headlessui/react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -146,10 +148,51 @@ function ChannelNavbar() {
                   </p>
                 </SkeletonFallback>
               )}
+              {selectedTab === 'Tasks' && <ChannelTasks />}
             </div>
           </Container>
         </div>
       </Transition>
     </>
+  )
+}
+
+function ChannelTasks() {
+  const myAddress = useMyMainAddress()
+  const { contentContainer } = useChannelContentPageContext()
+  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery(
+    {
+      address: myAddress || '',
+      rootSpaceId: contentContainer?.rootSpace.id || '',
+    },
+    { enabled: !!contentContainer?.rootSpace.id }
+  )
+  return (
+    <div className='flex flex-col gap-2'>
+      {/* {gamificationTasks?.data.map((task, index) => {
+      const tag = task.tag
+
+      const { image, title, event } = modalConfigByVariant[tag]
+
+      return (
+        <TaskCard
+          key={index}
+          image={image}
+          onClick={() => {
+            sendEvent(event)
+
+            if (task !== undefined && !task.claimed) {
+              clearGamificationTasksError(client)
+              setModalVariant(tag)
+            }
+          }}
+          title={title}
+          openInNewTab
+          reward={parseInt(task.rewardPoints ?? '0')}
+          completed={task.claimed ?? false}
+        />
+      )
+    })} */}
+    </div>
   )
 }

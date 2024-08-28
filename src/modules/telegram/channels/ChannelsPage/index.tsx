@@ -5,6 +5,7 @@ import Meme1 from '@/assets/graphics/memes/check-1.jpeg'
 import Meme2 from '@/assets/graphics/memes/check-2.jpeg'
 import Container from '@/components/Container'
 import MediaLoader from '@/components/MediaLoader'
+import { Skeleton } from '@/components/SkeletonFallback'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import PointsWidget from '@/modules/points/PointsWidget'
 import {
@@ -36,12 +37,19 @@ export default function ChannelsPage() {
 }
 
 function ChannelsList() {
-  const { data } = getContentContainersQuery.useQuery({
+  const { data, isLoading } = getContentContainersQuery.useQuery({
     filter: { hidden: false },
   })
 
   return (
     <div className='flex flex-col gap-2'>
+      {isLoading && (
+        <>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className='h-16 w-full rounded-xl' />
+          ))}
+        </>
+      )}
       {data?.data.map((channel) => (
         <Channel key={channel.id} channel={channel} />
       ))}

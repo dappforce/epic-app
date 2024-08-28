@@ -15,6 +15,9 @@ const GET_CONTENT_CONTAINERS = gql`
         rootPost {
           id
         }
+        rootSpace {
+          id
+        }
         metadata {
           title
           description
