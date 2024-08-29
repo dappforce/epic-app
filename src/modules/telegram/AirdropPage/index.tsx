@@ -5,11 +5,10 @@ import Card from '@/components/Card'
 import LinkText from '@/components/LinkText'
 import Name from '@/components/Name'
 import Toast from '@/components/Toast'
-import { CommonEVMLoginContent } from '@/components/auth/common/evm/CommonEvmModalContent'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
-import LinkEvmAddressModal from '@/components/modals/LinkEvmAddressModal'
-import Modal, { ModalFunctionalityProps } from '@/components/modals/Modal'
 import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
+import UnlinkWalletModal from '@/components/wallets/UnlinkWalletModal'
+import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
@@ -29,6 +28,7 @@ import SearchUser from './SearchUser'
 export default function AirdropPage() {
   useTgNoScroll()
 
+  const [isOpenUnlinkModal, setIsOpenUnlinkModal] = useState(false)
   const isAdmin = useIsModerationAdmin()
   const [isOpenRemoveAccountModal, setIsOpenRemoveAccountModal] =
     useState(false)
@@ -101,14 +101,13 @@ export default function AirdropPage() {
                       </div>
                     </div>
                     <LinkText
-                      variant='primary'
-                      className='mr-1'
-                      onClick={(e) => {
+                      className='mr-1 text-text-red'
+                      onClick={() => {
                         sendEvent('edit_evm_address_click')
                         setOpenEvmLinkModal(true)
                       }}
                     >
-                      Edit
+                      Unlink
                     </LinkText>
                   </Card>
                 )
@@ -166,37 +165,16 @@ export default function AirdropPage() {
         closeModal={() => setOpenProfileModal(false)}
         isOpen={openProfileModal}
       />
-      <LinkEvmAddressModal
+      <EvmConnectWalletModal
         isOpen={openEvmLinkModal}
         closeModal={() => setOpenEvmLinkModal(false)}
       />
-    </LayoutWithBottomNavigation>
-  )
-}
-
-export function AddEvmProviderModal(props: ModalFunctionalityProps) {
-  const [isError, setIsError] = useState(false)
-  const sendEvent = useSendEvent()
-
-  return (
-    <Modal
-      {...props}
-      title='🔑 Connect Ethereum address'
-      description='Create an on-chain proof to link your Epic account.'
-      withCloseButton
-    >
-      <CommonEVMLoginContent
-        mutationType='add-provider'
-        buttonLabel={isError ? 'Try again' : undefined}
-        onError={() => {
-          setIsError(true)
-        }}
-        onSuccess={() => {
-          sendEvent(`finish_add_provider_evm_standalone`)
-          props.closeModal()
-        }}
+      <UnlinkWalletModal
+        isOpen={isOpenUnlinkModal}
+        closeModal={() => setIsOpenUnlinkModal(false)}
+        chain='evm'
       />
-    </Modal>
+    </LayoutWithBottomNavigation>
   )
 }
 
