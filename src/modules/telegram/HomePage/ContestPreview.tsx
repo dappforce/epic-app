@@ -56,7 +56,7 @@ type ContestPreviewItemProps = {
 }
 
 const ContestPreviewItem = ({ item, withDivider }: ContestPreviewItemProps) => {
-  const { address, count } = item
+  const { address, count, rank } = item
 
   return (
     <div className='flex flex-col gap-2'>
@@ -70,14 +70,7 @@ const ContestPreviewItem = ({ item, withDivider }: ContestPreviewItemProps) => {
             </span>
           </div>
         </div>
-        {/* <div className='flex flex-col gap-2'>
-          <span className='text-right text-xs leading-none text-slate-400'>
-            Earned:
-          </span>
-          <span className='text-sm font-medium leading-none text-green-400'>
-            20 USD
-          </span>
-        </div> */}
+        <span className='text-slate-400'>{rank + 1}</span>
       </div>
       {withDivider && (
         <div className='ml-[46px] border-b border-slate-700'></div>
