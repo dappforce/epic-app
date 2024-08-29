@@ -106,7 +106,7 @@ export default function AirdropPage() {
                       className='mr-1 text-text-red'
                       onClick={() => {
                         sendEvent('edit_evm_address_click')
-                        setOpenEvmLinkModal(true)
+                        setIsOpenUnlinkModal(true)
                       }}
                     >
                       Unlink

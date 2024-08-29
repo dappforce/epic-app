@@ -1,5 +1,6 @@
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import { useUpdateExternalProvider } from '@/services/datahub/identity/mutation'
+import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import Button from '../Button'
 import Modal, { ModalFunctionalityProps } from '../modals/Modal'
 
@@ -33,7 +34,9 @@ export default function UnlinkWalletModal({
             mutate({
               entityId: evmAddressProviderId,
               externalProvider: {
-                // TODO: after added
+                id: evmAddress,
+                provider: IdentityProvider.EVM,
+                enabled: false,
               },
             })
           }}

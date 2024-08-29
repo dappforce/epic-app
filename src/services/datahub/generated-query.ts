@@ -360,7 +360,7 @@ export type ContentContainerConfig = {
   openAt?: Maybe<Scalars['DateTime']['output']>
   postBlockOneTimePenaltyPointsAmount?: Maybe<Scalars['String']['output']>
   rootPost: Post
-  rootSpace: Space
+  rootSpace?: Maybe<Space>
   slug: Scalars['String']['output']
   updatedAtTime?: Maybe<Scalars['DateTime']['output']>
 }
@@ -396,6 +396,8 @@ export type ContentContainerExternalToken = {
   __typename?: 'ContentContainerExternalToken'
   address: Scalars['String']['output']
   chain: ContentContainerExternalTokenChain
+  contractAbi: Scalars['String']['output']
+  contractMethods?: Maybe<ContentContainerExternalTokenContractMethods>
   decimals: Scalars['Int']['output']
   id: Scalars['String']['output']
   name: Scalars['String']['output']
@@ -406,6 +408,11 @@ export type ContentContainerExternalToken = {
 export enum ContentContainerExternalTokenChain {
   Ethereum = 'ETHEREUM',
   Solana = 'SOLANA',
+}
+
+export type ContentContainerExternalTokenContractMethods = {
+  __typename?: 'ContentContainerExternalTokenContractMethods'
+  balanceOf: Scalars['String']['output']
 }
 
 export enum ContentContainerType {
@@ -694,7 +701,7 @@ export type FindSpacesWithFilterResponseDto = {
 export type FindTasksFilter = {
   address: Scalars['String']['input']
   completed?: InputMaybe<Scalars['Boolean']['input']>
-  rootSpaceId: Scalars['String']['input']
+  rootSpaceId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type FindTasksResponseDto = {
@@ -1816,6 +1823,7 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthSocialProfileSyncExternalTokenBalance = 'synth_social_profile_sync_external_token_balance',
   SynthUpdateContentContainerConfig = 'synth_update_content_container_config',
   SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
@@ -1860,9 +1868,7 @@ export type SocialProfileBalances = {
   activeStakingTempReward: Scalars['String']['output']
   activeStakingTempToken: Scalars['String']['output']
   activeStakingTempTokenInitial: Scalars['String']['output']
-  externalTokenBalances?: Maybe<
-    Array<SocialProfileExternalTokenBalanceBalances>
-  >
+  externalTokenBalances?: Maybe<Array<SocialProfileExternalTokenBalance>>
   id: Scalars['String']['output']
 }
 
@@ -1876,11 +1882,14 @@ export type SocialProfileBalancesSubscriptionPayload = {
   event: DataHubSubscriptionEventEnum
 }
 
-export type SocialProfileExternalTokenBalanceBalances = {
-  __typename?: 'SocialProfileExternalTokenBalanceBalances'
+export type SocialProfileExternalTokenBalance = {
+  __typename?: 'SocialProfileExternalTokenBalance'
+  active: Scalars['Boolean']['output']
   amount: Scalars['String']['output']
+  blockchainAddress: Scalars['String']['output']
   externalToken: ContentContainerExternalToken
   id: Scalars['String']['output']
+  linkedIdentityExternalProvider: LinkedIdentityExternalProvider
   socialProfileBalance: SocialProfileBalances
 }
 
@@ -2341,7 +2350,6 @@ export type GetContentContainersQuery = {
       likeThresholdExternalTokenAmount?: string | null
       accessThresholdExternalTokenAmount?: string | null
       rootPost: { __typename?: 'Post'; id: string }
-      rootSpace: { __typename?: 'Space'; id: string }
       metadata: {
         __typename?: 'ContainerConfigMetadata'
         title?: string | null
@@ -3634,9 +3642,6 @@ export const GetContentContainers = gql`
       data {
         id
         rootPost {
-          id
-        }
-        rootSpace {
           id
         }
         metadata {

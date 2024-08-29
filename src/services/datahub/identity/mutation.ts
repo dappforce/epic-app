@@ -166,13 +166,14 @@ export const useUpdateExternalProvider = mutationWrapper(
   {
     onSuccess: (_, { externalProvider }) => {
       reloadEveryIntervalUntilLinkedIdentityFound((identity) => {
-        // TODO: check kalo dia enabled nya false, harusnya gada lagi di situ
-        return !!identity?.externalProviders.find(
+        const isFound = !!identity?.externalProviders.find(
           (p) =>
             // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
             p.provider === externalProvider.provider &&
             p.externalId === externalProvider.id
         )
+        if (!externalProvider.enabled) return !isFound
+        return isFound
       })
     },
   }
