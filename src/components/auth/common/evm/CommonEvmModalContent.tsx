@@ -1,6 +1,5 @@
 import LinkedEvmAddressImage from '@/assets/graphics/linked-evm-address.png'
 import Button from '@/components/Button'
-import { IdentityProvider } from '@/services/datahub/generated-query'
 import { Identity } from '@/services/datahub/identity/fetcher'
 import {
   useAddExternalProviderToIdentity,
@@ -17,7 +16,7 @@ import { IdentityProvider as SDKIdentityProvider } from '@subsocial/data-hub-sdk
 import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useSignMessage } from 'wagmi'
 import { CustomConnectButton } from './CustomConnectButton'
 
@@ -75,21 +74,21 @@ export const CommonEVMLoginContent = ({
   const isLoading = isLinking || isAdding
   const isSuccess = isSuccessLinking || isSuccessAdding
 
-  useEffect(() => {
-    if (
-      linkedIdentity?.externalProviders.find(
-        (p) => p.provider === IdentityProvider.Evm
-      )
-    ) {
-      const res = onSuccess?.(linkedIdentity)
-      if (res) {
-        res.then(() => reset())
-      } else {
-        reset()
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [linkedIdentity])
+  // useEffect(() => {
+  //   if (
+  //     linkedIdentity?.externalProviders.find(
+  //       (p) => p.provider === IdentityProvider.Evm
+  //     )
+  //   ) {
+  //     const res = onSuccess?.(linkedIdentity)
+  //     if (res) {
+  //       res.then(() => reset())
+  //     } else {
+  //       reset()
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [linkedIdentity])
 
   const isCalledRef = useRef(false)
   const signAndLinkEvmAddress = async (evmAddress: string) => {

@@ -58,6 +58,8 @@ export default function AirdropPage() {
           <Card className='flex flex-col items-center gap-4 bg-background-light'>
             <AddressAvatar address={myAddress ?? ''} className='h-16 w-16' />
             <div className='flex items-center gap-3'>
+              {/* <WalletMultiButton />
+              <WalletDisconnectButton /> */}
               <Name address={myAddress ?? ''} className='text-lg font-medium' />
               <Button
                 size='circleSm'

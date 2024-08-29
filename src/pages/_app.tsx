@@ -13,6 +13,7 @@ import useSaveTappedPointsAndEnergy, {
 import { ConfigProvider } from '@/providers/config/ConfigProvider'
 import TelegramLoginProvider from '@/providers/config/TelegramLoginProvider'
 import EvmProvider from '@/providers/evm/EvmProvider'
+import SolanaProvider from '@/providers/solana/SolanaProvider'
 import { getDatahubHealthQuery } from '@/services/datahub/health/query'
 import { getLinkedIdentityQuery } from '@/services/datahub/identity/query'
 import { increaseEnergyValue } from '@/services/datahub/leaderboard/points-balance/optimistic'
@@ -156,11 +157,13 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
           <div className={cx('font-sans')}>
             <ErrorBoundary>
               <EvmProvider>
-                <TappingHooksWrapper>
-                  <ProfileModalWrapper>
-                    <Component {...props} />
-                  </ProfileModalWrapper>
-                </TappingHooksWrapper>
+                <SolanaProvider>
+                  <TappingHooksWrapper>
+                    <ProfileModalWrapper>
+                      <Component {...props} />
+                    </ProfileModalWrapper>
+                  </TappingHooksWrapper>
+                </SolanaProvider>
               </EvmProvider>
             </ErrorBoundary>
           </div>
