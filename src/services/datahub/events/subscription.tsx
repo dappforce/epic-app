@@ -1,6 +1,6 @@
 import Toast from '@/components/Toast'
 import { linkEvmAddressCallbacks } from '@/components/modals/LinkEvmAddressModal'
-import { claimTaskErrorStore } from '@/modules/telegram/TasksPage/ClaimTaskTokensModal'
+import { claimTaskErrorStore } from '@/components/tasks/config'
 import { getPostQuery } from '@/services/api/query'
 import { deleteOptimisticData } from '@/services/subsocial/commentIds/optimistic'
 import { getCurrentWallet } from '@/services/subsocial/hooks'

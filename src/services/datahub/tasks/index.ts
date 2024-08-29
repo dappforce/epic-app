@@ -21,6 +21,12 @@ const GET_GAMIFICATION_TASKS = gql`
         linkedIdentity {
           id
         }
+        metadata {
+          telegramChannelToJoin
+          twitterChannelToJoin
+          likesNumberToAchieve
+          referralsNumberToAchieve
+        }
       }
       total
     }

@@ -4,6 +4,11 @@ import LinkText from '@/components/LinkText'
 import TaskCard from '@/components/TaskCard'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import DailyRewardModal from '@/components/modals/DailyRewardModal'
+import ClaimTaskModal from '@/components/tasks/ClaimTaskModal'
+import {
+  ClaimModalVariant,
+  modalConfigByVariant,
+} from '@/components/tasks/config'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import LikeCount from '@/modules/points/LikePreview'
 import PointsWidget from '@/modules/points/PointsWidget'
@@ -13,7 +18,7 @@ import {
   getTodaySuperLikeCountQuery,
   getTokenomicsMetadataQuery,
 } from '@/services/datahub/content-staking/query'
-import { getUserReferralStatsQuery } from '@/services/datahub/leaderboard/query'
+import { GamificationTask } from '@/services/datahub/tasks'
 import {
   clearGamificationTasksError,
   getGamificationTasksQuery,
@@ -24,10 +29,6 @@ import { formatNumber } from '@/utils/strings'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import SkeletonFallback from '../../../components/SkeletonFallback'
-import ClaimTasksTokensModal, {
-  ClaimModalVariant,
-  modalConfigByVariant,
-} from './ClaimTaskTokensModal'
 
 export default function TasksPage() {
   useTgNoScroll()
@@ -149,11 +150,11 @@ const inviteFriendsTasksName = 'INVITE_REFERRALS'
 function InviteFriendsTasks() {
   const myAddress = useMyMainAddress()
   const sendEvent = useSendEvent()
-  const [modalVariant, setModalVariant] = useState<ClaimModalVariant>(null)
+  const [isOpenClaimTaskModal, setIsOpenClaimTaskModal] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<GamificationTask | null>(
+    null
+  )
   const client = useQueryClient()
-  const { data: refStats } = getUserReferralStatsQuery.useQuery(myAddress || '')
-
-  const { refCount } = refStats || {}
 
   const { data: gamificationTasks } = getGamificationTasksQuery.useQuery({
     address: myAddress || '',
@@ -164,9 +165,6 @@ function InviteFriendsTasks() {
     gamificationTasks?.data?.filter(
       (item) => item.name === inviteFriendsTasksName
     ) || []
-
-  const { aim } =
-    modalConfigByVariant[modalVariant || 'JOIN_TELEGRAM_CHANNEL_EpicAppNet']
 
   return (
     <div className='flex flex-col gap-5'>
@@ -189,9 +187,8 @@ function InviteFriendsTasks() {
       </div>
       <div className='flex flex-col gap-2'>
         {data.map((task, index) => {
-          const tag = task.tag as Exclude<ClaimModalVariant, null>
-
-          const { image, title, event } = modalConfigByVariant[tag]
+          const { image, title, event } =
+            modalConfigByVariant[task.name]?.(task)
 
           return (
             <TaskCard
@@ -202,7 +199,8 @@ function InviteFriendsTasks() {
 
                 if (task !== undefined && !task.claimed) {
                   clearGamificationTasksError(client)
-                  setModalVariant(tag)
+                  setIsOpenClaimTaskModal(true)
+                  setSelectedTask(task)
                 }
               }}
               title={title}
@@ -213,14 +211,13 @@ function InviteFriendsTasks() {
           )
         })}
       </div>
-      <ClaimTasksTokensModal
-        modalVariant={modalVariant}
-        close={() => setModalVariant(null)}
-        data={data || []}
-        disableButton={
-          aim && refCount !== undefined ? refCount < aim : undefined
-        }
-      />
+      {selectedTask && (
+        <ClaimTaskModal
+          task={selectedTask}
+          isOpen={isOpenClaimTaskModal}
+          close={() => setIsOpenClaimTaskModal(false)}
+        />
+      )}
     </div>
   )
 }
@@ -229,7 +226,11 @@ const basicTasksNames = ['JOIN_TELEGRAM_CHANNEL', 'JOIN_TWITTER']
 
 function BasicTasks() {
   const sendEvent = useSendEvent()
-  const [modalVariant, setModalVariant] = useState<ClaimModalVariant>(null)
+  const [isOpenClaimTaskModal, setIsOpenClaimTaskModal] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<GamificationTask | null>(
+    null
+  )
+
   const myAddress = useMyMainAddress()
   const client = useQueryClient()
 
@@ -257,7 +258,7 @@ function BasicTasks() {
         {data.map((task, index) => {
           const tag = task.tag as Exclude<ClaimModalVariant, null>
 
-          const variant = modalConfigByVariant[tag]
+          const variant = modalConfigByVariant[tag]?.(task)
           if (!variant) return null
           const { image, title, event } = variant || {}
 
@@ -270,7 +271,8 @@ function BasicTasks() {
 
                 if (task !== undefined && !task.claimed) {
                   clearGamificationTasksError(client)
-                  setModalVariant(tag)
+                  setIsOpenClaimTaskModal(true)
+                  setSelectedTask(task)
                 }
               }}
               title={title}
@@ -281,11 +283,13 @@ function BasicTasks() {
           )
         })}
       </div>
-      <ClaimTasksTokensModal
-        modalVariant={modalVariant}
-        close={() => setModalVariant(null)}
-        data={data || []}
-      />
+      {selectedTask && (
+        <ClaimTaskModal
+          task={selectedTask}
+          isOpen={isOpenClaimTaskModal}
+          close={() => setIsOpenClaimTaskModal(false)}
+        />
+      )}
     </div>
   )
 }

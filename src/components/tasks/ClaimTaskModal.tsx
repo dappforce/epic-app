@@ -1,12 +1,9 @@
 import Diamond from '@/assets/emojis/diamond.png'
-import ReferralTask from '@/assets/graphics/tasks/referral-task.png'
-import Telegram from '@/assets/graphics/tasks/telegram.png'
-import TwitterX from '@/assets/graphics/tasks/twitter-x.png'
 import VerticalStepsDots from '@/assets/icons/vertical-steps-dots.svg'
 import WarningIcon from '@/assets/icons/warning.png'
 import Button from '@/components/Button'
-import LinkText from '@/components/LinkText'
 import useToastError from '@/hooks/useToastError'
+import { GamificationTaskName } from '@/services/datahub/generated-query'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { getUserReferralStatsQuery } from '@/services/datahub/leaderboard/query'
 import { GamificationTask } from '@/services/datahub/tasks'
@@ -18,167 +15,30 @@ import {
 } from '@/services/datahub/tasks/query'
 import { useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'
-import { LocalStorage } from '@/utils/storage'
 import { formatNumber } from '@/utils/strings'
 import { Transition } from '@headlessui/react'
 import { useQueryClient } from '@tanstack/react-query'
-import Image, { StaticImageData } from 'next/image'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { FiArrowUpRight } from 'react-icons/fi'
 import { HiXMark } from 'react-icons/hi2'
-import SkeletonFallback from '../../../components/SkeletonFallback'
 import TasksRewardsModal from './TasksRewardsModal'
+import { modalConfigByVariant } from './config'
 
-export type ClaimModalVariant =
-  | 'JOIN_TELEGRAM_CHANNEL_EpicAppNet'
-  | 'JOIN_TWITTER_EpicAppNet'
-  | 'INVITE_REFERRALS_5_referrals_v1'
-  | 'INVITE_REFERRALS_10_referrals_v1'
-  | 'INVITE_REFERRALS_15_referrals_v1'
-  | null
-
-export const claimTaskErrorStore = new LocalStorage(() => 'claim-tasks-error')
-
-const getReferralTasksObj = (aimRefCount: number) => ({
-  image: ReferralTask,
-  tag: `INVITE_REFERRALS_${aimRefCount}_referrals_v1`,
-  title: `Invite ${aimRefCount} Friends`,
-  event: `tasks_referral_${aimRefCount}_open`,
-  aim: aimRefCount,
-  steps: [
-    <span
-      key='invite-friends'
-      className='flex items-center gap-2 text-sm font-medium text-slate-200'
-    >
-      <LinkText
-        href='/tg/friends'
-        variant={'primary'}
-        className='hover:no-underline'
-      >
-        Invite {aimRefCount} friends to join
-      </LinkText>{' '}
-      <ReferralTaskModalStepPart aimRefCount={aimRefCount} />
-    </span>,
-    <span key='claim-click' className='text-sm font-medium text-slate-200'>
-      Click the button below to earn your reward.
-    </span>,
-  ],
-})
-
-type ReferralTaskModalProps = {
-  aimRefCount: number
-}
-
-const ReferralTaskModalStepPart = ({ aimRefCount }: ReferralTaskModalProps) => {
-  const myAddress = useMyMainAddress()
-  const { data, isLoading } = getUserReferralStatsQuery.useQuery(
-    myAddress || ''
-  )
-
-  const { refCount } = data || {}
-
-  return (
-    <span className='flex items-center'>
-      (
-      <SkeletonFallback isLoading={isLoading} className='w-6'>
-        {refCount && refCount > aimRefCount ? aimRefCount : refCount}
-      </SkeletonFallback>
-      /{aimRefCount})
-    </span>
-  )
-}
-
-type ModalConfig = {
-  image: StaticImageData
-  title: React.ReactNode
-  stepsWithOrangeText?: number[]
-  steps: React.ReactNode[]
-  event: string
-  tag: string
-  aim?: number
-}
-
-export const modalConfigByVariant: Record<
-  Exclude<ClaimModalVariant, null>,
-  ModalConfig
-> = {
-  JOIN_TELEGRAM_CHANNEL_EpicAppNet: {
-    image: Telegram,
-    tag: 'JOIN_TELEGRAM_CHANNEL_EpicAppNet',
-    title: 'Join Our Telegram Channel',
-    event: 'tasks_telegram_open',
-    steps: [
-      <div key='join-channel' className='flex flex-col gap-2'>
-        <span className='text-sm font-medium leading-none text-slate-200'>
-          Join the channel:
-        </span>
-        <LinkText
-          href='https://t.me/EpicAppNet'
-          variant='primary'
-          className='flex items-center gap-1.5 leading-none'
-        >
-          <span>@EpicAppNet</span>
-          <FiArrowUpRight className='relative top-0.5 text-base' />
-        </LinkText>
-      </div>,
-      <span key='claim-click' className='text-sm font-medium text-slate-200'>
-        Click the button below to verify your task
-      </span>,
-    ],
-  },
-  JOIN_TWITTER_EpicAppNet: {
-    image: TwitterX,
-    tag: 'JOIN_TWITTER_EpicAppNet',
-    title: 'Join Our Twitter',
-    event: 'tasks_x_open',
-    stepsWithOrangeText: [2],
-    steps: [
-      <div key='join-channel' className='flex flex-col gap-2'>
-        <span className='text-sm font-medium leading-none text-slate-200'>
-          Follow us on X
-        </span>
-        <LinkText
-          href='https://x.com/EpicAppNet'
-          variant='primary'
-          className='flex items-center gap-1.5 leading-none'
-        >
-          @EpicAppNet <FiArrowUpRight className='relative top-0.5 text-base' />
-        </LinkText>
-      </div>,
-      <span key='claim-click' className='text-sm font-medium text-slate-200'>
-        Click the button below to earn your reward.
-      </span>,
-      <span
-        key='reward-granted'
-        className='flex-1 text-sm font-medium text-orange-400'
-      >
-        If you&apos;re not subscribed, a penalty of 1M points will be deducted.
-      </span>,
-    ],
-  },
-  INVITE_REFERRALS_5_referrals_v1: getReferralTasksObj(5),
-  INVITE_REFERRALS_10_referrals_v1: getReferralTasksObj(10),
-  INVITE_REFERRALS_15_referrals_v1: getReferralTasksObj(15),
-}
-
-type ClaimTasksTokensModalProps = {
-  modalVariant: ClaimModalVariant
+type ClaimTaskModalProps = {
   close: () => void
-  data: GamificationTask[]
-  disableButton?: boolean
+  isOpen: boolean
+  task: GamificationTask
 }
 
-const ClaimTasksTokensModal = ({
-  modalVariant,
-  close,
-  data,
-  disableButton,
-}: ClaimTasksTokensModalProps) => {
+const ClaimTaskModal = ({ isOpen, task, close }: ClaimTaskModalProps) => {
   const [isOpenAnimation, setIsOpenAnimation] = useState(false)
   const client = useQueryClient()
   const [loading, setLoading] = useState(false)
   const myAddress = useMyMainAddress()
+
+  const { data: refStats } = getUserReferralStatsQuery.useQuery(myAddress || '')
+  const { refCount } = refStats || {}
 
   const { data: claimTaskTokensError } =
     getGamificationTasksErrorQuery.useQuery('error')
@@ -187,19 +47,12 @@ const ClaimTasksTokensModal = ({
     close()
   }
 
-  const isOpen = !!modalVariant
-
-  const variant = modalVariant || 'JOIN_TELEGRAM_CHANNEL_EpicAppNet'
-
   const {
     image: taskImage,
     steps,
-    tag,
     stepsWithOrangeText,
     title,
-  } = modalConfigByVariant[variant]
-
-  const task = data?.find((task) => task.tag === tag)
+  } = modalConfigByVariant[task.name](task)
 
   const reward = formatNumber(parseInt(task?.rewardPoints ?? '0'))
 
@@ -239,6 +92,17 @@ const ClaimTasksTokensModal = ({
   }, [loading, claimTaskTokensError])
 
   useToastError(error, 'Failed to claim task tokens')
+
+  let disableButton = false
+  if (
+    task.name === GamificationTaskName.InviteReferrals &&
+    task.metadata?.referralsNumberToAchieve
+  ) {
+    disableButton =
+      refCount !== undefined
+        ? refCount < task.metadata.referralsNumberToAchieve
+        : false
+  }
 
   return createPortal(
     <>
@@ -332,7 +196,7 @@ const ClaimTasksTokensModal = ({
                 setLoading(true)
                 clearGamificationTasksError(client)
 
-                claimTaskTokens({ taskTag: tag })
+                claimTaskTokens({ taskTag: task.tag })
               }}
             >
               Check the task
@@ -345,4 +209,4 @@ const ClaimTasksTokensModal = ({
   )
 }
 
-export default ClaimTasksTokensModal
+export default ClaimTaskModal

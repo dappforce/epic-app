@@ -3538,6 +3538,13 @@ export type GetGamificationTasksQuery = {
       completed: boolean
       claimed: boolean
       linkedIdentity: { __typename?: 'LinkedIdentity'; id: string }
+      metadata?: {
+        __typename?: 'GamificationTaskMetadata'
+        telegramChannelToJoin?: string | null
+        twitterChannelToJoin?: string | null
+        likesNumberToAchieve?: string | null
+        referralsNumberToAchieve?: number | null
+      } | null
     }>
   }
 }
@@ -4458,6 +4465,12 @@ export const GetGamificationTasks = gql`
         claimed
         linkedIdentity {
           id
+        }
+        metadata {
+          telegramChannelToJoin
+          twitterChannelToJoin
+          likesNumberToAchieve
+          referralsNumberToAchieve
         }
       }
       total

@@ -1,13 +1,22 @@
 import Button from '@/components/Button'
 import Container from '@/components/Container'
-import SkeletonFallback from '@/components/SkeletonFallback'
+import SkeletonFallback, { Skeleton } from '@/components/SkeletonFallback'
 import TabButtons from '@/components/TabButtons'
+import TaskCard from '@/components/TaskCard'
 import MemeChatRoom from '@/components/chats/ChatRoom/MemeChatRoom'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
+import ClaimTaskModal from '@/components/tasks/ClaimTaskModal'
+import { modalConfigByVariant } from '@/components/tasks/config'
 import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
-import { getGamificationTasksQuery } from '@/services/datahub/tasks/query'
+import { GamificationTask } from '@/services/datahub/tasks'
+import {
+  clearGamificationTasksError,
+  getGamificationTasksQuery,
+} from '@/services/datahub/tasks/query'
+import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
 import { Transition } from '@headlessui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -187,40 +196,67 @@ function ChannelNavbar() {
 function ChannelTasks() {
   const myAddress = useMyMainAddress()
   const { contentContainer } = useChannelContentPageContext()
-  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery(
+  const {
+    data: gamificationTasks,
+    isLoading,
+    isSuccess,
+  } = getGamificationTasksQuery.useQuery(
     {
       address: myAddress || '',
       rootSpaceId: contentContainer?.rootSpace?.id || '',
     },
     { enabled: !!contentContainer?.rootSpace?.id }
   )
+  const sendEvent = useSendEvent()
+  const client = useQueryClient()
+
+  const [isOpenTaskModal, setIsOpenTaskModal] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<GamificationTask | null>(
+    null
+  )
 
   return (
     <div className='flex flex-col gap-2'>
-      {/* {gamificationTasks?.data.map((task, index) => {
-      const tag = task.tag
+      {isLoading &&
+        Array.from({ length: 3 }).map((_, idx) => (
+          <Skeleton key={idx} className='h-16 w-full rounded-xl' />
+        ))}
+      {isSuccess && !gamificationTasks.data.length && (
+        <div className='mt-4 text-center font-medium text-text-muted'>
+          No tasks available
+        </div>
+      )}
+      {gamificationTasks?.data.map((task, index) => {
+        const taskConfig = modalConfigByVariant[task.name]
+        const config = taskConfig?.(task)
 
-      const { image, title, event } = modalConfigByVariant[tag]
+        return (
+          <TaskCard
+            key={index}
+            image={config.image}
+            onClick={() => {
+              sendEvent(config.event)
 
-      return (
-        <TaskCard
-          key={index}
-          image={image}
-          onClick={() => {
-            sendEvent(event)
-
-            if (task !== undefined && !task.claimed) {
-              clearGamificationTasksError(client)
-              setModalVariant(tag)
-            }
-          }}
-          title={title}
-          openInNewTab
-          reward={parseInt(task.rewardPoints ?? '0')}
-          completed={task.claimed ?? false}
+              if (task !== undefined && !task.claimed) {
+                clearGamificationTasksError(client)
+                setIsOpenTaskModal(true)
+                setSelectedTask(task)
+              }
+            }}
+            title={config.title}
+            openInNewTab
+            reward={parseInt(task.rewardPoints ?? '0')}
+            completed={task.claimed ?? false}
+          />
+        )
+      })}
+      {selectedTask && (
+        <ClaimTaskModal
+          isOpen={isOpenTaskModal}
+          task={selectedTask}
+          close={() => setIsOpenTaskModal(false)}
         />
-      )
-    })} */}
+      )}
     </div>
   )
 }
