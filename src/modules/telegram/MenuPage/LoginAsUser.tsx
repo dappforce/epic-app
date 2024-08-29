@@ -38,6 +38,7 @@ const LoginAsUser = () => {
             onChange={(e) => {
               setValue(e.target.value)
             }}
+            className='h-[50px]'
           />
 
           <Button

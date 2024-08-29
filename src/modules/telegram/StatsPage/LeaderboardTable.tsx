@@ -64,10 +64,9 @@ const parseTableRows = (data: Data[], limit: number, currentUserRank: Data) => {
           <UserPreview
             address={item.address}
             desc={<UserReward reward={item.reward} />}
+            isMyAccount={item.address === currentUserRank?.address}
           />
         ),
-        className:
-          item.address === currentUserRank?.address ? 'bg-slate-800' : '',
       }))
       .slice(0, limit) || []
   )
@@ -202,6 +201,7 @@ type UserPreviewProps = {
   desc?: React.ReactNode
   className?: string
   nameClassName?: string
+  isMyAccount?: boolean
 }
 
 export const UserPreview = ({
@@ -210,6 +210,7 @@ export const UserPreview = ({
   loading,
   className,
   nameClassName,
+  isMyAccount,
 }: UserPreviewProps & { loading?: ImageProps['loading'] }) => {
   return (
     <div className={cx('flex items-center gap-2', className)}>
@@ -219,13 +220,21 @@ export const UserPreview = ({
         loading={loading}
       />
       <div className={cx('flex flex-col gap-2')}>
-        <Name
-          address={address}
-          className={cx(
-            'text-sm font-medium leading-none !text-text',
-            nameClassName
+        <div className='flex items-center gap-2'>
+          <Name
+            address={address}
+            clipText
+            className={cx(
+              'text-sm font-medium leading-none !text-text',
+              nameClassName
+            )}
+          />
+          {isMyAccount && (
+            <span className='text-sm font-medium leading-none text-slate-400'>
+              (you)
+            </span>
           )}
-        />
+        </div>
         {desc && (
           <div
             className={cx(

@@ -7,7 +7,7 @@ const TasksPreview = () => {
   const sendEvent = useSendEvent()
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4 px-4'>
       <div className='flex items-center justify-between gap-2'>
         <span className='text-lg font-bold'>Daily Tasks</span>
         <LinkText variant='primary' href='/tg/tasks'>

@@ -39,7 +39,7 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
 
   return (
     <div className='flex flex-col gap-3'>
-      <div className='flex items-center justify-between gap-2'>
+      <div className='flex items-center justify-between gap-2 px-4'>
         <div className='flex items-center gap-2'>
           <span className='text-lg font-bold'>Memes</span>
           <SkeletonFallback
@@ -56,7 +56,7 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
         </LinkText>
       </div>
       <div className='w-full overflow-hidden'>
-        <div className='no-scroll flex items-center gap-3 overflow-auto'>
+        <div className='no-scroll flex items-center gap-3 overflow-auto px-4'>
           {isLoading && isEmptyArray(messageIds) ? (
             <MemesPreviewSkeleton />
           ) : (
@@ -102,7 +102,13 @@ const MemesPreviewSkeleton = () => {
   )
 }
 
-const MemesPreviewItem = ({ message }: { message: PostData }) => {
+const MemesPreviewItem = ({
+  message,
+  className,
+}: {
+  message: PostData
+  className?: string
+}) => {
   const { body, extensions } = message.content || {}
 
   if (!body && (!extensions || extensions.length === 0)) return null
@@ -113,7 +119,7 @@ const MemesPreviewItem = ({ message }: { message: PostData }) => {
   )
 
   return (
-    <Link href='/tg/memes' className={memeCardSize}>
+    <Link href='/tg/memes' className={cx(memeCardSize, className)}>
       <MediaLoader
         containerClassName={cx(
           'overflow-hidden rounded-xl flex-1 justify-center flex items-center cursor-pointer',

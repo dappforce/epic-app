@@ -91,7 +91,7 @@ function MenuPageContent({ setPage }: ContentProps) {
         alt=''
         className='absolute left-1/2 z-0 w-full -translate-x-1/2'
       />
-      <div className='z-10 flex flex-col gap-6 overflow-auto px-4 py-4'>
+      <div className='z-10 flex flex-col gap-6 overflow-auto px-4 py-6'>
         <div className='flex w-full flex-col items-center gap-4'>
           <AddressAvatar
             address={myAddress || ''}

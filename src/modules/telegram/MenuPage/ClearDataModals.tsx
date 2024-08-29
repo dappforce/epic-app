@@ -55,7 +55,7 @@ export const DeleteAccountConfirmationModal = ({
       closeModal={onClose}
     >
       <div className='flex w-full flex-col items-center gap-8'>
-        <div className='flex flex-col items-center gap-4'>
+        <div className='flex flex-col items-center gap-1'>
           <span className='text-[68px]'>⚠️</span>
           <span className='text-center text-yellow-300'>
             Deleting your account will result in the loss of all points and
@@ -97,7 +97,7 @@ export const CrearLocalData = ({ isOpen, onClose }: ModalProps) => {
       closeModal={onClose}
     >
       <div className='flex w-full flex-col items-center gap-8'>
-        <div className='flex flex-col items-center gap-4'>
+        <div className='flex flex-col items-center gap-1'>
           <span className='text-[68px]'>⚠️</span>
           <span className='text-center text-yellow-300'>
             This action cannot be undone.

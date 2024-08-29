@@ -17,7 +17,7 @@ const ContestPreview = () => {
 
   return (
     <>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-4 px-4'>
         <div className='flex items-center justify-between gap-2'>
           <span className='text-lg font-bold'>Contest Winners</span>
           <LinkText variant='primary' onClick={() => setIsOpen(true)}>

@@ -37,10 +37,13 @@ export default function useLinkedAddress(
     getLinkedIdentityQuery.useQuery(myGrillAddress ?? '', {
       enabled: !address && config.enabled && !!myGrillAddress,
     })
-  const { data: linkedIdentity, isLoading: isLoadingMainAddress } =
-    getLinkedIdentityFromMainAddressQuery.useQuery(address ?? '', {
-      enabled: !!address && config.enabled,
-    })
+  const {
+    data: linkedIdentity,
+    refetch,
+    isLoading: isLoadingMainAddress,
+  } = getLinkedIdentityFromMainAddressQuery.useQuery(address ?? '', {
+    enabled: !!address && config.enabled,
+  })
 
   const usedLinkedIdentity = address ? linkedIdentity : myLinkedIdentity
   const usedLoading = address ? isLoadingMainAddress : isLoadingMy
@@ -64,5 +67,6 @@ export default function useLinkedAddress(
     identityAddress: latestAddress,
     identityAddressProviderId: latestProviderId,
     isLoading: usedLoading,
+    refetch,
   }
 }

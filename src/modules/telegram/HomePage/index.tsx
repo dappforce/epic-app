@@ -27,7 +27,7 @@ const HomePage = () => {
 
 const HomePageContent = () => {
   return (
-    <div className='z-10 flex flex-col gap-10 overflow-y-auto px-4 py-6'>
+    <div className='z-10 flex flex-col gap-10 overflow-y-auto py-6'>
       <MemesPreview
         chatId={env.NEXT_PUBLIC_MAIN_CHAT_ID}
         hubId={env.NEXT_PUBLIC_MAIN_SPACE_ID}

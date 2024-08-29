@@ -64,6 +64,10 @@ export default function LinkAddressModal({
   const [linkedAddress, setLinkedAddress] = useState('')
   const [linkedAddressError, setLinkedAddressError] = useState('')
   const [isWaitingEvent, setIsWaitingEvent] = useState(false)
+  const myAddress = useMyMainAddress()
+
+  const { identityAddress, identityAddressProviderId, refetch } =
+    useLinkedAddress(myAddress || '', { enabled: true }, identityProvider)
 
   const mutationConfigs = {
     onMutate: () => {
@@ -74,6 +78,8 @@ export default function LinkAddressModal({
     },
     onSuccess: () => {
       linkEvmAddressCallbacks.onSuccessCallbacks.push(() => {
+        refetch()
+
         setIsWaitingEvent(false)
         props.closeModal()
         resetAdding()
@@ -107,15 +113,9 @@ export default function LinkAddressModal({
     error: errorUpdating,
   } = useUpdateExternalProvider(mutationConfigs)
   useToastError(errorAdding || errorUpdating, 'Failed to link Ethereum address')
-  const myAddress = useMyMainAddress()
 
   const isLoading = loadingAdding || loadingUpdating
 
-  const { identityAddress, identityAddressProviderId } = useLinkedAddress(
-    myAddress || '',
-    { enabled: true },
-    identityProvider
-  )
   useEffect(() => {
     if (props.isOpen && identityAddress) {
       setLinkedAddress(identityAddress)

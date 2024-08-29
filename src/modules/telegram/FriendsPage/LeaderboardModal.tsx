@@ -190,12 +190,12 @@ const LeaderboardTable = ({ isContest }: LeaderboardTableProps) => {
     const leaderboardData =
       items?.map((item, i) => ({
         index: i + 1,
-        className: item.address === myAddress ? 'bg-slate-800' : '',
         address: item.address,
         user: (
           <UserPreview
             address={item.address}
             nameClassName='[&>span]:overflow-hidden [&>span]:whitespace-nowrap [&>span]:text-ellipsis'
+            isMyAccount={item.address === myAddress}
             desc={
               <span className='text-sm text-slate-400'>
                 👋 {item.count} frens
