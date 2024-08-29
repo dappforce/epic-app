@@ -2350,6 +2350,7 @@ export type GetContentContainersQuery = {
       likeThresholdExternalTokenAmount?: string | null
       accessThresholdExternalTokenAmount?: string | null
       rootPost: { __typename?: 'Post'; id: string }
+      rootSpace?: { __typename?: 'Space'; id: string } | null
       metadata: {
         __typename?: 'ContainerConfigMetadata'
         title?: string | null
@@ -3642,6 +3643,9 @@ export const GetContentContainers = gql`
       data {
         id
         rootPost {
+          id
+        }
+        rootSpace {
           id
         }
         metadata {

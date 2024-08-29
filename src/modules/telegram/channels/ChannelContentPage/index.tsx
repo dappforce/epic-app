@@ -190,10 +190,11 @@ function ChannelTasks() {
   const { data: gamificationTasks } = getGamificationTasksQuery.useQuery(
     {
       address: myAddress || '',
-      rootSpaceId: contentContainer?.rootSpace.id || '',
+      rootSpaceId: contentContainer?.rootSpace?.id || '',
     },
-    { enabled: !!contentContainer?.rootSpace.id }
+    { enabled: !!contentContainer?.rootSpace?.id }
   )
+
   return (
     <div className='flex flex-col gap-2'>
       {/* {gamificationTasks?.data.map((task, index) => {

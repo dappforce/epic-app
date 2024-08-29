@@ -28,9 +28,12 @@ export function ChannelContentPageProvider({
   rootPostId: string
 }) {
   const [isModerating, setIsModerating] = useState(false)
-  const { data, isLoading } = getContentContainersQuery.useQuery({
-    filter: { rootPostIds: [rootPostId], hidden: false },
-  })
+  const { data, isLoading } = getContentContainersQuery.useQuery(
+    {
+      filter: { rootPostIds: [rootPostId], hidden: false },
+    },
+    { enabled: !!rootPostId }
+  )
   const container = data?.data?.[0]
 
   return (
