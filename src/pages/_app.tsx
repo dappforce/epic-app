@@ -131,6 +131,13 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
   const isInitialized = useRef(false)
 
   useEffect(() => {
+    // for wallet connect integration, because in telegram app, window.open doesn't really work without this
+    window.open = (function (open) {
+      return function (url, _, features) {
+        return open.call(window, url, '_blank', features)
+      }
+    })(window.open)
+
     if (isInitialized.current) return
     isInitialized.current = true
     initAllStores()
