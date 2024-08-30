@@ -165,7 +165,7 @@ export default function LinkAddressModal({
         'We will send your token rewards to this address if you win a contest or event.'
       }
     >
-      <form onSubmit={onSubmit} className='mt-2 flex flex-col gap-6 pb-2'>
+      <form onSubmit={onSubmit} className='flex flex-col gap-6 pb-2'>
         <Input
           error={linkedAddressError}
           value={linkedAddress}
