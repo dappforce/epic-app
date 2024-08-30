@@ -121,7 +121,6 @@ export const CommonEVMLoginContent = ({
             provider: SDKIdentityProvider.EVM,
             evmProofMsg: message,
             evmProofMsgSig: sig,
-            enabled: true,
           },
         })
       } else {
@@ -131,7 +130,6 @@ export const CommonEVMLoginContent = ({
             provider: SDKIdentityProvider.EVM,
             evmProofMsg: message,
             evmProofMsgSig: sig,
-            enabled: true,
           },
         })
       }

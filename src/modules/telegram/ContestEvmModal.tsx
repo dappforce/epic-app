@@ -82,7 +82,6 @@ const ContestEvmModal = () => {
       externalProvider: {
         id: checksumAddress,
         provider: IdentityProvider.EVM,
-        enabled: true,
       },
     })
   }

@@ -94,14 +94,12 @@ export function getExternalProviderPayload(
     return {
       id: session.user.email ?? session.user.id,
       provider: SDKIdentityProvider.GOOGLE,
-      enabled: true,
     }
   } else if (session.provider === 'twitter') {
     return {
       id: session.user?.id,
       provider: SDKIdentityProvider.TWITTER,
       username: session.user?.name ?? undefined,
-      enabled: true,
     }
   }
   return null

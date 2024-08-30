@@ -136,7 +136,6 @@ export default function NeynarLoginProvider({
             provider: SDKIdentityProvider.FARCASTER,
             id: data.fid,
             farcasterSignerUuid: data.signer_uuid,
-            enabled: true,
           },
         })
       } else {
