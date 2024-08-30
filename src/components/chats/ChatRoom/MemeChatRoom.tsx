@@ -143,7 +143,7 @@ function PostMemeButton({
     !isLoading &&
     !loadingThreshold &&
     data &&
-    data >= parseInt(threshold?.thresholdPointsAmount ?? '0')
+    data >= parseInt(threshold ?? '0')
   const isTimeConstrained =
     !loadingTimeLeft && timeLeft !== Infinity && (timeLeft ?? 0) > 0
 
