@@ -7,7 +7,7 @@ import {
   UserReward,
 } from '../StatsPage/LeaderboardTable'
 import LeaderboardByPointsModal from './LeaderboardByPointsModal'
-import LeaderboardPreviewItem from './LeaderboardPreveiwItem'
+import LeaderboardPreviewItem from './LeaderboardPreviewItem'
 
 const LeaderboardByPoints = () => {
   const tabs = [

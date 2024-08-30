@@ -4,7 +4,7 @@ import { isDef } from '@subsocial/utils'
 import { useState } from 'react'
 import LeaderboardModal from '../FriendsPage/LeaderboardModal'
 import { LeaderboardNoData } from '../StatsPage/LeaderboardTable'
-import LeaderboardPreviewItem from './LeaderboardPreveiwItem'
+import LeaderboardPreviewItem from './LeaderboardPreviewItem'
 
 const LeaderboardByReferrals = () => {
   const [isOpen, setIsOpen] = useState(false)

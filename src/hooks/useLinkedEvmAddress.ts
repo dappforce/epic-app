@@ -5,16 +5,19 @@ import {
 import { useMyGrillAddress } from '@/stores/my-account'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 
-export const useLinkedProviders = (address: string) => {
+export const useLinkedProviders = (
+  address: string,
+  config = { enabled: true }
+) => {
   const myGrillAddress = useMyGrillAddress()
 
   const { data: myLinkedIdentity, isLoading: isLoadingMy } =
     getLinkedIdentityQuery.useQuery(myGrillAddress ?? '', {
-      enabled: !address && true && !!myGrillAddress,
+      enabled: !address && config.enabled && !!myGrillAddress,
     })
   const { data: linkedIdentity, isLoading: isLoadingMainAddress } =
     getLinkedIdentityFromMainAddressQuery.useQuery(address ?? '', {
-      enabled: !!address && true,
+      enabled: !!address && config.enabled,
     })
 
   const usedLinkedIdentity = address ? linkedIdentity : myLinkedIdentity
