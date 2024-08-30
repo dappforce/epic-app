@@ -148,7 +148,7 @@ export const CommonEVMLoginContent = ({
       label={buttonLabel}
       secondLabel='Sign Message'
       additionalSecondActionLabel={
-        (isSigning || true) && (
+        isSigning && (
           <Link
             href='https://metamask.app.link/'
             target='_blank'
