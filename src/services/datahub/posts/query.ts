@@ -10,6 +10,7 @@ import {
   useInfiniteQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { gql } from 'graphql-request'
 import {
   commentIdsOptimisticEncoder,
@@ -618,5 +619,58 @@ export const getUserPostedMemesForCountQuery = createQuery({
   },
   defaultConfigGenerator: (params) => ({
     enabled: !!params?.address && !!params.chatId,
+  }),
+})
+
+const GET_POSTS_COUNT_BY_TODAY = gql`
+  query GetUnapprovedMemesCount(
+    $createdAtTimeGte: String!
+    $createdAtTimeLte: String!
+    $postId: String!
+  ) {
+    posts(
+      args: {
+        filter: {
+          createdAtTimeGte: $createdAtTimeGte
+          createdAtTimeLte: $createdAtTimeLte
+          rootPostId: $postId
+        }
+        pageSize: 100
+      }
+    ) {
+      total
+    }
+  }
+`
+export const getPostsCountByTodayQuery = createQuery({
+  key: 'getPostsCountByToday',
+  fetcher: async ({ chatId }: { chatId: string }) => {
+    const createdAtTimeGte = dayjs.utc(new Date()).startOf('day')
+
+    const createdAtTimeLte = createdAtTimeGte.add(1, 'day').toString()
+
+    const res = await datahubQueryRequest<
+      {
+        posts: {
+          total: number
+        }
+      },
+      {
+        createdAtTimeGte: string
+        createdAtTimeLte: string
+        postId: string
+      }
+    >({
+      document: GET_POSTS_COUNT_BY_TODAY,
+      variables: {
+        postId: chatId,
+        createdAtTimeGte: createdAtTimeGte.toString(),
+        createdAtTimeLte: createdAtTimeLte,
+      },
+    })
+    return res.posts.total
+  },
+  defaultConfigGenerator: (params) => ({
+    enabled: !!params?.chatId,
   }),
 })

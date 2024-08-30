@@ -5,22 +5,15 @@ import Speaker from '@/assets/emojis/speaker.png'
 import Target from '@/assets/emojis/target.png'
 import Thumbsup from '@/assets/emojis/thumbsup.png'
 import BlueGradient from '@/assets/graphics/blue-gradient.png'
-import AddressAvatar from '@/components/AddressAvatar'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
 import LinkText from '@/components/LinkText'
-import Name from '@/components/Name'
-import Toast from '@/components/Toast'
-import LinkEvmAddressModal from '@/components/modals/LinkEvmAddressModal'
+import LinkAddressModal from '@/components/modals/LinkEvmAddressModal'
 import RewardPerDayModal from '@/components/modals/RewardPerDayModal'
 import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
 import useIsMounted from '@/hooks/useIsMounted'
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import { useSendEvent } from '@/stores/analytics'
-import { useMyMainAddress } from '@/stores/my-account'
-import { truncateAddress } from '@/utils/account'
 import { cx } from '@/utils/class-names'
-import { copyToClipboard } from '@/utils/strings'
 import { allowWindowScroll, preventWindowScroll } from '@/utils/window'
 import { Transition } from '@headlessui/react'
 import Image from 'next/image'
@@ -31,10 +24,6 @@ import { createPortal } from 'react-dom'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { FaChevronDown } from 'react-icons/fa'
 import { HiChevronRight, HiOutlineChevronLeft, HiXMark } from 'react-icons/hi2'
-import { IoIosArrowForward, IoIosStats } from 'react-icons/io'
-import { MdContentCopy } from 'react-icons/md'
-import { RiPencilFill } from 'react-icons/ri'
-import { toast } from 'sonner'
 import { LeaderboardContent } from '../telegram/StatsPage/LeaderboardSection'
 import CheckInTaskPreview from './CheckInTaskPreview'
 import LikeCount from './LikePreview'
@@ -139,11 +128,7 @@ function PointsDrawerContent({
       title: 'My Progress',
       content: () => (
         <>
-          <UserStatsSection
-            setOpenEvmLinkModal={setOpenEvmLinkModal}
-            setOpenProfileModal={setOpenProfileModal}
-            setDrawerContentState={setDrawerContentState}
-          />
+          <UserStatsSection />
           <DrawerLinks
             setIsOpen={setIsOpen}
             setDrawerContentState={setDrawerContentState}
@@ -227,7 +212,7 @@ function PointsDrawerContent({
         closeModal={() => setOpenProfileModal(false)}
         isOpen={openProfileModal}
       />
-      <LinkEvmAddressModal
+      <LinkAddressModal
         isOpen={openEvmLinkModal}
         closeModal={() => setOpenEvmLinkModal(false)}
       />
@@ -236,130 +221,12 @@ function PointsDrawerContent({
   )
 }
 
-const UserStatsSection = ({
-  setDrawerContentState,
-  setOpenEvmLinkModal,
-  setOpenProfileModal,
-}: {
-  setDrawerContentState: (drawerContentState: DrawerContentState) => void
-  setOpenProfileModal: (open: boolean) => void
-  setOpenEvmLinkModal: (open: boolean) => void
-}) => {
-  const myAddress = useMyMainAddress()
-  const sendEvent = useSendEvent()
+const UserStatsSection = () => {
   const [openRewardModal, setOpenRewardModal] = useState(false)
-
-  const { evmAddress, isLoading } = useLinkedEvmAddress()
 
   return (
     <>
       <div className='mb-10 flex w-full flex-col rounded-xl bg-slate-800 hover:cursor-pointer'>
-        <div
-          className={cx(
-            'flex flex-col gap-4 border-b border-slate-700 p-4 pb-2',
-            isLoading && 'pb-4'
-          )}
-        >
-          <div
-            className='flex items-center justify-between gap-2'
-            onClick={() => {
-              sendEvent('open_leaderboard')
-              setDrawerContentState('leaderboard')
-            }}
-          >
-            <div className='flex items-center gap-2'>
-              <AddressAvatar address={myAddress ?? ''} className='h-16 w-16' />
-              <div className='flex flex-col gap-1'>
-                <div className='flex items-center gap-3'>
-                  <Name
-                    address={myAddress ?? ''}
-                    clipText
-                    className='text-lg font-medium !text-text'
-                  />
-                  <Button
-                    size='circleSm'
-                    variant='muted'
-                    className='inline flex-shrink-0'
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-
-                      sendEvent('edit_profile_click')
-                      setOpenProfileModal(true)
-                    }}
-                  >
-                    <RiPencilFill />
-                  </Button>
-                </div>
-                <LinkText
-                  variant='primary'
-                  className='flex items-center gap-2 hover:no-underline focus:no-underline'
-                >
-                  <IoIosStats /> See the Leaderboard
-                </LinkText>
-              </div>
-            </div>
-            <IoIosArrowForward className={cx('fill-slate-400 text-2xl')} />
-          </div>
-          {(() => {
-            if (isLoading) return null
-            if (evmAddress) {
-              return (
-                <Card className='mb-2 flex items-center justify-between gap-4 p-4 py-3'>
-                  <div className='flex flex-col gap-1'>
-                    <span className='text-sm font-medium text-text-muted'>
-                      My Ethereum Address
-                    </span>
-                    <div className='flex items-center gap-2.5'>
-                      <span className='font-semibold'>
-                        {truncateAddress(evmAddress ?? '')}
-                      </span>
-                      <Button
-                        className='flex-shrink-0 text-sm text-text-muted'
-                        variant='transparent'
-                        size='circleSm'
-                        onClick={() => {
-                          sendEvent('copy_evm_address_click')
-                          copyToClipboard(evmAddress ?? '')
-                          toast.custom((t) => (
-                            <Toast t={t} title='Copied to clipboard!' />
-                          ))
-                        }}
-                      >
-                        <MdContentCopy />
-                      </Button>
-                    </div>
-                  </div>
-                  <LinkText
-                    variant='primary'
-                    className='mr-1'
-                    onClick={() => {
-                      sendEvent('edit_evm_address_click')
-                      setOpenEvmLinkModal(true)
-                    }}
-                  >
-                    Edit
-                  </LinkText>
-                </Card>
-              )
-            } else {
-              return (
-                <div className='pb-2'>
-                  <Button
-                    className='w-full'
-                    onClick={() => {
-                      sendEvent('connect_evm_address_click')
-                      setOpenEvmLinkModal(true)
-                    }}
-                    variant='primaryOutline'
-                  >
-                    Connect Ethereum Wallet
-                  </Button>
-                </div>
-              )
-            }
-          })()}
-        </div>
         <div className='flex w-full items-center gap-4 px-4'>
           <div className='flex w-full flex-col gap-1 border-r border-slate-700 py-4'>
             <span className='text-text-muted'>LIKES LEFT TODAY:</span>
@@ -446,7 +313,7 @@ const DrawerLinks = ({
           </Button>
         </Card>
       </LinkWrapper>
-      <LinkWrapper close={onClose} href='/tg'>
+      <LinkWrapper close={onClose} href='/tg/memes'>
         <Card className={cardStyles}>
           <Image src={Laugh} alt='' className='h-12 w-12 flex-shrink-0' />
           <div className='flex flex-col gap-1'>

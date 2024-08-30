@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { IoSearchSharp } from 'react-icons/io5'
 import { toast } from 'sonner'
 
-function getStartParam(urlOrAddress: string) {
+export function getStartParam(urlOrAddress: string) {
   let result = ''
 
   try {
@@ -35,7 +35,7 @@ const SearchUser = () => {
 
   return (
     <>
-      <div className='flex flex-col gap-1 px-4'>
+      <div className='flex flex-col gap-1'>
         <span className={cx(mutedTextColorStyles)}>Search user posts:</span>
         <div className='flex items-center gap-2 '>
           <Input
@@ -43,13 +43,14 @@ const SearchUser = () => {
             onChange={(e) => {
               setValue(e.target.value)
             }}
+            className='h-[50px]'
           />
 
           <Button
             variant='primary'
             size={'md'}
             roundings={'xl'}
-            className='h-full'
+            className='flex h-[50px] w-full max-w-[50px] items-center justify-center p-0'
             disabled={!value}
             onClick={() => {
               const { address, error } = getStartParam(value)

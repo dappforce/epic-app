@@ -48,7 +48,7 @@ type LeaderboardTableProps = {
   >
 }
 
-type Data = {
+export type Data = {
   address: string
   rank: number | null
   reward: string
@@ -64,10 +64,9 @@ const parseTableRows = (data: Data[], limit: number, currentUserRank: Data) => {
           <UserPreview
             address={item.address}
             desc={<UserReward reward={item.reward} />}
+            isMyAccount={item.address === currentUserRank?.address}
           />
         ),
-        className:
-          item.address === currentUserRank?.address ? 'bg-slate-800' : '',
       }))
       .slice(0, limit) || []
   )
@@ -129,19 +128,7 @@ const LeaderboardTable = ({
         (isLoading ? (
           <Loading title='Loading table data' className='p-7' />
         ) : (
-          <div
-            className='flex flex-col items-center justify-center p-4 text-center'
-            style={{ gridColumn: '1/4' }}
-          >
-            <Image
-              src={MedalsImage}
-              alt=''
-              className='relative w-[70px] max-w-sm'
-            />
-            <span className={cx(mutedTextColorStyles)}>
-              Create great content and get the most likes to show up here!
-            </span>
-          </div>
+          <LeaderboardNoData />
         ))}
       {!!data.length && (
         <div className='flex w-full flex-col'>
@@ -178,6 +165,18 @@ const LeaderboardTable = ({
   )
 }
 
+export const LeaderboardNoData = () => (
+  <div
+    className='flex flex-col items-center justify-center p-4 text-center'
+    style={{ gridColumn: '1/4' }}
+  >
+    <Image src={MedalsImage} alt='' className='relative w-[70px] max-w-sm' />
+    <span className={cx(mutedTextColorStyles)}>
+      Create great content and get the most likes to show up here!
+    </span>
+  </div>
+)
+
 type UserRewardProps = {
   reward: string
 }
@@ -202,6 +201,7 @@ type UserPreviewProps = {
   desc?: React.ReactNode
   className?: string
   nameClassName?: string
+  isMyAccount?: boolean
 }
 
 export const UserPreview = ({
@@ -210,6 +210,7 @@ export const UserPreview = ({
   loading,
   className,
   nameClassName,
+  isMyAccount,
 }: UserPreviewProps & { loading?: ImageProps['loading'] }) => {
   return (
     <div className={cx('flex items-center gap-2', className)}>
@@ -219,13 +220,21 @@ export const UserPreview = ({
         loading={loading}
       />
       <div className={cx('flex flex-col gap-2')}>
-        <Name
-          address={address}
-          className={cx(
-            'text-sm font-medium leading-none !text-text',
-            nameClassName
+        <div className='flex items-center gap-2'>
+          <Name
+            address={address}
+            clipText
+            className={cx(
+              'text-sm font-medium leading-none !text-text',
+              nameClassName
+            )}
+          />
+          {isMyAccount && (
+            <span className='text-sm font-medium leading-none text-slate-400'>
+              (you)
+            </span>
           )}
-        />
+        </div>
         {desc && (
           <div
             className={cx(

@@ -1,6 +1,4 @@
-import Airdrop from '@/assets/icons/bottomNavbar/airdrop.svg'
 import Friends from '@/assets/icons/bottomNavbar/friends.svg'
-import Tap from '@/assets/icons/bottomNavbar/tap.svg'
 import Tasks from '@/assets/icons/bottomNavbar/tasks.svg'
 import TopMemes from '@/assets/icons/bottomNavbar/top-memes.svg'
 import { env } from '@/env.mjs'
@@ -15,6 +13,8 @@ import { useHapticFeedbackRaw } from '@tma.js/sdk-react'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
 import { IconType } from 'react-icons'
+import { AiFillHome } from 'react-icons/ai'
+import { IoMenu } from 'react-icons/io5'
 import CustomLink from 'src/components/referral/CustomLink'
 import useLastReadTimeFromStorage from '../chats/hooks/useLastReadMessageTimeFromStorage'
 
@@ -22,7 +22,7 @@ const tasksPageVisitedDateStore = new LocalStorage(
   () => 'tasks-page-visited-date'
 )
 
-export type HomePageView = 'memes' | 'tasks' | 'airdrop' | 'friends' | 'tap'
+export type HomePageView = 'memes' | 'tasks' | 'home' | 'friends' | 'menu'
 
 type MobileNavigationProps = {}
 
@@ -37,26 +37,9 @@ type Tab = {
 
 const tabs: Tab[] = [
   {
-    id: 'friends',
-    text: `Friends`,
-    Icon: Friends,
-    href: '/tg/friends',
-  },
-  {
-    id: 'tap',
-    text: 'Tap',
-    Icon: Tap,
-    href: '/tg/tap',
-  },
-  {
-    id: 'memes',
-    text: 'Memes',
-    Icon: (props: ComponentProps<'div'>) => (
-      <div {...props} className={cx('relative', props.className)}>
-        <TopMemes />
-        <NewMemeNotice />
-      </div>
-    ),
+    id: 'home',
+    text: `Home`,
+    Icon: AiFillHome,
     href: '/tg',
   },
   {
@@ -79,12 +62,27 @@ const tabs: Tab[] = [
     },
   },
   {
-    id: 'airdrop',
-    text: `Airdrop`,
-    Icon: Airdrop,
-    href: '/tg/airdrop',
-    customClassName:
-      '[&_path]:fill-[linear-gradient(90deg, #FFE26E 100%, #D8A44D 100%)] !text-[#FBDB6A]',
+    id: 'memes',
+    text: 'Memes',
+    Icon: (props: ComponentProps<'div'>) => (
+      <div {...props} className={cx('relative', props.className)}>
+        <TopMemes />
+        <NewMemeNotice />
+      </div>
+    ),
+    href: '/tg/memes',
+  },
+  {
+    id: 'friends',
+    text: `Friends`,
+    Icon: Friends,
+    href: '/tg/friends',
+  },
+  {
+    id: 'menu',
+    text: `Menu`,
+    Icon: IoMenu,
+    href: '/tg/menu',
   },
 ]
 
@@ -185,7 +183,7 @@ function NewMemeNotice() {
   const isMounted = useIsMounted()
 
   if (
-    pathname !== '/tg' &&
+    pathname !== '/tg/memes' &&
     isMounted &&
     lastMessage &&
     getLastReadTime() < lastMessage.struct.createdAtTime

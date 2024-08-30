@@ -1,10 +1,10 @@
 import Diamond from '@/assets/emojis/diamond.png'
 import TapFromMobileImage from '@/assets/graphics/tap-from-mobile.png'
 import SkeletonFallback from '@/components/SkeletonFallback'
+import BackButton from '@/components/layouts/BackButton'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import Points from '@/modules/points/PointsPreview'
-import PointsWidget from '@/modules/points/PointsWidget'
 import {
   FULL_ENERGY_VALUE,
   getEnergyStateQuery,
@@ -23,10 +23,10 @@ const TapPage = () => {
       className='relative'
       style={{ minHeight: '100dvh' }}
     >
-      <PointsWidget
-        isNoTgScroll
-        withPointsAnimation={false}
-        className='sticky top-0'
+      <BackButton
+        title='Tap The Cat'
+        backPath='/tg/menu'
+        className='mt-4 px-4'
       />
       <TapPageContent />
     </LayoutWithBottomNavigation>

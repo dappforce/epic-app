@@ -7,6 +7,10 @@ import MobileNavigation from './MobileNavigation'
 export type DefaultLayoutProps = ComponentProps<'div'> & {
   withFixedHeight?: boolean
   withFixedWidth?: boolean
+  pageNavigation?: {
+    title: string
+    backLink: string
+  }
 }
 
 export default function LayoutWithBottomNavigation({
@@ -33,8 +37,10 @@ export default function LayoutWithBottomNavigation({
           : { minHeight: '100svh', ...style }
       }
     >
+      {/* <div className='overflow-auto'> */}
       {children}
       <MobileNavigation />
+      {/* </div> */}
     </div>
   )
 }

@@ -3,7 +3,7 @@ import Button from '@/components/Button'
 import LinkText from '@/components/LinkText'
 import Input from '@/components/inputs/Input'
 import useIsMounted from '@/hooks/useIsMounted'
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import { useAddExternalProviderToIdentity } from '@/services/datahub/identity/mutation'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
@@ -39,8 +39,8 @@ const ContestEvmModal = () => {
       },
     })
 
-  const { evmAddress: myEvmAddress, isLoading: isEvmAccountLoading } =
-    useLinkedEvmAddress()
+  const { identityAddress: myEvmAddress, isLoading: isEvmAccountLoading } =
+    useLinkedAddress()
   useEffect(() => {
     if (isOpen && myEvmAddress) {
       if (!isAfterSubmit.current) {

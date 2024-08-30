@@ -1,4 +1,4 @@
-import HomePage from '@/modules/telegram/HomePage'
+import MenuPage from '@/modules/telegram/MenuPage'
 import { getCommonStaticProps } from '@/utils/page'
 import { AppCommonProps } from '../_app'
 
@@ -17,4 +17,4 @@ export const getStaticProps = getCommonStaticProps<AppCommonProps>(
   }
 )
 
-export default HomePage
+export default MenuPage
