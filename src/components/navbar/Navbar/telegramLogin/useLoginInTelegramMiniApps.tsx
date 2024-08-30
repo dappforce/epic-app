@@ -136,6 +136,7 @@ const useLoginInTelegramMiniApps = () => {
             username: data.username,
             provider: SDKIdentityProvider.TELEGRAM,
             id: data.id?.toString() || '',
+            enabled: true,
           },
         })
       } else {

@@ -1,6 +1,10 @@
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
-import { useUpdateExternalProvider } from '@/services/datahub/identity/mutation'
+import {
+  reloadEveryIntervalUntilLinkedIdentityFound,
+  useUpdateExternalProvider,
+} from '@/services/datahub/identity/mutation'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
+import { useEffect } from 'react'
 import Button from '../Button'
 import Modal, { ModalFunctionalityProps } from '../modals/Modal'
 
@@ -15,7 +19,27 @@ export default function UnlinkWalletModal({
   ...props
 }: ModalFunctionalityProps & { chain: 'evm' | 'solana' }) {
   const { evmAddress, evmAddressProviderId } = useLinkedEvmAddress()
-  const { mutate, isLoading } = useUpdateExternalProvider()
+  const { mutate, isLoading, isSuccess, reset } = useUpdateExternalProvider({
+    onSuccess: (_, { externalProvider }) => {
+      reloadEveryIntervalUntilLinkedIdentityFound((identity) => {
+        const found = identity?.externalProviders.find(
+          (p) =>
+            // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
+            p.provider === externalProvider.provider &&
+            p.externalId === externalProvider.id
+        )
+        console.log('FOUND?', found)
+        if (!found) {
+          props.closeModal()
+        }
+        return !found
+      })
+    },
+  })
+
+  useEffect(() => {
+    reset()
+  }, [props.isOpen, reset])
 
   return (
     <Modal
@@ -42,7 +66,7 @@ export default function UnlinkWalletModal({
           }}
           variant='primaryOutline'
           className='border-red-500'
-          isLoading={isLoading}
+          isLoading={isLoading || isSuccess}
         >
           Yes, unlink
         </Button>

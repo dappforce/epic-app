@@ -42,7 +42,7 @@ export async function linkIdentity(
   )
 }
 
-function reloadEveryIntervalUntilLinkedIdentityFound(
+export function reloadEveryIntervalUntilLinkedIdentityFound(
   foundChecker: (linkedIdentity: Identity | null) => boolean
 ) {
   const intervalId = setInterval(async () => {

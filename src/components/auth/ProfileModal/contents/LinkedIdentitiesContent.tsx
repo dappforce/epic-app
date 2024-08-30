@@ -196,6 +196,7 @@ function EvmConnectButton() {
       await addProvider({
         externalProvider: {
           id: evmAddress,
+          enabled: true,
           provider: SDKIdentityProvider.EVM,
           evmProofMsg: message,
           evmProofMsgSig: sig,

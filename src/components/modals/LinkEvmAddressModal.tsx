@@ -84,6 +84,7 @@ export default function LinkEvmAddressModal(
         externalProvider: {
           id: checksumAddress,
           provider: IdentityProvider.EVM,
+          enabled: true,
         },
       })
     } else {
@@ -91,6 +92,7 @@ export default function LinkEvmAddressModal(
         externalProvider: {
           id: checksumAddress,
           provider: IdentityProvider.EVM,
+          enabled: true,
         },
       })
     }
