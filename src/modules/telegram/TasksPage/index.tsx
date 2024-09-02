@@ -1,12 +1,14 @@
-import Diamond from '@/assets/emojis/diamond.png'
 import Calendar from '@/assets/graphics/tasks/calendar.png'
 import Like from '@/assets/graphics/tasks/like.png'
-import Check from '@/assets/icons/check.svg'
-import Card from '@/components/Card'
 import LinkText from '@/components/LinkText'
-import { Skeleton } from '@/components/SkeletonFallback'
+import TaskCard from '@/components/TaskCard'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import DailyRewardModal from '@/components/modals/DailyRewardModal'
+import ClaimTaskModal from '@/components/tasks/ClaimTaskModal'
+import {
+  ClaimModalVariant,
+  modalConfigByVariant,
+} from '@/components/tasks/config'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import LikeCount from '@/modules/points/LikePreview'
 import PointsWidget from '@/modules/points/PointsWidget'
@@ -16,25 +18,17 @@ import {
   getTodaySuperLikeCountQuery,
   getTokenomicsMetadataQuery,
 } from '@/services/datahub/content-staking/query'
-import { getUserReferralStatsQuery } from '@/services/datahub/leaderboard/query'
+import { GamificationTask } from '@/services/datahub/tasks'
 import {
   clearGamificationTasksError,
   getGamificationTasksQuery,
 } from '@/services/datahub/tasks/query'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
-import { cx } from '@/utils/class-names'
 import { formatNumber } from '@/utils/strings'
 import { useQueryClient } from '@tanstack/react-query'
-import Image, { ImageProps } from 'next/image'
-import Link from 'next/link'
-import { CSSProperties, useState } from 'react'
-import { FaChevronRight } from 'react-icons/fa6'
+import { useState } from 'react'
 import SkeletonFallback from '../../../components/SkeletonFallback'
-import ClaimTasksTokensModal, {
-  ClaimModalVariant,
-  modalConfigByVariant,
-} from './ClaimTaskTokensModal'
 
 export default function TasksPage() {
   useTgNoScroll()
@@ -158,23 +152,21 @@ const inviteFriendsTasksName = 'INVITE_REFERRALS'
 function InviteFriendsTasks() {
   const myAddress = useMyMainAddress()
   const sendEvent = useSendEvent()
-  const [modalVariant, setModalVariant] = useState<ClaimModalVariant>(null)
-  const client = useQueryClient()
-  const { data: refStats } = getUserReferralStatsQuery.useQuery(myAddress || '')
-
-  const { refCount } = refStats || {}
-
-  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery(
-    myAddress || ''
+  const [isOpenClaimTaskModal, setIsOpenClaimTaskModal] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<GamificationTask | null>(
+    null
   )
+  const client = useQueryClient()
+
+  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery({
+    address: myAddress || '',
+    rootSpaceId: '',
+  })
 
   const data =
     gamificationTasks?.data?.filter(
       (item) => item.name === inviteFriendsTasksName
     ) || []
-
-  const { aim } =
-    modalConfigByVariant[modalVariant || 'JOIN_TELEGRAM_CHANNEL_EpicAppNet']
 
   return (
     <div className='flex flex-col gap-5'>
@@ -197,9 +189,8 @@ function InviteFriendsTasks() {
       </div>
       <div className='flex flex-col gap-2'>
         {data.map((task, index) => {
-          const tag = task.tag as Exclude<ClaimModalVariant, null>
-
-          const { image, title, event } = modalConfigByVariant[tag]
+          const { image, title, event } =
+            modalConfigByVariant[task.name]?.(task)
 
           return (
             <TaskCard
@@ -210,7 +201,8 @@ function InviteFriendsTasks() {
 
                 if (task !== undefined && !task.claimed) {
                   clearGamificationTasksError(client)
-                  setModalVariant(tag)
+                  setIsOpenClaimTaskModal(true)
+                  setSelectedTask(task)
                 }
               }}
               title={title}
@@ -221,14 +213,13 @@ function InviteFriendsTasks() {
           )
         })}
       </div>
-      <ClaimTasksTokensModal
-        modalVariant={modalVariant}
-        close={() => setModalVariant(null)}
-        data={data || []}
-        disableButton={
-          aim && refCount !== undefined ? refCount < aim : undefined
-        }
-      />
+      {selectedTask && (
+        <ClaimTaskModal
+          task={selectedTask}
+          isOpen={isOpenClaimTaskModal}
+          close={() => setIsOpenClaimTaskModal(false)}
+        />
+      )}
     </div>
   )
 }
@@ -237,13 +228,18 @@ const basicTasksNames = ['JOIN_TELEGRAM_CHANNEL', 'JOIN_TWITTER']
 
 function BasicTasks() {
   const sendEvent = useSendEvent()
-  const [modalVariant, setModalVariant] = useState<ClaimModalVariant>(null)
+  const [isOpenClaimTaskModal, setIsOpenClaimTaskModal] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<GamificationTask | null>(
+    null
+  )
+
   const myAddress = useMyMainAddress()
   const client = useQueryClient()
 
-  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery(
-    myAddress || ''
-  )
+  const { data: gamificationTasks } = getGamificationTasksQuery.useQuery({
+    address: myAddress || '',
+    rootSpaceId: '',
+  })
 
   const data =
     gamificationTasks?.data?.filter((item) =>
@@ -264,7 +260,7 @@ function BasicTasks() {
         {data.map((task, index) => {
           const tag = task.tag as Exclude<ClaimModalVariant, null>
 
-          const variant = modalConfigByVariant[tag]
+          const variant = modalConfigByVariant[tag]?.(task)
           if (!variant) return null
           const { image, title, event } = variant || {}
 
@@ -277,7 +273,8 @@ function BasicTasks() {
 
                 if (task !== undefined && !task.claimed) {
                   clearGamificationTasksError(client)
-                  setModalVariant(tag)
+                  setIsOpenClaimTaskModal(true)
+                  setSelectedTask(task)
                 }
               }}
               title={title}
@@ -288,108 +285,15 @@ function BasicTasks() {
           )
         })}
       </div>
-      <ClaimTasksTokensModal
-        modalVariant={modalVariant}
-        close={() => setModalVariant(null)}
-        data={data || []}
-      />
+      {selectedTask && (
+        <ClaimTaskModal
+          task={selectedTask}
+          isOpen={isOpenClaimTaskModal}
+          close={() => setIsOpenClaimTaskModal(false)}
+        />
+      )}
     </div>
   )
-}
-
-export function TaskCard({
-  completed,
-  image,
-  reward,
-  title,
-  customAction,
-  onClick,
-  href,
-  openInNewTab,
-  isLoadingReward,
-  withoutDiamondIcon,
-  topBanner,
-}: {
-  image: ImageProps['src']
-  title: React.ReactNode
-  reward: number | string
-  completed: boolean
-  customAction?: React.ReactNode
-  onClick?: () => void
-  href?: string
-  openInNewTab?: boolean
-  isLoadingReward?: boolean
-  withoutDiamondIcon?: boolean
-  topBanner?: {
-    icon: JSX.Element
-    text: string
-    className?: string
-    textStyle?: CSSProperties
-    textClassName?: string
-  }
-}) {
-  const card = (
-    <Card className='flex cursor-pointer flex-col overflow-clip rounded-2xl p-0'>
-      {topBanner && (
-        <div className='bg-background'>
-          <div
-            className={cx(
-              'flex items-center justify-center gap-1 py-1.5 text-xs',
-              topBanner.className
-            )}
-          >
-            <span className='text-sm'>{topBanner.icon}</span>
-            <span
-              className={cx('font-medium', topBanner.textClassName)}
-              style={topBanner.textStyle}
-            >
-              {topBanner.text}
-            </span>
-          </div>
-        </div>
-      )}
-      <div
-        className='flex items-center gap-2.5 bg-background-light p-2.5 transition active:bg-background-lighter'
-        onClick={onClick}
-      >
-        <Image src={image} alt='' className='h-[50px] w-[50px]' />
-        <div className='flex flex-col gap-1'>
-          <span className='font-bold'>{title}</span>
-          <div className='flex items-center gap-0.5'>
-            {!withoutDiamondIcon && (
-              <Image src={Diamond} alt='' className='relative top-px h-5 w-5' />
-            )}
-            {isLoadingReward ? (
-              <Skeleton className='w-12' />
-            ) : (
-              <span className='text-text-muted'>
-                {typeof reward === 'number'
-                  ? `+${formatNumber(reward)}`
-                  : reward}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className='ml-auto flex items-center justify-center pr-1'>
-          {completed ? (
-            <Check />
-          ) : customAction ? (
-            customAction
-          ) : (
-            <FaChevronRight className='text-text-muted' />
-          )}
-        </div>
-      </div>
-    </Card>
-  )
-  if (href) {
-    return (
-      <Link target={openInNewTab ? '_blank' : undefined} href={href}>
-        {card}
-      </Link>
-    )
-  }
-  return card
 }
 
 function NewTasks() {

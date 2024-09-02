@@ -5,7 +5,7 @@ import { cx } from '@/utils/class-names'
 import { HiOutlineEyeSlash } from 'react-icons/hi2'
 import { toast } from 'sonner'
 import Toast from '../Toast'
-import ChatItem from '../chats/ChatItem'
+import MemeChatItem from '../chats/ChatItem/MemeChatItem'
 import ConfirmationModal from './ConfirmationModal'
 import { ModalFunctionalityProps } from './Modal'
 
@@ -53,12 +53,13 @@ export default function HideMessageModal({
             'relative flex max-h-96 flex-col overflow-y-auto rounded-2xl bg-background p-2 md:p-4'
           )}
         >
-          <ChatItem
+          <MemeChatItem
             enableChatMenu={false}
             message={message}
             hubId={hubId}
             chatId={chatId}
-            isMyMessage={false}
+            className='max-w-none rounded-2xl bg-background-lighter'
+            noBorder
           />
         </div>
       )}

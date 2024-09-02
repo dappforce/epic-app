@@ -50,6 +50,14 @@ export type CreateMutateActiveStakingSuperLikeInput = {
   sig: Scalars['String']['input'];
 };
 
+export type CreateMutateContentContainerConfigInput = {
+  callData?: InputMaybe<SocialCallDataInput>;
+  dataType: SocialEventDataType;
+  protVersion?: InputMaybe<Scalars['String']['input']>;
+  providerAddr: Scalars['String']['input'];
+  sig: Scalars['String']['input'];
+};
+
 export type CreateMutateGamificationEntityInput = {
   callData?: InputMaybe<SocialCallDataInput>;
   dataType: SocialEventDataType;
@@ -183,6 +191,7 @@ export type Mutation = {
   addPostViewsBatch: IngestDataResponseDto;
   addTappingActivityStates: IngestDataResponseDto;
   claimEntranceDailyReward: IngestDataResponseDto;
+  contentContainerConfigCreate: IngestDataResponseDto;
   createLinkedIdentity: IngestDataResponseDto;
   createPostOffChain: IngestDataResponseDto;
   createPostOptimistic: IngestDataResponseDto;
@@ -203,6 +212,7 @@ export type Mutation = {
   setPostApproveStatus: IngestDataResponseDto;
   socialProfileAddReferrerId: IngestDataResponseDto;
   socialProfileSetActionPermissions: IngestDataResponseDto;
+  socialProfileSyncExternalTokenBalance: IngestDataResponseDto;
   updateLinkedIdentityExternalProvider: IngestDataResponseDto;
   updatePostBlockchainSyncStatus: IngestDataResponseDto;
   updatePostOptimistic: IngestDataResponseDto;
@@ -242,6 +252,11 @@ export type MutationAddTappingActivityStatesArgs = {
 
 export type MutationClaimEntranceDailyRewardArgs = {
   args: CreateMutateGamificationEntityInput;
+};
+
+
+export type MutationContentContainerConfigCreateArgs = {
+  args: CreateMutateContentContainerConfigInput;
 };
 
 
@@ -341,6 +356,11 @@ export type MutationSocialProfileAddReferrerIdArgs = {
 
 
 export type MutationSocialProfileSetActionPermissionsArgs = {
+  args: SocialProfileAddReferrerIdInput;
+};
+
+
+export type MutationSocialProfileSyncExternalTokenBalanceArgs = {
   args: SocialProfileAddReferrerIdInput;
 };
 
@@ -450,6 +470,7 @@ export enum SocialCallName {
   SynthAddLinkedIdentityExternalProvider = 'synth_add_linked_identity_external_provider',
   SynthAddPostView = 'synth_add_post_view',
   SynthAddPostViewsBatch = 'synth_add_post_views_batch',
+  SynthCreateContentContainerConfig = 'synth_create_content_container_config',
   SynthCreateLinkedIdentity = 'synth_create_linked_identity',
   SynthCreatePostTxFailed = 'synth_create_post_tx_failed',
   SynthCreatePostTxRetry = 'synth_create_post_tx_retry',
@@ -475,6 +496,8 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthSocialProfileSyncExternalTokenBalance = 'synth_social_profile_sync_external_token_balance',
+  SynthUpdateContentContainerConfig = 'synth_update_content_container_config',
   SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
   SynthUpdatePostTxRetry = 'synth_update_post_tx_retry',

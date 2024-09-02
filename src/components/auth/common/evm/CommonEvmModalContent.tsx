@@ -16,6 +16,7 @@ import { openNewWindow, twitterShareUrl } from '@/utils/social-share'
 import { IdentityProvider as SDKIdentityProvider } from '@subsocial/data-hub-sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { useSignMessage } from 'wagmi'
 import { CustomConnectButton } from './CustomConnectButton'
@@ -146,6 +147,18 @@ export const CommonEVMLoginContent = ({
       className='w-full'
       label={buttonLabel}
       secondLabel='Sign Message'
+      additionalSecondActionLabel={
+        isSigning && (
+          <Link
+            href='https://metamask.app.link/'
+            target='_blank'
+            className='text-sm text-text-muted'
+          >
+            Wallet not appearing?{' '}
+            <span className='text-text-primary'>Click here</span>
+          </Link>
+        )
+      }
       loadingText={!isSigned ? 'Pending Confirmation...' : 'Please wait...'}
     />
   )

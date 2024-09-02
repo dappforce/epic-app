@@ -12,6 +12,7 @@ type CustomConnectButtonProps = ButtonProps & {
   className?: string
   label?: React.ReactNode
   secondLabel?: React.ReactNode
+  additionalSecondActionLabel?: React.ReactNode
   withWalletActionImage?: boolean
   onSuccessConnect: (evmAddress: string) => Promise<void>
   isLoading: boolean
@@ -23,6 +24,7 @@ export const CustomConnectButton = ({
   label = 'Connect Ethereum Address',
   withWalletActionImage = true,
   secondLabel,
+  additionalSecondActionLabel,
   isLoading,
   ...buttonProps
 }: CustomConnectButtonProps) => {
@@ -81,7 +83,7 @@ export const CustomConnectButton = ({
                 commonButtonProps.onClick?.(e as any)
               }}
             >
-              {usedLabel}
+              {label}
             </Button>
           )
         }
@@ -102,17 +104,20 @@ export const CustomConnectButton = ({
         }
 
         return (
-          <Button
-            {...commonButtonProps}
-            onClick={async () => {
-              setHasInteractedOnce(true)
-              const connector = getConnector()
-              isTouchDevice() && (await openMobileWallet({ connector }))
-              onSuccess(account.address)
-            }}
-          >
-            {usedLabel}
-          </Button>
+          <>
+            <Button
+              {...commonButtonProps}
+              onClick={async () => {
+                setHasInteractedOnce(true)
+                const connector = getConnector()
+                isTouchDevice() && (await openMobileWallet({ connector }))
+                onSuccess(account.address)
+              }}
+            >
+              {usedLabel}
+            </Button>
+            {additionalSecondActionLabel}
+          </>
         )
       }}
     </ConnectButton.Custom>
@@ -126,7 +131,9 @@ export const CustomConnectButton = ({
           <LinkingDark className='hidden w-full dark:block' />
         </div>
 
-        {customButton}
+        <div className='flex w-full flex-col items-center gap-2'>
+          {customButton}
+        </div>
       </div>
     )
   }

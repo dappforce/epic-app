@@ -79,7 +79,10 @@ const ContestEvmModal = () => {
     if (!evmAddress || !isAddress(evmAddress)) return
     const checksumAddress = getAddress(evmAddress)
     mutate({
-      externalProvider: { id: checksumAddress, provider: IdentityProvider.EVM },
+      externalProvider: {
+        id: checksumAddress,
+        provider: IdentityProvider.EVM,
+      },
     })
   }
 

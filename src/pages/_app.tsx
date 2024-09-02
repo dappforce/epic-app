@@ -13,6 +13,7 @@ import useSaveTappedPointsAndEnergy, {
 import { ConfigProvider } from '@/providers/config/ConfigProvider'
 import TelegramLoginProvider from '@/providers/config/TelegramLoginProvider'
 import EvmProvider from '@/providers/evm/EvmProvider'
+import SolanaProvider from '@/providers/solana/SolanaProvider'
 import { getDatahubHealthQuery } from '@/services/datahub/health/query'
 import { getLinkedIdentityQuery } from '@/services/datahub/identity/query'
 import { increaseEnergyValue } from '@/services/datahub/leaderboard/points-balance/optimistic'
@@ -131,6 +132,13 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
   const isInitialized = useRef(false)
 
   useEffect(() => {
+    // for wallet connect integration, because in telegram app, window.open doesn't really work without this
+    window.open = (function (open) {
+      return function (url, _, features) {
+        return open.call(window, url, '_blank', features)
+      }
+    })(window.open)
+
     if (isInitialized.current) return
     isInitialized.current = true
     initAllStores()
@@ -149,11 +157,13 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
           <div className={cx('font-sans')}>
             <ErrorBoundary>
               <EvmProvider>
-                <TappingHooksWrapper>
-                  <ProfileModalWrapper>
-                    <Component {...props} />
-                  </ProfileModalWrapper>
-                </TappingHooksWrapper>
+                <SolanaProvider>
+                  <TappingHooksWrapper>
+                    <ProfileModalWrapper>
+                      <Component {...props} />
+                    </ProfileModalWrapper>
+                  </TappingHooksWrapper>
+                </SolanaProvider>
               </EvmProvider>
             </ErrorBoundary>
           </div>
