@@ -1,7 +1,8 @@
 import TapTheCat from '@/assets/graphics/tasks/tap-the-cat.png'
 import LinkText from '@/components/LinkText'
+import TaskCard from '@/components/TaskCard'
 import { useSendEvent } from '@/stores/analytics'
-import { DailyTasks, TaskCard } from '../TasksPage'
+import { DailyTasks } from '../TasksPage'
 
 const TasksPreview = () => {
   const sendEvent = useSendEvent()
