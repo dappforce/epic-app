@@ -27,7 +27,7 @@ export default function ChannelsPage() {
           alt=''
           className='absolute left-0 top-0 w-full'
         />
-        <div className='relative flex flex-col gap-4 h-full'>
+        <div className='relative flex h-full flex-col gap-4'>
           <TopMemesToday />
           <ChannelsList />
         </div>
