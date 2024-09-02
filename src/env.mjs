@@ -32,6 +32,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().default(''),
     FRAMES_SECRET: z.string().default(''),
     NEYNAR_API_KEY: z.string().default(''),
+    DAPP_SECRET_KEY: z.string().default(''),
   },
   client: {
     NEXT_PUBLIC_BASE_URL: z.string().default(''),
@@ -81,6 +82,8 @@ export const env = createEnv({
     NEXT_PUBLIC_DATAHUB_QUERY_URL: z.string().default(''),
     NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL: z.string().default(''),
     NEXT_PUBLIC_NEYNAR_CLIENT_ID: z.string().default(''),
+
+    NEXT_PUBLIC_DAPP_PUBLIC_KEY: z.string().default(''),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -130,5 +133,6 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_DATAHUB_SUBSCRIPTION_URL,
     NEXT_PUBLIC_NEYNAR_CLIENT_ID: process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID,
     NEXT_PUBLIC_PROPOSALS_HUB: process.env.NEXT_PUBLIC_PROPOSALS_HUB,
+    NEXT_PUBLIC_DAPP_PUBLIC_KEY: process.env.NEXT_PUBLIC_DAPP_PUBLIC_KEY,
   },
 })

@@ -24,6 +24,7 @@ import { RiPencilFill } from 'react-icons/ri'
 import { toast } from 'sonner'
 import RemoveLinkedIdentityModal from './RemoveLinkedIdentityModal'
 import SearchUser from './SearchUser'
+import SolanaButton from './solana'
 
 export default function AirdropPage() {
   useTgNoScroll()
@@ -73,6 +74,7 @@ export default function AirdropPage() {
                 <RiPencilFill />
               </Button>
             </div>
+            <SolanaButton />
             {(() => {
               if (isLoading) return null
               if (evmAddress) {

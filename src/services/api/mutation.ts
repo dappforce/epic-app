@@ -1,5 +1,6 @@
 import { CreateUserIdResponse } from '@/pages/api/create-user-id'
 import { ApiDatahubRemoveIdentityBody } from '@/pages/api/datahub/remove-identity'
+import { ApiEncryptResponseData } from '@/pages/api/encrypt'
 import { RevalidateChatInput } from '@/pages/api/revalidation/chat'
 import { SaveFileRequest, SaveFileResponse } from '@/pages/api/save-file'
 import { SaveImageResponse } from '@/pages/api/save-image'
@@ -56,3 +57,9 @@ async function removeMyLinkedIdentity() {
   return apiInstance.post('/api/datahub/remove-identity', data)
 }
 export const useRemoveMyLinkedIdentity = mutationWrapper(removeMyLinkedIdentity)
+
+async function encryptData(data: string) {
+  const res = await apiInstance.post('/api/encrypt', { data })
+  return res.data as ApiEncryptResponseData
+}
+export const useEncryptData = mutationWrapper(encryptData)

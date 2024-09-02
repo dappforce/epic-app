@@ -38,13 +38,8 @@ export function useDatahubEventsSubscriber() {
   useEffect(() => {
     if (!myAddress) return
 
-    const listener = () => {
-      unsubRef.current = subscription(queryClient)
-    }
-    listener()
-    document.addEventListener('visibilitychange', listener)
+    unsubRef.current = subscription(queryClient)
     return () => {
-      document.removeEventListener('visibilitychange', listener)
       unsubRef.current?.()
     }
   }, [queryClient, myAddress])
