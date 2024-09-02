@@ -1,7 +1,7 @@
 import Button from '@/components/Button'
 import { env } from '@/env.mjs'
 import { addExternalProviderToIdentity } from '@/server/datahub-queue/identity'
-import { createSocialDataEventPayload } from '@/services/datahub/utils'
+import { createSignedSocialDataEvent } from '@/services/datahub/utils'
 import { decryptPayload } from '@/stores/encryption'
 import { decodeSecretKey, loginWithSecretKey } from '@/utils/account'
 import { getCommonServerSideProps } from '@/utils/page'
@@ -47,12 +47,13 @@ export const getServerSideProps = getCommonServerSideProps(
     const secretKey = decodeSecretKey(Buffer.from(decryptRes).toString())
     const signer = await loginWithSecretKey(secretKey)
     await addExternalProviderToIdentity(
-      await createSocialDataEventPayload(
+      await createSignedSocialDataEvent(
         'synth_add_linked_identity_external_provider',
         {
           address: signer.address,
           proxyToAddress: address,
           timestamp: Date.now(),
+          signer,
         },
         {
           externalProvider: {
