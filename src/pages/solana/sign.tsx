@@ -138,7 +138,7 @@ export default function SolanaSignPage(
         <Button
           className='mt-6'
           size='lg'
-          href={`https://t.me/${'Telebot123botbot'}`}
+          href={`https://t.me/${env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME}`}
         >
           Retry Verification
         </Button>
