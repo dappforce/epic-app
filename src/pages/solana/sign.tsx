@@ -1,4 +1,5 @@
-import LinkText from '@/components/LinkText'
+import Button from '@/components/Button'
+import Container from '@/components/Container'
 import { env } from '@/env.mjs'
 import { datahubQueueRequest } from '@/server/datahub-queue/utils'
 import { decryptPayload, encryptPayload } from '@/stores/encryption'
@@ -38,6 +39,15 @@ export const getServerSideProps = getCommonServerSideProps(
     const data = context.query.data as string
     const nonce = context.query.nonce as string
 
+    const errorMessage = context.query.errorMessage as string
+    if (errorMessage) {
+      return {
+        props: {
+          error: errorMessage,
+        },
+      }
+    }
+
     if (
       !signer ||
       !signerNonce ||
@@ -47,9 +57,8 @@ export const getServerSideProps = getCommonServerSideProps(
       !nonce
     ) {
       return {
-        redirect: {
-          destination: '/tg',
-          permanent: false,
+        props: {
+          error: 'Missing required parameters',
         },
       }
     }
@@ -70,14 +79,13 @@ export const getServerSideProps = getCommonServerSideProps(
     )
     if (!decrypted) {
       return {
-        redirect: {
-          destination: '/tg',
-          permanent: false,
+        props: {
+          error: 'Bad Request',
         },
       }
     }
 
-    const message = await getLinkIdentitySolanaMessage(address)
+    const message = await getLinkIdentitySolanaMessage(connectData.public_key)
     const [signNonce, encrypted] = encryptPayload(
       {
         message: bs58.encode(Buffer.from(message) as any),
@@ -90,7 +98,7 @@ export const getServerSideProps = getCommonServerSideProps(
       dapp_encryption_public_key: env.NEXT_PUBLIC_DAPP_PUBLIC_KEY,
       nonce: bs58.encode(signNonce),
       payload: bs58.encode(encrypted),
-      redirect_link: `https://ce9454743142.ngrok.app/solana/connect?solana_address=${connectData.public_key}&signer=${signer}&signer_nonce=${signerNonce}&address=${address}&message=${message}&phantom_encryption_public_key=${phantomEncryptionPublicKey}`,
+      redirect_link: `${env.NEXT_PUBLIC_BASE_URL}/solana/connect?solana_address=${connectData.public_key}&signer=${signer}&signer_nonce=${signerNonce}&address=${address}&message=${message}&phantom_encryption_public_key=${phantomEncryptionPublicKey}`,
     }
 
     return {
@@ -104,43 +112,74 @@ export const getServerSideProps = getCommonServerSideProps(
   }
 )
 
-export default function SolanaSignPage({
-  address,
-  solanaAddress,
-  encrypted,
-  nonce,
-  signer,
-  signerNonce,
-  phantomEncryptionPublicKey,
-  message,
-}: {
-  address: string
-  solanaAddress: string
-  encrypted: string
-  nonce: string
-  signer: string
-  phantomEncryptionPublicKey: string
-  signerNonce: string
-  message: string
-}) {
+export default function SolanaSignPage(
+  props:
+    | {
+        address: string
+        solanaAddress: string
+        encrypted: string
+        nonce: string
+        signer: string
+        phantomEncryptionPublicKey: string
+        signerNonce: string
+        message: string
+      }
+    | { error: string }
+) {
+  if ('error' in props) {
+    return (
+      <Container className='flex h-screen w-full flex-col items-center justify-center text-center'>
+        <h1 className='text-2xl font-bold'>
+          Uh-oh! 🚫 Something went wrong with the wallet verification process.
+          Give it another try!
+        </h1>
+        <p className='mt-3 text-text-muted'>{props.error}</p>
+
+        <Button
+          className='mt-6'
+          size='lg'
+          href={`https://t.me/${'Telebot123botbot'}`}
+        >
+          Retry Verification
+        </Button>
+      </Container>
+    )
+  }
+
+  const {
+    address,
+    solanaAddress,
+    encrypted,
+    nonce,
+    signer,
+    signerNonce,
+    phantomEncryptionPublicKey,
+    message,
+  } = props
+
   const params = {
     dapp_encryption_public_key: env.NEXT_PUBLIC_DAPP_PUBLIC_KEY,
     nonce,
     payload: encrypted,
-    redirect_link: `https://ce9454743142.ngrok.app/solana/connect?solana_address=${solanaAddress}&signer=${signer}&signer_nonce=${signerNonce}&address=${address}&message=${message}&phantom_encryption_public_key=${phantomEncryptionPublicKey}`,
+    redirect_link: `${env.NEXT_PUBLIC_BASE_URL}/solana/connect?solana_address=${solanaAddress}&signer=${signer}&signer_nonce=${signerNonce}&address=${address}&message=${message}&phantom_encryption_public_key=${phantomEncryptionPublicKey}`,
   }
 
   return (
-    <div>
-      <LinkText
+    <Container className='flex h-screen w-full flex-col items-center justify-center text-center'>
+      <h1 className='text-2xl font-bold'>Verify your Solana Address</h1>
+      <p className='mt-3 text-text-muted'>
+        Your Solana address: {solanaAddress}
+      </p>
+
+      <Button
+        className='mt-6'
+        size='lg'
         href={`https://phantom.app/ul/v1/signMessage?${new URLSearchParams(
           params
         ).toString()}`}
       >
-        {`https://phantom.app/ul/v1/signMessage?${new URLSearchParams(
-          params
-        ).toString()}`}
-      </LinkText>
-    </div>
+        Verify
+      </Button>
+    </Container>
   )
 }

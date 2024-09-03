@@ -1,4 +1,5 @@
 import Button from '@/components/Button'
+import Container from '@/components/Container'
 import { env } from '@/env.mjs'
 import { addExternalProviderToIdentity } from '@/server/datahub-queue/identity'
 import { createSignedSocialDataEvent } from '@/services/datahub/utils'
@@ -37,9 +38,10 @@ export const getServerSideProps = getCommonServerSideProps(
 
     if (!decryptRes) {
       return {
-        redirect: {
-          destination: '/tg',
-          permanent: false,
+        props: {
+          solanaAddress,
+          address,
+          error: 'Bad Request',
         },
       }
     }
@@ -70,6 +72,7 @@ export const getServerSideProps = getCommonServerSideProps(
       props: {
         solanaAddress,
         address,
+        error: '',
       },
     }
   }
@@ -77,17 +80,20 @@ export const getServerSideProps = getCommonServerSideProps(
 
 export default function SolanaConnectPage({
   solanaAddress,
+  error,
 }: {
   solanaAddress: string
-  address: string
+  error: string
 }) {
   return (
-    <div className='flex h-screen w-full flex-col items-center justify-center text-center'>
+    <Container className='flex h-screen w-full flex-col items-center justify-center text-center'>
       <h1 className='text-2xl font-bold'>
-        Your Solana Address Successfully Linked 🎉
+        {error
+          ? 'Uh-oh! 🚫 Something went wrong with the connection process. Give it another try!'
+          : 'Your Solana Address Successfully Linked 🎉'}
       </h1>
       <p className='mt-3 text-text-muted'>
-        Your Solana address: {solanaAddress}
+        {error ? error : `Your Solana address: ${solanaAddress}`}
       </p>
 
       <Button
@@ -95,8 +101,8 @@ export default function SolanaConnectPage({
         size='lg'
         href={`https://t.me/${'Telebot123botbot'}`}
       >
-        Back to Epic
+        {error ? 'Retry Connecting' : 'Back to Epic'}
       </Button>
-    </div>
+    </Container>
   )
 }

@@ -18,9 +18,9 @@ export default function SolanaButton() {
   const { encrypted, nonce } = encryptedData || {}
   const params = {
     cluster: 'mainnet-beta',
-    app_url: 'https://ce9454743142.ngrok.app/tg',
+    app_url: `${env.NEXT_PUBLIC_BASE_URL}/tg`,
     dapp_encryption_public_key: env.NEXT_PUBLIC_DAPP_PUBLIC_KEY,
-    redirect_link: `https://ce9454743142.ngrok.app/solana/sign?signer=${encrypted}&signer_nonce=${nonce}&address=${myAddress}`,
+    redirect_link: `${env.NEXT_PUBLIC_BASE_URL}/solana/sign?signer=${encrypted}&signer_nonce=${nonce}&address=${myAddress}`,
   }
   const url = `https://phantom.app/ul/v1/connect?${new URLSearchParams(
     params

@@ -64,6 +64,8 @@ export async function addExternalProviderToIdentity(
       args: input as any,
     },
   })
+
+  console.log(JSON.stringify(input))
   throwErrorIfNotProcessed(
     res.addNewLinkedIdentityExternalProvider,
     'Failed to add external provider to identity'
