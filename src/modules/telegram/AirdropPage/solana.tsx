@@ -1,10 +1,10 @@
-import LinkText from '@/components/LinkText'
+import Button, { ButtonProps } from '@/components/Button'
 import { env } from '@/env.mjs'
 import { useEncryptData } from '@/services/api/mutation'
 import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
 import { useQuery } from '@tanstack/react-query'
 
-export default function SolanaButton() {
+export default function SolanaButton(props: ButtonProps) {
   const myAddress = useMyMainAddress()
   const { mutateAsync: encrypt } = useEncryptData()
   const encodedSecretKey = useMyAccount((state) => state.encodedSecretKey)
@@ -26,9 +26,5 @@ export default function SolanaButton() {
     params
   ).toString()}`
 
-  return (
-    <LinkText href={url} className='break-all'>
-      Open Solana
-    </LinkText>
-  )
+  return <Button {...props} isLoading={isLoading} href={url} />
 }

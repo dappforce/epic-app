@@ -1,13 +1,15 @@
-import Diamond from '@/assets/emojis/diamond.png'
+import Confused from '@/assets/emojis/confused.png'
+import BottomDrawer from '@/components/BottomDrawer'
 import Button from '@/components/Button'
-import LinkEvmAddressModal from '@/components/modals/LinkEvmAddressModal'
 import Meme2EarnIntroModal, {
   hasOpenedMeme2EarnIntroStorage,
 } from '@/components/modals/Meme2EarnIntroModal'
-import Modal, { ModalFunctionalityProps } from '@/components/modals/Modal'
+import { ModalFunctionalityProps } from '@/components/modals/Modal'
+import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
 import useIsAddressBlockedInChat from '@/hooks/useIsAddressBlockedInChat'
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import usePostMemeThreshold from '@/hooks/usePostMemeThreshold'
+import SolanaButton from '@/modules/telegram/AirdropPage/solana'
 import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { useSyncExternalTokenBalances } from '@/services/datahub/externalTokenBalances/mutation'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
@@ -124,7 +126,7 @@ export default function PostMemeButton({
         size='lg'
         variant={isMoreThanThreshold ? 'primary' : 'primaryOutline'}
         onClick={() => {
-          if (passRequirement) {
+          if (!passRequirement) {
             sendEvent('post_meme_token_gated_modal_opened')
             setIsOpenTokenGatedModal(true)
             return
@@ -168,7 +170,7 @@ export default function PostMemeButton({
           setIsOpenIntroModal(false)
         }}
       />
-      <LinkEvmAddressModal
+      <EvmConnectWalletModal
         isOpen={isOpenLinkEvm}
         closeModal={() => setIsOpenLinkEvm(false)}
       />
@@ -177,6 +179,7 @@ export default function PostMemeButton({
           contentContainer={contentContainer}
           isOpen={isOpenTokenGatedModal}
           closeModal={() => setIsOpenTokenGatedModal(false)}
+          openEvmLinkModal={() => setIsOpenLinkEvm(true)}
         />
       )}
     </>
@@ -185,65 +188,67 @@ export default function PostMemeButton({
 
 function TokenGatedModal({
   contentContainer,
+  openEvmLinkModal,
   ...props
-}: ModalFunctionalityProps & { contentContainer: ContentContainer }) {
-  const { amountRequired, requiredToken } =
+}: ModalFunctionalityProps & {
+  contentContainer: ContentContainer
+  openEvmLinkModal: () => void
+}) {
+  const { amountRequired, requiredToken, hasToLinkWallet } =
     useTokenGatedRequirement(contentContainer)
   const sendEvent = useSendEvent()
   const { mutate: syncExternalTokenBalances } = useSyncExternalTokenBalances()
+  const [isOpenEvmConnect, setIsOpenEvmConnect] = useState(false)
 
   return (
-    <Modal
-      {...props}
-      title='🔒 Hold Up, Meme Master!'
-      description={`You need at least ${formatNumber(
-        amountRequired
-      )} ${requiredToken} to unlock meme-posting powers in this channel.`}
-    >
-      <div className='flex flex-col gap-6'>
-        <div className='flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-background-lighter p-4'>
-          <span className='text-center font-medium text-text-muted'>
-            Required amount:
-          </span>
-          <div className='-ml-2 flex items-center gap-2.5'>
-            <Image src={Diamond} alt='' className='h-12 w-12' />
-            <span className='flex items-center text-3xl font-bold'>
-              {formatNumber(amountRequired)} {requiredToken}
-            </span>
+    <>
+      <BottomDrawer
+        {...props}
+        title={hasToLinkWallet ? 'Account not yet linked' : '🔒 Hold On'}
+        description={
+          hasToLinkWallet
+            ? `To gain access to posting in this channel, you first need to connect your ${hasToLinkWallet} account.`
+            : `You need at least ${formatNumber(
+                amountRequired
+              )} ${requiredToken} to unlock posting access in this channel.`
+        }
+      >
+        {hasToLinkWallet ? (
+          <div className='flex flex-col items-center gap-6'>
+            <Image src={Confused} alt='' className='h-28 w-28' />
+            {hasToLinkWallet === 'Ethereum' ? (
+              <Button
+                className='w-full'
+                size='lg'
+                onClick={() => {
+                  sendEvent('token_gated_connect_evm')
+                  openEvmLinkModal()
+                  props.closeModal()
+                }}
+              >
+                Connect Ethereum
+              </Button>
+            ) : (
+              <SolanaButton
+                className='w-full'
+                size='lg'
+                onClick={() => {
+                  sendEvent('token_gated_connect_solana')
+                  props.closeModal()
+                }}
+              >
+                Connect Solana
+              </SolanaButton>
+            )}
           </div>
-        </div>
-        <div className='flex flex-col gap-3 text-text-muted'>
-          <div className='flex items-center gap-4'>
-            <span className='font-medium text-text-muted'>
-              Already got the magic tokens? Click the button below to verify
-              your balance and start casting your memes!
-            </span>
-          </div>
-        </div>
-        <div className='flex flex-col gap-3'>
-          <Button
-            size='lg'
-            onClick={() => {
-              if (contentContainer.externalToken?.id) {
-                syncExternalTokenBalances({
-                  externalTokenId: contentContainer.externalToken?.id,
-                })
-              }
-            }}
-          >
-            I have the token in my wallet!
-          </Button>
-          <Button
-            variant='primaryOutline'
-            size='lg'
-            onClick={() => {
-              props.closeModal()
-            }}
-          >
-            Buy {requiredToken}
-          </Button>
-        </div>
-      </div>
-    </Modal>
+        ) : (
+          <div>asdfasdf</div>
+        )}
+      </BottomDrawer>
+      <EvmConnectWalletModal
+        isOpen={isOpenEvmConnect}
+        closeModal={() => setIsOpenEvmConnect(false)}
+      />
+    </>
   )
 }
