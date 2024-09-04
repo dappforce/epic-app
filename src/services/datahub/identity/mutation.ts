@@ -95,7 +95,7 @@ async function addExternalProviderToIdentity(
     SocialCallDataArgs<'synth_add_linked_identity_external_provider'>
   >
 ) {
-  const input = await createSocialDataEventPayload(
+  const input = await createSignedSocialDataEvent(
     socialCallName.synth_add_linked_identity_external_provider,
     params,
     params.args
