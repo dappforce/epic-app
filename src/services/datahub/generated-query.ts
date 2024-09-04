@@ -2412,6 +2412,7 @@ export type GetContentContainersQuery = {
         id: string
         chain: ExternalTokenChain
         name: string
+        address: string
         decimals: number
       } | null
     }>
@@ -2656,6 +2657,12 @@ export type GetExternalTokenBalancesQuery = {
       active: boolean
       amount: string
       blockchainAddress: string
+      externalToken: {
+        __typename?: 'ExternalToken'
+        id: string
+        address: string
+        decimals: number
+      }
     }> | null
   } | null
 }
@@ -3761,6 +3768,7 @@ export const GetContentContainers = gql`
           id
           chain
           name
+          address
           decimals
         }
       }
@@ -3947,6 +3955,11 @@ export const GetExternalTokenBalances = gql`
         active
         amount
         blockchainAddress
+        externalToken {
+          id
+          address
+          decimals
+        }
       }
     }
   }

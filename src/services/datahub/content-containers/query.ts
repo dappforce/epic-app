@@ -31,6 +31,7 @@ const GET_CONTENT_CONTAINERS = gql`
           id
           chain
           name
+          address
           decimals
         }
       }

@@ -1,6 +1,7 @@
 import Confused from '@/assets/emojis/confused.png'
 import BottomDrawer from '@/components/BottomDrawer'
-import Button from '@/components/Button'
+import Button, { ButtonProps } from '@/components/Button'
+import Card from '@/components/Card'
 import Meme2EarnIntroModal, {
   hasOpenedMeme2EarnIntroStorage,
 } from '@/components/modals/Meme2EarnIntroModal'
@@ -12,12 +13,14 @@ import usePostMemeThreshold from '@/hooks/usePostMemeThreshold'
 import SolanaButton from '@/modules/telegram/AirdropPage/solana'
 import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { useSyncExternalTokenBalances } from '@/services/datahub/externalTokenBalances/mutation'
+import { ExternalTokenChain } from '@/services/datahub/generated-query'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { getTimeLeftUntilCanPostQuery } from '@/services/datahub/posts/query'
 import { useSendEvent } from '@/stores/analytics'
 import { useExtensionData } from '@/stores/extension'
 import { useMessageData } from '@/stores/message'
 import { useMyMainAddress } from '@/stores/my-account'
+import { truncateAddress } from '@/utils/account'
 import { formatNumber } from '@/utils/strings'
 import dayjs from 'dayjs'
 import Image from 'next/image'
@@ -194,11 +197,13 @@ function TokenGatedModal({
   contentContainer: ContentContainer
   openEvmLinkModal: () => void
 }) {
-  const { amountRequired, requiredToken, hasToLinkWallet } =
+  const { amountRequired, requiredToken, hasToLinkWallet, currentToken } =
     useTokenGatedRequirement(contentContainer)
   const sendEvent = useSendEvent()
   const { mutate: syncExternalTokenBalances } = useSyncExternalTokenBalances()
   const [isOpenEvmConnect, setIsOpenEvmConnect] = useState(false)
+
+  const externalToken = contentContainer.externalToken
 
   return (
     <>
@@ -242,7 +247,54 @@ function TokenGatedModal({
             )}
           </div>
         ) : (
-          <div>asdfasdf</div>
+          <div className='flex flex-col gap-6'>
+            <div className='flex flex-col gap-3'>
+              <Card className='flex flex-col gap-2 p-4'>
+                <span className='text-3xl font-bold'>
+                  {formatNumber(amountRequired)} {requiredToken}
+                </span>
+                <span className='text-sm text-text-muted'>
+                  Required tokens amount
+                </span>
+              </Card>
+              {currentToken && (
+                <Card className='flex flex-col gap-2 p-4'>
+                  <span className='text-3xl font-bold'>
+                    {formatNumber(currentToken.parsedAmount)} {requiredToken}
+                  </span>
+                  <span className='text-sm text-text-muted'>
+                    Your balance (
+                    {truncateAddress(currentToken.blockchainAddress)})
+                  </span>
+                </Card>
+              )}
+            </div>
+            <div className='flex flex-col gap-4'>
+              <Button
+                size='lg'
+                onClick={() => {
+                  if (!externalToken) return
+                  sendEvent('token_gated_check_balance')
+                  syncExternalTokenBalances({
+                    externalTokenId: externalToken.id,
+                  })
+                }}
+              >
+                Check my balance
+              </Button>
+              {externalToken && (
+                <BuyTokenButton
+                  address={externalToken.address}
+                  chain={externalToken.chain}
+                  size='lg'
+                  variant='primaryOutline'
+                >
+                  Buy {currentToken ? 'more ' : ''}
+                  {requiredToken}
+                </BuyTokenButton>
+              )}
+            </div>
+          </div>
         )}
       </BottomDrawer>
       <EvmConnectWalletModal
@@ -250,5 +302,28 @@ function TokenGatedModal({
         closeModal={() => setIsOpenEvmConnect(false)}
       />
     </>
+  )
+}
+
+const linkGenerator: Record<ExternalTokenChain, (address: string) => string> = {
+  ETHEREUM: (address) =>
+    `https://app.uniswap.org/swap?chain=mainnet&outputCurrency=${address}`,
+  SOLANA: (address) => `https://raydium.io/swap/?outputMint=${address}`,
+}
+function BuyTokenButton({
+  address,
+  chain,
+  ...props
+}: {
+  address: string
+  chain: ExternalTokenChain
+} & ButtonProps) {
+  return (
+    <Button
+      {...props}
+      href={linkGenerator[chain]?.(address)}
+      target='_blank'
+      rel='noopener noreferrer'
+    />
   )
 }
