@@ -10,6 +10,7 @@ import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModa
 import useIsAddressBlockedInChat from '@/hooks/useIsAddressBlockedInChat'
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import usePostMemeThreshold from '@/hooks/usePostMemeThreshold'
+import useToastError from '@/hooks/useToastError'
 import SolanaButton from '@/modules/telegram/AirdropPage/solana'
 import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { useSyncExternalTokenBalances } from '@/services/datahub/externalTokenBalances/mutation'
@@ -200,7 +201,32 @@ function TokenGatedModal({
   const { amountRequired, requiredToken, hasToLinkWallet, currentToken } =
     useTokenGatedRequirement(contentContainer)
   const sendEvent = useSendEvent()
-  const { mutate: syncExternalTokenBalances } = useSyncExternalTokenBalances()
+
+  const [isWaitingSyncDone, setIsWaitingSyncDone] = useState(false)
+  useEffect(() => {
+    if (props.isOpen) setIsWaitingSyncDone(false)
+  }, [props.isOpen])
+
+  const {
+    mutate: syncExternalTokenBalances,
+    error,
+    isLoading,
+  } = useSyncExternalTokenBalances({
+    onMutate: () => setIsWaitingSyncDone(true),
+    onSuccessSync: () => {
+      // TODO: onSuccessSync
+      setIsWaitingSyncDone(false)
+    },
+    onError: () => {
+      setIsWaitingSyncDone(false)
+    },
+    onErrorSync: () => {
+      // TODO: onErrorSync
+      setIsWaitingSyncDone(false)
+    },
+  })
+  useToastError(error, 'Failed to check balance')
+
   const [isOpenEvmConnect, setIsOpenEvmConnect] = useState(false)
 
   const externalToken = contentContainer.externalToken
@@ -272,6 +298,7 @@ function TokenGatedModal({
             <div className='flex flex-col gap-4'>
               <Button
                 size='lg'
+                isLoading={isWaitingSyncDone || isLoading}
                 onClick={() => {
                   if (!externalToken) return
                   sendEvent('token_gated_check_balance')

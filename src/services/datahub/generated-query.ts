@@ -2682,6 +2682,12 @@ export type SubscribeExternalTokenBalancesSubscription = {
       active: boolean
       amount: string
       blockchainAddress: string
+      externalToken: {
+        __typename?: 'ExternalToken'
+        id: string
+        address: string
+        decimals: number
+      }
     }
   }
 }
@@ -3973,6 +3979,11 @@ export const SubscribeExternalTokenBalances = gql`
         active
         amount
         blockchainAddress
+        externalToken {
+          id
+          address
+          decimals
+        }
       }
     }
   }
