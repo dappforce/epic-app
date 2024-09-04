@@ -27,6 +27,12 @@ const GET_CONTENT_CONTAINERS = gql`
         accessThresholdPointsAmount
         likeThresholdExternalTokenAmount
         accessThresholdExternalTokenAmount
+        externalToken {
+          id
+          chain
+          name
+          decimals
+        }
       }
       total
       offset

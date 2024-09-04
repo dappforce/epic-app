@@ -88,3 +88,11 @@ export function parseJSONData<T>(data: string | null) {
     return undefined
   }
 }
+
+export function convertToBigInt(num: number | string) {
+  try {
+    return BigInt(num)
+  } catch {
+    return BigInt(0)
+  }
+}

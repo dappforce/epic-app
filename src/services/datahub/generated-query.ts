@@ -348,7 +348,7 @@ export type ContentContainerConfig = {
   createdAtTime: Scalars['DateTime']['output']
   expirationWindowFrom?: Maybe<Scalars['DateTime']['output']>
   expirationWindowTo?: Maybe<Scalars['DateTime']['output']>
-  externalToken?: Maybe<ContentContainerExternalToken>
+  externalToken?: Maybe<ExternalToken>
   hidden: Scalars['Boolean']['output']
   id: Scalars['String']['output']
   isCreatorModerationPenalty?: Maybe<Scalars['Boolean']['output']>
@@ -390,24 +390,6 @@ export type ContentContainerConfigsResourcesResponseDto = {
   offset?: Maybe<Scalars['Int']['output']>
   pageSize?: Maybe<Scalars['Int']['output']>
   total?: Maybe<Scalars['Int']['output']>
-}
-
-export type ContentContainerExternalToken = {
-  __typename?: 'ContentContainerExternalToken'
-  address: Scalars['String']['output']
-  chain: ContentContainerExternalTokenChain
-  contractAbi: Scalars['String']['output']
-  contractMethods?: Maybe<ContentContainerExternalTokenContractMethods>
-  decimals: Scalars['Int']['output']
-  id: Scalars['String']['output']
-  name: Scalars['String']['output']
-  relatedContentContainers: Array<ContentContainerConfig>
-  symbol: Scalars['String']['output']
-}
-
-export enum ContentContainerExternalTokenChain {
-  Ethereum = 'ETHEREUM',
-  Solana = 'SOLANA',
 }
 
 export type ContentContainerExternalTokenContractMethods = {
@@ -533,6 +515,8 @@ export enum DataHubSubscriptionEventEnum {
   ServiceAccountWarningEvent = 'SERVICE_ACCOUNT_WARNING_EVENT',
   SocialProfileBalancesCreated = 'SOCIAL_PROFILE_BALANCES_CREATED',
   SocialProfileBalancesStateUpdated = 'SOCIAL_PROFILE_BALANCES_STATE_UPDATED',
+  SocialProfileExternalTokenBalanceCreated = 'SOCIAL_PROFILE_EXTERNAL_TOKEN_BALANCE_CREATED',
+  SocialProfileExternalTokenBalanceStateUpdated = 'SOCIAL_PROFILE_EXTERNAL_TOKEN_BALANCE_STATE_UPDATED',
 }
 
 export enum DataType {
@@ -627,6 +611,25 @@ export type ExtensionPinnedResource = {
   post?: Maybe<Post>
   resourceType: PinnedResourceType
   space?: Maybe<Space>
+}
+
+export type ExternalToken = {
+  __typename?: 'ExternalToken'
+  address: Scalars['String']['output']
+  chain: ExternalTokenChain
+  contractAbi: Scalars['String']['output']
+  contractMethods?: Maybe<ContentContainerExternalTokenContractMethods>
+  createdByAccount: Account
+  decimals: Scalars['Int']['output']
+  id: Scalars['String']['output']
+  name: Scalars['String']['output']
+  relatedContentContainers: Array<ContentContainerConfig>
+  symbol: Scalars['String']['output']
+}
+
+export enum ExternalTokenChain {
+  Ethereum = 'ETHEREUM',
+  Solana = 'SOLANA',
 }
 
 export type FindPostsFilter = {
@@ -1284,6 +1287,7 @@ export type Query = {
   activeStakingDateDetails: DateTimeDetailsResponseDto
   activeStakingIsActiveStaker: Scalars['Boolean']['output']
   activeStakingRankedPostIdsByActiveStakingActivity: RankedPostIdsByActiveStakingActivityResponse
+  activeStakingRankedPostIdsBySuperLikesNumber: RankedPostIdsBySuperLikesCountResponse
   activeStakingRewardsByPosts: Array<RewardsByPostsResponseDto>
   activeStakingRewardsByWeek: Array<TotalRewardsByWeekResponse>
   activeStakingRewardsReportByWeek: Array<ActiveStakingRewardsReport>
@@ -1365,6 +1369,10 @@ export type QueryActiveStakingIsActiveStakerArgs = {
 
 export type QueryActiveStakingRankedPostIdsByActiveStakingActivityArgs = {
   args: RankedPostIdsByActiveStakingActivityInput
+}
+
+export type QueryActiveStakingRankedPostIdsBySuperLikesNumberArgs = {
+  args: RankedPostIdsBySuperLikesCountInput
 }
 
 export type QueryActiveStakingRewardsByPostsArgs = {
@@ -1549,6 +1557,14 @@ export type RankedAddressWithDetails = {
   reward: Scalars['String']['output']
 }
 
+export type RankedPostIdBySuperLikesCountWithDetails = {
+  __typename?: 'RankedPostIdBySuperLikesCountWithDetails'
+  postId: Scalars['String']['output']
+  rank: Scalars['Int']['output']
+  rootPostId?: Maybe<Scalars['String']['output']>
+  score: Scalars['Float']['output']
+}
+
 export type RankedPostIdWithDetails = {
   __typename?: 'RankedPostIdWithDetails'
   ownerAddress?: Maybe<Scalars['String']['output']>
@@ -1573,6 +1589,27 @@ export type RankedPostIdsByActiveStakingActivityInput = {
 export type RankedPostIdsByActiveStakingActivityResponse = {
   __typename?: 'RankedPostIdsByActiveStakingActivityResponse'
   data: Array<RankedPostIdWithDetails>
+  limit: Scalars['Int']['output']
+  offset: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+}
+
+export type RankedPostIdsBySuperLikesCountInput = {
+  filter?: InputMaybe<RankedPostIdsBySuperLikesCountInputFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  order?: InputMaybe<ActiveStakingListOrder>
+}
+
+export type RankedPostIdsBySuperLikesCountInputFilter = {
+  period: ActiveStakingPeriod
+  rootPostId?: InputMaybe<Scalars['String']['input']>
+  timestamp?: InputMaybe<Scalars['String']['input']>
+}
+
+export type RankedPostIdsBySuperLikesCountResponse = {
+  __typename?: 'RankedPostIdsBySuperLikesCountResponse'
+  data: Array<RankedPostIdBySuperLikesCountWithDetails>
   limit: Scalars['Int']['output']
   offset: Scalars['Int']['output']
   total: Scalars['Int']['output']
@@ -1800,6 +1837,7 @@ export enum SocialCallName {
   SynthAddPostView = 'synth_add_post_view',
   SynthAddPostViewsBatch = 'synth_add_post_views_batch',
   SynthCreateContentContainerConfig = 'synth_create_content_container_config',
+  SynthCreateExternalToken = 'synth_create_external_token',
   SynthCreateLinkedIdentity = 'synth_create_linked_identity',
   SynthCreatePostTxFailed = 'synth_create_post_tx_failed',
   SynthCreatePostTxRetry = 'synth_create_post_tx_retry',
@@ -1887,10 +1925,16 @@ export type SocialProfileExternalTokenBalance = {
   active: Scalars['Boolean']['output']
   amount: Scalars['String']['output']
   blockchainAddress: Scalars['String']['output']
-  externalToken: ContentContainerExternalToken
+  externalToken: ExternalToken
   id: Scalars['String']['output']
   linkedIdentityExternalProvider: LinkedIdentityExternalProvider
   socialProfileBalance: SocialProfileBalances
+}
+
+export type SocialProfileExternalTokenBalanceSubscriptionPayload = {
+  __typename?: 'SocialProfileExternalTokenBalanceSubscriptionPayload'
+  entity: SocialProfileExternalTokenBalance
+  event: DataHubSubscriptionEventEnum
 }
 
 export type SocialProfileInput = {
@@ -1989,6 +2033,7 @@ export type Subscription = {
   post: PostSubscriptionPayload
   serviceMessageToTarget: AccountServiceMessageToTargetResponse
   socialProfileBalancesSubscription: SocialProfileBalancesSubscriptionPayload
+  socialProfileExternalTokenBalanceSubscription: SocialProfileExternalTokenBalanceSubscriptionPayload
 }
 
 export type SubscriptionServiceMessageToTargetArgs = {
@@ -1996,6 +2041,10 @@ export type SubscriptionServiceMessageToTargetArgs = {
 }
 
 export type SubscriptionSocialProfileBalancesSubscriptionArgs = {
+  args: SocialProfileBalancesSubscriptionInput
+}
+
+export type SubscriptionSocialProfileExternalTokenBalanceSubscriptionArgs = {
   args: SocialProfileBalancesSubscriptionInput
 }
 
@@ -2358,6 +2407,13 @@ export type GetContentContainersQuery = {
         coverImage?: string | null
         image?: string | null
       }
+      externalToken?: {
+        __typename?: 'ExternalToken'
+        id: string
+        chain: ExternalTokenChain
+        name: string
+        decimals: number
+      } | null
     }>
   }
 }
@@ -2861,6 +2917,24 @@ export type GetClickedPointsByDaySQuery = {
       date: number
     }>
   }
+}
+
+export type GetExternalTokenBalancesQueryVariables = Exact<{
+  address: Scalars['String']['input']
+}>
+
+export type GetExternalTokenBalancesQuery = {
+  __typename?: 'Query'
+  socialProfileBalances?: {
+    __typename?: 'SocialProfileBalances'
+    externalTokenBalances?: Array<{
+      __typename?: 'SocialProfileExternalTokenBalance'
+      id: string
+      active: boolean
+      amount: string
+      blockchainAddress: string
+    }> | null
+  } | null
 }
 
 export type GetBlockedResourcesQueryVariables = Exact<{
@@ -3664,6 +3738,12 @@ export const GetContentContainers = gql`
         accessThresholdPointsAmount
         likeThresholdExternalTokenAmount
         accessThresholdExternalTokenAmount
+        externalToken {
+          id
+          chain
+          name
+          decimals
+        }
       }
       total
       offset
@@ -4070,6 +4150,18 @@ export const GetClickedPointsByDayS = gql`
       data {
         tapsCount
         date
+      }
+    }
+  }
+`
+export const GetExternalTokenBalances = gql`
+  query GetExternalTokenBalances($address: String!) {
+    socialProfileBalances(args: { where: { address: $address } }) {
+      externalTokenBalances {
+        id
+        active
+        amount
+        blockchainAddress
       }
     }
   }
