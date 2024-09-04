@@ -4,9 +4,10 @@ import Name from '@/components/Name'
 import Toast from '@/components/Toast'
 import BackButton from '@/components/layouts/BackButton'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
-import LinkAddressModal from '@/components/modals/LinkEvmAddressModal'
 import { getReferralLink } from '@/components/referral/utils'
 import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
+import UnlinkWalletModal from '@/components/wallets/UnlinkWalletModal'
+import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
 import { useLinkedProviders } from '@/hooks/useLinkedEvmAddress'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
@@ -16,8 +17,10 @@ import { truncateAddress } from '@/utils/account'
 import { copyToClipboard } from '@/utils/strings'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useGetSolanaWalletUrl } from '../AirdropPage/solana'
 import {
   CrearLocalData,
   DeleteAccountConfirmationModal,
@@ -182,10 +185,9 @@ type AddressesModalKind = 'evm' | 'solana' | undefined
 
 function MyCryptoAddressesContent({ setPage }: ContentProps) {
   const myAddress = useMyMainAddress()
-  const [modaKind, setModalKind] = useState<AddressesModalKind>(undefined)
-
-  const providerByModalKind =
-    modaKind === 'evm' ? IdentityProvider.EVM : IdentityProvider.SOLANA
+  const [modalKind, setModalKind] = useState<AddressesModalKind>(undefined)
+  const solanaWalletUrl = useGetSolanaWalletUrl()
+  const router = useRouter()
 
   const { providers } = useLinkedProviders(myAddress || '')
 
@@ -200,19 +202,19 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
   const cryptoAddressesItems = [
     [
       {
-        title: `${evmProvider?.externalId ? 'Edit' : 'Add'} Ethereum Address`,
+        title: `${evmProvider?.externalId ? 'Unlink' : 'Add'} Ethereum Address`,
         desc: evmProvider?.externalId ? (
           <span className='font-medium leading-none text-slate-400'>
             {truncateAddress(evmProvider?.externalId)}
           </span>
         ) : undefined,
-        icon: evmProvider?.externalId ? '✏️' : '🛠️',
+        icon: evmProvider?.externalId ? '🖇️' : '🛠️',
         onClick: () => setModalKind('evm'),
       },
       {
         title: `${solanaProvider?.externalId ? 'Edit' : 'Add'} Solana Address`,
-        icon: solanaProvider?.externalId ? '✏️' : '🛠️',
-        onClick: () => setModalKind('solana'),
+        icon: solanaProvider?.externalId ? '🖇️' : '🛠️',
+        onClick: () => router.push(solanaWalletUrl),
         desc: solanaProvider?.externalId ? (
           <span className='font-medium leading-none text-slate-400'>
             {truncateAddress(solanaProvider?.externalId)}
@@ -236,11 +238,19 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
         </div>
         <Menu menuItems={cryptoAddressesItems} />
       </div>
-      <LinkAddressModal
-        isOpen={!!modaKind}
-        identityProvider={providerByModalKind}
-        closeModal={() => setModalKind(undefined)}
-      />
+      {!evmProvider?.externalId && (
+        <EvmConnectWalletModal
+          isOpen={modalKind === 'evm'}
+          closeModal={() => setModalKind(undefined)}
+        />
+      )}
+      {(evmProvider?.externalId || solanaProvider?.externalId) && (
+        <UnlinkWalletModal
+          chain={modalKind as any}
+          isOpen={!!modalKind}
+          closeModal={() => setModalKind(undefined)}
+        />
+      )}
     </>
   )
 }

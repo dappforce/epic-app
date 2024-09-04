@@ -56,7 +56,6 @@ const MenuItem = ({
   desc,
   icon,
   disabled,
-  hidden,
   href,
   textClassName,
   onClick,

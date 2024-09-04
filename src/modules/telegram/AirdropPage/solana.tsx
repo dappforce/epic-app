@@ -5,6 +5,16 @@ import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
 import { useQuery } from '@tanstack/react-query'
 
 export default function SolanaButton() {
+  const url = useGetSolanaWalletUrl()
+
+  return (
+    <LinkText href={url} className='break-all'>
+      Open Solana
+    </LinkText>
+  )
+}
+
+export const useGetSolanaWalletUrl = () => {
   const myAddress = useMyMainAddress()
   const { mutateAsync: encrypt } = useEncryptData()
   const encodedSecretKey = useMyAccount((state) => state.encodedSecretKey)
@@ -26,9 +36,5 @@ export default function SolanaButton() {
     params
   ).toString()}`
 
-  return (
-    <LinkText href={url} className='break-all'>
-      Open Solana
-    </LinkText>
-  )
+  return url
 }

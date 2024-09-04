@@ -90,7 +90,7 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
   )
 }
 
-const MemesPreviewSkeleton = () => {
+export const MemesPreviewSkeleton = () => {
   const items = Array.from({ length: 5 })
 
   return (
@@ -102,12 +102,14 @@ const MemesPreviewSkeleton = () => {
   )
 }
 
-const MemesPreviewItem = ({
+export const MemesPreviewItem = ({
   message,
   className,
+  href,
 }: {
   message: PostData
   className?: string
+  href?: string
 }) => {
   const { body, extensions } = message.content || {}
 
@@ -119,7 +121,10 @@ const MemesPreviewItem = ({
   )
 
   return (
-    <Link href='/tg/memes' className={cx(memeCardSize, className)}>
+    <Link
+      href={href ? href : '/tg/channels'}
+      className={cx(memeCardSize, className)}
+    >
       <MediaLoader
         containerClassName={cx(
           'overflow-hidden rounded-xl flex-1 justify-center flex items-center cursor-pointer',

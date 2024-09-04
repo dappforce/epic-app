@@ -1,9 +1,11 @@
+import usePaginatedMessageIds from '@/components/chats/hooks/usePaginatedMessageIds'
 import { CHAT_PER_PAGE } from '@/constants/chat'
 import { env } from '@/env.mjs'
 import { getPostQuery, getServerTime } from '@/services/api/query'
 import { queryClient } from '@/services/provider'
 import { QueryConfig, createQuery, poolQuery } from '@/subsocial-query'
 import { PostData } from '@subsocial/api/types'
+import { isEmptyArray } from '@subsocial/utils'
 import {
   QueryClient,
   UseInfiniteQueryResult,
@@ -12,6 +14,7 @@ import {
 } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { gql } from 'graphql-request'
+import { useEffect } from 'react'
 import {
   commentIdsOptimisticEncoder,
   isClientGeneratedOptimisticId,
@@ -680,7 +683,7 @@ const GET_TOP_MEMES = gql`
     activeStakingRankedPostIdsBySuperLikesNumber(
       args: {
         filter: { period: DAY, timestamp: $timestamp }
-        limit: 2
+        limit: 5
         offset: 0
         order: DESC
       }
@@ -725,3 +728,37 @@ export const getTopnMemesQuery = createQuery({
     enabled: true,
   }),
 })
+
+const TOP_MEMES_SIZE = 5
+
+export const useGetTopMemes = () => {
+  const { data, isLoading } = getTopnMemesQuery.useQuery({})
+
+  const dataLength = data?.length || 0
+
+  const topMemesIds = data?.map((item) => item.postId) || []
+
+  const {
+    messageIds,
+    isLoading: isLastMemesLoading,
+    loadMore,
+  } = usePaginatedMessageIds({
+    hubId: env.NEXT_PUBLIC_MAIN_SPACE_ID,
+    chatId: env.NEXT_PUBLIC_MAIN_CHAT_ID,
+    onlyDisplayUnapprovedMessages: false,
+  })
+
+  useEffect(() => {
+    if (isEmptyArray(messageIds) && dataLength < TOP_MEMES_SIZE) {
+      loadMore()
+    }
+  }, [loadMore, messageIds, dataLength])
+
+  return {
+    isLoading: isLoading && isLastMemesLoading,
+    data:
+      dataLength < TOP_MEMES_SIZE
+        ? [...topMemesIds, ...messageIds.slice(0, 5 - dataLength)]
+        : topMemesIds,
+  }
+}

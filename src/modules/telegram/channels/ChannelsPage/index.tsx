@@ -1,38 +1,36 @@
 import BlueGradient from '@/assets/graphics/blue-gradient.png'
-import Author1 from '@/assets/graphics/landing/testimonials/alberdioni8406.png'
-import Author2 from '@/assets/graphics/landing/testimonials/dogstreet.png'
-import Meme1 from '@/assets/graphics/memes/check-1.jpeg'
-import Meme2 from '@/assets/graphics/memes/check-2.jpeg'
-import Container from '@/components/Container'
-import MediaLoader from '@/components/MediaLoader'
 import { Skeleton } from '@/components/SkeletonFallback'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import PointsWidget from '@/modules/points/PointsWidget'
+import { getPostQuery } from '@/services/api/query'
 import {
   ContentContainer,
   getContentContainersQuery,
 } from '@/services/datahub/content-containers/query'
-import { getTopnMemesQuery } from '@/services/datahub/posts/query'
+import { useGetTopMemes } from '@/services/datahub/posts/query'
 import { cx } from '@/utils/class-names'
-import Image, { ImageProps } from 'next/image'
+import { isEmptyArray } from '@subsocial/utils'
+import Image from 'next/image'
 import Link from 'next/link'
 import { FaChevronRight } from 'react-icons/fa6'
+import {
+  MemesPreviewItem,
+  MemesPreviewSkeleton,
+} from '../../HomePage/MemesPreview'
 
 export default function ChannelsPage() {
   return (
     <LayoutWithBottomNavigation withFixedHeight className='relative'>
       <PointsWidget isNoTgScroll className='sticky top-0' />
-      <Container as='div' className='relative pt-4'>
-        <Image
-          src={BlueGradient}
-          alt=''
-          className='absolute left-0 top-0 w-full'
-        />
-        <div className='relative flex h-full flex-col gap-4'>
-          <TopMemesToday />
-          <ChannelsList />
-        </div>
-      </Container>
+      <Image
+        src={BlueGradient}
+        alt=''
+        className='absolute left-0 top-0 w-full'
+      />
+      <div className='relative flex h-full flex-col gap-4 pt-4'>
+        <TopMemesToday />
+        <ChannelsList />
+      </div>
     </LayoutWithBottomNavigation>
   )
 }
@@ -43,7 +41,7 @@ function ChannelsList() {
   })
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex flex-col gap-2 px-4'>
       {isLoading && (
         <>
           {Array.from({ length: 3 }).map((_, i) => (
@@ -80,53 +78,49 @@ function Channel({ channel }: { channel: ContentContainer }) {
 }
 
 function TopMemesToday() {
-  const { data, isLoading } = getTopnMemesQuery.useQuery({})
+  const { data: topMemesIds, isLoading } = useGetTopMemes()
 
-  console.log(data)
+  const renderedMessageQueries = getPostQuery.useQueries(topMemesIds)
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='flex flex-col gap-0.5'>
+      <div className='flex flex-col gap-0.5 px-4'>
         <h1 className='text-lg font-bold'>Top memes today</h1>
         <span className='text-sm font-medium text-text-muted'>
           Authors of the best memes earn 💎 20,000 points
         </span>
       </div>
-      <div className='grid grid-cols-2 items-center gap-3'>
-        <TopMeme image={Meme1} author='Steve456' authorImage={Author1} />
-        <TopMeme image={Meme2} author='Alan4' authorImage={Author2} />
-      </div>
-    </div>
-  )
-}
+      <div className='no-scroll flex items-center gap-3 overflow-auto px-4'>
+        {isLoading && isEmptyArray(topMemesIds) ? (
+          <MemesPreviewSkeleton />
+        ) : (
+          renderedMessageQueries
+            .slice(0, 5)
+            .map(({ data: message, isLoading }, index) => {
+              if (!message) return null
 
-function TopMeme({
-  author,
-  image,
-  authorImage,
-}: {
-  image: ImageProps['src']
-  author: string
-  authorImage: ImageProps['src']
-}) {
-  return (
-    <div className='relative aspect-square overflow-clip rounded-xl'>
-      <MediaLoader
-        containerClassName={cx(
-          'overflow-hidden w-full h-full cursor-pointer relative'
+              return isLoading ? (
+                <Skeleton
+                  key={index}
+                  className={cx('!my-0 h-5 w-5 rounded-xl')}
+                />
+              ) : (
+                <MemesPreviewItem
+                  key={index}
+                  message={message}
+                  href={`/tg/channels/${message.struct.rootPostId}`}
+                />
+              )
+            })
         )}
-        placeholderClassName={cx('w-full aspect-square')}
-        className='h-full w-full object-contain'
-        src={image}
-        enableMaxHeight={false}
-      />
-      <div className='absolute bottom-2.5 left-2.5 flex gap-1 rounded-full bg-background-light p-0.5 pr-1.5'>
-        <Image
-          src={authorImage}
-          alt=''
-          className='h-5 w-5 rounded-full object-cover'
-        />
-        <span className='text-sm font-medium'>{author}</span>
+        <Link
+          href='/tg/memes'
+          className={cx(
+            'flex h-[160px] w-[150px] min-w-[150px] items-center justify-center rounded-xl bg-slate-800'
+          )}
+        >
+          See all
+        </Link>
       </div>
     </div>
   )
