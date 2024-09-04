@@ -203,7 +203,7 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
         .getState()
         .setSubscriptionState('identity', 'always-sub')
     }
-  }, [])
+  }, [connectSolanaClick])
 
   const { providers } = useLinkedProviders(myAddress || '')
 

@@ -117,7 +117,7 @@ function TopMemesToday() {
             })
         )}
         <Link
-          href='/tg/memes'
+          href='/tg/channels'
           className={cx(
             'flex h-[160px] w-[150px] min-w-[150px] items-center justify-center rounded-xl bg-slate-800'
           )}
