@@ -1,44 +1,34 @@
+import { apiInstance } from '@/services/api/utils'
+import { getCurrentWallet } from '@/services/subsocial/hooks'
+import mutationWrapper from '@/subsocial-query/base'
+import {
+  SocialCallDataArgs,
+  socialCallName,
+  SynthSocialProfileSyncExternalTokenBalanceCallParsedArgs,
+} from '@subsocial/data-hub-sdk'
+import { createSignedSocialDataEvent, DatahubParams } from '../utils'
+
 async function updateExternalProvider(
   params: DatahubParams<
-    SocialCallDataArgs<'synth_update_linked_identity_external_provider'>
+    SocialCallDataArgs<'synth_social_profile_sync_external_token_balance'>
   >
 ) {
   const input = await createSignedSocialDataEvent(
-    socialCallName.synth_update_linked_identity_external_provider,
+    socialCallName.synth_social_profile_sync_external_token_balance,
     params,
     params.args
   )
 
-  await apiInstance.post<any, any, ApiDatahubIdentityBody>(
-    '/api/datahub/identity',
-    {
-      payload: input,
-      id: params.args.externalProvider?.id ?? '',
-      provider:
-        params.args.externalProvider?.provider ?? IdentityProvider.FARCASTER,
-    }
-  )
+  await apiInstance.post<any, any, {}>('/api/datahub/external-token', {
+    payload: input,
+  })
 }
 
 export const useUpdateExternalProvider = mutationWrapper(
-  async (data: SynthUpdateLinkedIdentityExternalProviderCallParsedArgs) => {
+  async (data: SynthSocialProfileSyncExternalTokenBalanceCallParsedArgs) => {
     await updateExternalProvider({
       ...getCurrentWallet(),
       args: data,
     })
-  },
-  {
-    onSuccess: (_, { externalProvider }) => {
-      reloadEveryIntervalUntilLinkedIdentityFound((identity) => {
-        const isFound = !!identity?.externalProviders.find(
-          (p) =>
-            // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
-            p.provider === externalProvider.provider &&
-            p.externalId === externalProvider.id
-        )
-        if (!externalProvider.enabled) return !isFound
-        return isFound
-      })
-    },
   }
 )

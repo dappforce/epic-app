@@ -7,7 +7,7 @@ import {
 import { datahubQueueRequest, throwErrorIfNotProcessed } from './utils'
 
 const SYNC_EXTERNAL_TOKEN_BALANCES = gql`
-  mutation SyncExternalTokenBalances($args: CreateMutateLinkedIdentityInput!) {
+  mutation SyncExternalTokenBalances($args: SocialProfileAddReferrerIdInput!!) {
     socialProfileSyncExternalTokenBalance(args: $args) {
       processed
       callId

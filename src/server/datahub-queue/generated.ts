@@ -58,6 +58,14 @@ export type CreateMutateContentContainerConfigInput = {
   sig: Scalars['String']['input'];
 };
 
+export type CreateMutateExternalTokenInput = {
+  callData?: InputMaybe<SocialCallDataInput>;
+  dataType: SocialEventDataType;
+  protVersion?: InputMaybe<Scalars['String']['input']>;
+  providerAddr: Scalars['String']['input'];
+  sig: Scalars['String']['input'];
+};
+
 export type CreateMutateGamificationEntityInput = {
   callData?: InputMaybe<SocialCallDataInput>;
   dataType: SocialEventDataType;
@@ -192,11 +200,13 @@ export type Mutation = {
   addTappingActivityStates: IngestDataResponseDto;
   claimEntranceDailyReward: IngestDataResponseDto;
   contentContainerConfigCreate: IngestDataResponseDto;
+  contentContainerConfigUpdate: IngestDataResponseDto;
   createLinkedIdentity: IngestDataResponseDto;
   createPostOffChain: IngestDataResponseDto;
   createPostOptimistic: IngestDataResponseDto;
   createSpaceOffChain: IngestDataResponseDto;
   deleteLinkedIdentity: IngestDataResponseDto;
+  externalTokenCreate: IngestDataResponseDto;
   gamificationClaimTask: IngestDataResponseDto;
   gamificationUpdateTaskStatus: IngestDataResponseDto;
   ingestDataFromIndexerNeynar: IngestPersistentDataFromSquidResponseDto;
@@ -260,6 +270,11 @@ export type MutationContentContainerConfigCreateArgs = {
 };
 
 
+export type MutationContentContainerConfigUpdateArgs = {
+  args: CreateMutateContentContainerConfigInput;
+};
+
+
 export type MutationCreateLinkedIdentityArgs = {
   createLinkedIdentityInput: CreateMutateLinkedIdentityInput;
 };
@@ -282,6 +297,11 @@ export type MutationCreateSpaceOffChainArgs = {
 
 export type MutationDeleteLinkedIdentityArgs = {
   deleteLinkedIdentityInput: CreateMutateLinkedIdentityInput;
+};
+
+
+export type MutationExternalTokenCreateArgs = {
+  args: CreateMutateExternalTokenInput;
 };
 
 
@@ -471,6 +491,7 @@ export enum SocialCallName {
   SynthAddPostView = 'synth_add_post_view',
   SynthAddPostViewsBatch = 'synth_add_post_views_batch',
   SynthCreateContentContainerConfig = 'synth_create_content_container_config',
+  SynthCreateExternalToken = 'synth_create_external_token',
   SynthCreateLinkedIdentity = 'synth_create_linked_identity',
   SynthCreatePostTxFailed = 'synth_create_post_tx_failed',
   SynthCreatePostTxRetry = 'synth_create_post_tx_retry',

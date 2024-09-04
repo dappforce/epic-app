@@ -1,18 +1,16 @@
 import { ApiResponse, handlerWrapper } from '@/server/common'
-import { claimTasksTokens } from '@/server/datahub-queue/claim-tasks-tokens'
-import { datahubMutationWrapper } from '@/server/datahub-queue/utils'
+import { syncExternalTokenBalances } from '@/server/datahub-queue/external-token'
 import { z } from 'zod'
 
 export type ApiDatahubModerationResponse = ApiResponse
 export default handlerWrapper({
-  inputSchema: z.object({ address: z.string() }),
+  inputSchema: z.object({ payload: z.any() }),
   dataGetter: (req) => req.body,
 })({
   allowedMethods: ['POST'],
   errorLabel: 'external-token',
   handler: async (data, _req, res) => {
-    const mapper = datahubMutationWrapper(claimTasksTokens)
-    await mapper(payload)
+    await syncExternalTokenBalances(data.payload)
 
     res.json({
       message: 'OK',
