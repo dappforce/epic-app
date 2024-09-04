@@ -1,13 +1,13 @@
 import { SocialEventDataApiInput } from '@subsocial/data-hub-sdk'
 import { gql } from 'graphql-request'
 import {
-  LinkIdentityMutation,
-  LinkIdentityMutationVariables,
+  SyncExternalTokenBalancesMutation,
+  SyncExternalTokenBalancesMutationVariables,
 } from './generated'
 import { datahubQueueRequest, throwErrorIfNotProcessed } from './utils'
 
 const SYNC_EXTERNAL_TOKEN_BALANCES = gql`
-  mutation SyncExternalTokenBalances($args: SocialProfileAddReferrerIdInput!!) {
+  mutation SyncExternalTokenBalances($args: SocialProfileAddReferrerIdInput!) {
     socialProfileSyncExternalTokenBalance(args: $args) {
       processed
       callId
@@ -20,8 +20,8 @@ export async function syncExternalTokenBalances(
   input: SocialEventDataApiInput
 ) {
   const res = await datahubQueueRequest<
-    LinkIdentityMutation,
-    LinkIdentityMutationVariables
+    SyncExternalTokenBalancesMutation,
+    SyncExternalTokenBalancesMutationVariables
   >({
     document: SYNC_EXTERNAL_TOKEN_BALANCES,
     variables: {
@@ -29,7 +29,7 @@ export async function syncExternalTokenBalances(
     },
   })
   throwErrorIfNotProcessed(
-    res.initLinkedIdentity,
+    res.socialProfileSyncExternalTokenBalance,
     'Failed to sync external token balances'
   )
 }

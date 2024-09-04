@@ -8,7 +8,7 @@ import {
 } from '@subsocial/data-hub-sdk'
 import { createSignedSocialDataEvent, DatahubParams } from '../utils'
 
-async function updateExternalProvider(
+async function syncExternalTokenBalances(
   params: DatahubParams<
     SocialCallDataArgs<'synth_social_profile_sync_external_token_balance'>
   >
@@ -24,9 +24,9 @@ async function updateExternalProvider(
   })
 }
 
-export const useUpdateExternalProvider = mutationWrapper(
+export const useSyncExternalTokenBalances = mutationWrapper(
   async (data: SynthSocialProfileSyncExternalTokenBalanceCallParsedArgs) => {
-    await updateExternalProvider({
+    await syncExternalTokenBalances({
       ...getCurrentWallet(),
       args: data,
     })

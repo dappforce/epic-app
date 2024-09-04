@@ -591,6 +591,13 @@ export type LinkIdentityMutationVariables = Exact<{
 
 export type LinkIdentityMutation = { __typename?: 'Mutation', initLinkedIdentity: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
 
+export type SyncExternalTokenBalancesMutationVariables = Exact<{
+  args: SocialProfileAddReferrerIdInput;
+}>;
+
+
+export type SyncExternalTokenBalancesMutation = { __typename?: 'Mutation', socialProfileSyncExternalTokenBalance: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
+
 export type CreateFramesLikeMutationVariables = Exact<{
   args: CreateMutateActiveStakingSuperLikeInput;
 }>;
@@ -736,6 +743,15 @@ export const ClaimDailyReward = gql`
 export const LinkIdentity = gql`
     mutation LinkIdentity($args: CreateMutateLinkedIdentityInput!) {
   initLinkedIdentity(args: $args) {
+    processed
+    callId
+    message
+  }
+}
+    `;
+export const SyncExternalTokenBalances = gql`
+    mutation SyncExternalTokenBalances($args: SocialProfileAddReferrerIdInput!) {
+  socialProfileSyncExternalTokenBalance(args: $args) {
     processed
     callId
     message

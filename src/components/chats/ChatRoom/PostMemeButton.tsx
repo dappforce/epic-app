@@ -9,6 +9,7 @@ import useIsAddressBlockedInChat from '@/hooks/useIsAddressBlockedInChat'
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import usePostMemeThreshold from '@/hooks/usePostMemeThreshold'
 import { ContentContainer } from '@/services/datahub/content-containers/query'
+import { useSyncExternalTokenBalances } from '@/services/datahub/externalTokenBalances/mutation'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { getTimeLeftUntilCanPostQuery } from '@/services/datahub/posts/query'
 import { useSendEvent } from '@/stores/analytics'
@@ -189,6 +190,7 @@ function TokenGatedModal({
   const { amountRequired, requiredToken } =
     useTokenGatedRequirement(contentContainer)
   const sendEvent = useSendEvent()
+  const { mutate: syncExternalTokenBalances } = useSyncExternalTokenBalances()
 
   return (
     <Modal
@@ -222,7 +224,11 @@ function TokenGatedModal({
           <Button
             size='lg'
             onClick={() => {
-              props.closeModal()
+              if (contentContainer.externalToken?.id) {
+                syncExternalTokenBalances({
+                  externalTokenId: contentContainer.externalToken?.id,
+                })
+              }
             }}
           >
             I have the token in my wallet!
