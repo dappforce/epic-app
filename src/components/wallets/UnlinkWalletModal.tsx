@@ -26,9 +26,9 @@ export default function UnlinkWalletModal({
 
   const { identityAddress, identityAddressProviderId, refetch } =
     useLinkedEvmAddress(myAddress || '', { enabled: true }, identityProvider)
+
   const { mutate, isLoading, isSuccess, reset } = useUpdateExternalProvider({
     onSuccess: (_, { externalProvider }) => {
-      refetch()
       reloadEveryIntervalUntilLinkedIdentityFound((identity) => {
         const found = identity?.externalProviders.find(
           (p) =>
@@ -37,6 +37,7 @@ export default function UnlinkWalletModal({
             p.externalId === externalProvider.id
         )
         if (!found) {
+          refetch()
           props.closeModal()
         }
         return !found

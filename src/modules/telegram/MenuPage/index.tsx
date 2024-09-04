@@ -181,7 +181,12 @@ function MyAccountPageContent({ setPage }: ContentProps) {
   )
 }
 
-type AddressesModalKind = 'evm' | 'solana' | undefined
+type AddressesModalKind =
+  | 'evm'
+  | 'solana'
+  | 'unlink-solana'
+  | 'unlink-evm'
+  | undefined
 
 function MyCryptoAddressesContent({ setPage }: ContentProps) {
   const myAddress = useMyMainAddress()
@@ -209,12 +214,16 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
           </span>
         ) : undefined,
         icon: evmProvider?.externalId ? '🖇️' : '🛠️',
-        onClick: () => setModalKind('evm'),
+        onClick: () =>
+          setModalKind(evmProvider?.externalId ? 'unlink-evm' : 'evm'),
       },
       {
         title: `${solanaProvider?.externalId ? 'Edit' : 'Add'} Solana Address`,
         icon: solanaProvider?.externalId ? '🖇️' : '🛠️',
-        onClick: () => router.push(solanaWalletUrl),
+        onClick: () =>
+          solanaProvider?.externalId
+            ? setModalKind('unlink-solana')
+            : router.push(solanaWalletUrl),
         desc: solanaProvider?.externalId ? (
           <span className='font-medium leading-none text-slate-400'>
             {truncateAddress(solanaProvider?.externalId)}
@@ -244,9 +253,9 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
           closeModal={() => setModalKind(undefined)}
         />
       )}
-      {(evmProvider?.externalId || solanaProvider?.externalId) && (
+      {modalKind?.includes('unlink') && (
         <UnlinkWalletModal
-          chain={modalKind as any}
+          chain={modalKind.includes('solana') ? 'solana' : 'evm'}
           isOpen={!!modalKind}
           closeModal={() => setModalKind(undefined)}
         />

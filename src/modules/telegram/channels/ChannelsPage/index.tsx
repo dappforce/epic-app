@@ -1,6 +1,7 @@
 import BlueGradient from '@/assets/graphics/blue-gradient.png'
 import { Skeleton } from '@/components/SkeletonFallback'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
+import useTgNoScroll from '@/hooks/useTgNoScroll'
 import PointsWidget from '@/modules/points/PointsWidget'
 import { getPostQuery } from '@/services/api/query'
 import {
@@ -19,6 +20,8 @@ import {
 } from '../../HomePage/MemesPreview'
 
 export default function ChannelsPage() {
+  useTgNoScroll()
+
   return (
     <LayoutWithBottomNavigation withFixedHeight className='relative'>
       <PointsWidget isNoTgScroll className='sticky top-0' />
