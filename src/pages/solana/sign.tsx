@@ -95,13 +95,6 @@ export const getServerSideProps = getCommonServerSideProps<{
     sharedSecretDapp
   )
 
-  const params = {
-    dapp_encryption_public_key: env.NEXT_PUBLIC_DAPP_PUBLIC_KEY,
-    nonce: bs58.encode(signNonce),
-    payload: bs58.encode(encrypted),
-    redirect_link: `${env.NEXT_PUBLIC_BASE_URL}/solana/connect?solana_address=${connectData.public_key}&signer=${signer}&signer_nonce=${signerNonce}&address=${address}&message=${message}&phantom_encryption_public_key=${phantomEncryptionPublicKey}`,
-  }
-
   return {
     props: {
       address,

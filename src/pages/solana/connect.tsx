@@ -1,6 +1,7 @@
 import Button from '@/components/Button'
 import Container from '@/components/Container'
 import { env } from '@/env.mjs'
+import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import { addExternalProviderToIdentity } from '@/server/datahub-queue/identity'
 import { createSignedSocialDataEvent } from '@/services/datahub/utils'
 import { decryptPayload } from '@/stores/encryption'
@@ -8,6 +9,7 @@ import { decodeSecretKey, loginWithSecretKey } from '@/utils/account'
 import { getCommonServerSideProps } from '@/utils/page'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import bs58 from 'bs58'
+import { useEffect } from 'react'
 import nacl from 'tweetnacl'
 
 export const getServerSideProps = getCommonServerSideProps(
@@ -81,10 +83,22 @@ export const getServerSideProps = getCommonServerSideProps(
 export default function SolanaConnectPage({
   solanaAddress,
   error,
+  address,
 }: {
   solanaAddress: string
   error: string
+  address: string
 }) {
+  const { refetch } = useLinkedAddress(
+    address,
+    { enabled: true },
+    IdentityProvider.SOLANA
+  )
+
+  useEffect(() => {
+    refetch()
+  }, [refetch])
+
   return (
     <Container className='flex h-screen w-full flex-col items-center justify-center text-center'>
       <h1 className='text-2xl font-bold'>
