@@ -14,13 +14,14 @@ import { useLinkedProviders } from '@/hooks/useLinkedEvmAddress'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import PointsWidget from '@/modules/points/PointsWidget'
 import { useMyMainAddress } from '@/stores/my-account'
+import { useSubscriptionState } from '@/stores/subscription'
 import { truncateAddress } from '@/utils/account'
 import { isTouchDevice } from '@/utils/device'
 import { copyToClipboard } from '@/utils/strings'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useGetSolanaWalletUrl } from '../AirdropPage/solana'
 import {
@@ -194,6 +195,15 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
   const [openEvmConnectWalletModal, setOpenEvmConnectWalletModal] =
     useState(false)
   const [openUnlinkModal, setOpenUnlinkModal] = useState(false)
+  const [connectSolanaClick, setConnectSolanaClick] = useState(false)
+
+  useEffect(() => {
+    if (connectSolanaClick) {
+      useSubscriptionState
+        .getState()
+        .setSubscriptionState('identity', 'always-sub')
+    }
+  }, [])
 
   const { providers } = useLinkedProviders(myAddress || '')
 
@@ -217,14 +227,16 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
         icon: evmProvider?.externalId ? '🖇️' : '🛠️',
         onClick: () => {
           setModalKind('evm')
-          if (!isTouchDevice()) {
-            setIsOpenUseMobileModal(true)
-            return
-          }
+          if (evmProvider?.externalId) {
+            setOpenUnlinkModal(true)
+          } else {
+            if (!isTouchDevice()) {
+              setIsOpenUseMobileModal(true)
+              return
+            }
 
-          evmProvider?.externalId
-            ? setOpenUnlinkModal(true)
-            : setOpenEvmConnectWalletModal(true)
+            setOpenEvmConnectWalletModal(true)
+          }
         },
       },
       {
@@ -234,14 +246,18 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
         icon: solanaProvider?.externalId ? '🖇️' : '🛠️',
         onClick: () => {
           setModalKind('solana')
-          if (!isTouchDevice()) {
-            setIsOpenUseMobileModal(true)
-            return
-          }
 
-          solanaProvider?.externalId
-            ? setOpenUnlinkModal(true)
-            : router.push(solanaWalletUrl)
+          if (solanaProvider?.externalId) {
+            setOpenUnlinkModal(true)
+          } else {
+            if (!isTouchDevice()) {
+              setIsOpenUseMobileModal(true)
+              return
+            }
+
+            setConnectSolanaClick(true)
+            router.push(solanaWalletUrl)
+          }
         },
         desc: solanaProvider?.externalId ? (
           <span className='font-medium leading-none text-slate-400'>
