@@ -55,7 +55,7 @@ export function TabButton({
   )
 }
 
-export function Tabs({
+export function ChatTabs({
   setSelectedTab,
   selectedTab,
   className,
