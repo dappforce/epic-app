@@ -135,6 +135,8 @@ jobs:
             GH_NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=subsocial_staging_bot
             GH_NEXT_PUBLIC_NEYNAR_CLIENT_ID=e8dc01b0-046c-4698-98ac-05432050961d
             GH_FRAMES_SECRET=JG/W96svVHQ3bdaEKWm1h8xJXqxDtqZ6t7tKCZNWhh0=
+            GH_NEXT_PUBLIC_DAPP_PUBLIC_KEY=GqJKFQavHPEvngh6hNwt9FbqcEYsNvduGvyQuT6ARTHk
+            GH_DAPP_SECRET_KEY=85Nb7L8gVozH99wYYu4Ggx64DVFKUXH15iwxSNGCgHBs
           target: runner
           tags: |
             ${{ env.image }}
