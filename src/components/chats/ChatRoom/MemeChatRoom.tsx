@@ -118,7 +118,8 @@ function PostMemeButton({
   const { threshold, isLoading: loadingThreshold } =
     usePostMemeThreshold(chatId)
 
-  const { evmAddress, isLoading: loadingEvmAddress } = useLinkedEvmAddress()
+  const { identityAddress, isLoading: loadingEvmAddress } =
+    useLinkedEvmAddress()
   const { isBlocked, isLoading: loadingIsBlocked } = useIsAddressBlockedInChat(
     myAddress,
     chatId
@@ -178,7 +179,7 @@ function PostMemeButton({
               hasOpenedMeme2EarnIntroStorage.set('true')
               return
             }
-            if (!evmAddress && isContestTab) {
+            if (!identityAddress && isContestTab) {
               setIsOpenLinkEvm(true)
               return
             }

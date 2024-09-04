@@ -12,6 +12,7 @@ import {
   ContentContainer,
   getContentContainersQuery,
 } from '@/services/datahub/content-containers/query'
+import { getTopnMemesQuery } from '@/services/datahub/posts/query'
 import { cx } from '@/utils/class-names'
 import Image, { ImageProps } from 'next/image'
 import Link from 'next/link'
@@ -79,6 +80,10 @@ function Channel({ channel }: { channel: ContentContainer }) {
 }
 
 function TopMemesToday() {
+  const { data, isLoading } = getTopnMemesQuery.useQuery({})
+
+  console.log(data)
+
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex flex-col gap-0.5'>

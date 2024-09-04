@@ -3,6 +3,7 @@ import {
   reloadEveryIntervalUntilLinkedIdentityFound,
   useUpdateExternalProvider,
 } from '@/services/datahub/identity/mutation'
+import { useMyMainAddress } from '@/stores/my-account'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import { useEffect } from 'react'
 import Button from '../Button'
@@ -18,7 +19,16 @@ export default function UnlinkWalletModal({
   chain,
   ...props
 }: ModalFunctionalityProps & { chain: 'evm' | 'solana' }) {
-  const { evmAddress, evmAddressProviderId } = useLinkedEvmAddress()
+  const myAddress = useMyMainAddress()
+
+  const identityProvider =
+    chain === 'evm' ? IdentityProvider.EVM : IdentityProvider.SOLANA
+
+  const { identityAddress, identityAddressProviderId } = useLinkedEvmAddress(
+    myAddress || '',
+    { enabled: true },
+    identityProvider
+  )
   const { mutate, isLoading, isSuccess, reset } = useUpdateExternalProvider({
     onSuccess: (_, { externalProvider }) => {
       reloadEveryIntervalUntilLinkedIdentityFound((identity) => {
@@ -54,12 +64,12 @@ export default function UnlinkWalletModal({
         <Button
           size='lg'
           onClick={() => {
-            if (!evmAddress) return
+            if (!identityAddress) return
             mutate({
-              entityId: evmAddressProviderId,
+              entityId: identityAddressProviderId,
               externalProvider: {
-                id: evmAddress,
-                provider: IdentityProvider.EVM,
+                id: identityAddress,
+                provider: identityProvider,
                 enabled: false,
               },
             })

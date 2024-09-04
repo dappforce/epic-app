@@ -674,3 +674,54 @@ export const getPostsCountByTodayQuery = createQuery({
     enabled: !!params?.chatId,
   }),
 })
+
+const GET_TOP_MEMES = gql`
+  query GetTopMemes($timestamp: String!) {
+    activeStakingRankedPostIdsBySuperLikesNumber(
+      args: {
+        filter: { period: DAY, timestamp: $timestamp }
+        limit: 2
+        offset: 0
+        order: DESC
+      }
+    ) {
+      data {
+        postId
+        score
+        rank
+      }
+      total
+    }
+  }
+`
+export const getTopnMemesQuery = createQuery({
+  key: 'getTopMemes',
+  fetcher: async () => {
+    const timestamp = dayjs.utc(new Date()).startOf('day').unix().toString()
+
+    const res = await datahubQueryRequest<
+      {
+        activeStakingRankedPostIdsBySuperLikesNumber: {
+          data: {
+            postId: string
+            score: number
+            rank: number
+          }[]
+          total: number
+        }
+      },
+      {
+        timestamp: string
+      }
+    >({
+      document: GET_TOP_MEMES,
+      variables: {
+        timestamp: timestamp,
+      },
+    })
+    return res.activeStakingRankedPostIdsBySuperLikesNumber.data
+  },
+  defaultConfigGenerator: () => ({
+    enabled: true,
+  }),
+})
