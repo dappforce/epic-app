@@ -2642,6 +2642,43 @@ export type SubscribeEventsSubscription = {
   }
 }
 
+export type GetExternalTokenBalancesQueryVariables = Exact<{
+  address: Scalars['String']['input']
+}>
+
+export type GetExternalTokenBalancesQuery = {
+  __typename?: 'Query'
+  socialProfileBalances?: {
+    __typename?: 'SocialProfileBalances'
+    externalTokenBalances?: Array<{
+      __typename?: 'SocialProfileExternalTokenBalance'
+      id: string
+      active: boolean
+      amount: string
+      blockchainAddress: string
+    }> | null
+  } | null
+}
+
+export type SubscribeExternalTokenBalancesSubscriptionVariables = Exact<{
+  address: Scalars['String']['input']
+}>
+
+export type SubscribeExternalTokenBalancesSubscription = {
+  __typename?: 'Subscription'
+  socialProfileExternalTokenBalanceSubscription: {
+    __typename?: 'SocialProfileExternalTokenBalanceSubscriptionPayload'
+    event: DataHubSubscriptionEventEnum
+    entity: {
+      __typename?: 'SocialProfileExternalTokenBalance'
+      id: string
+      active: boolean
+      amount: string
+      blockchainAddress: string
+    }
+  }
+}
+
 export type GetGeneralStatsQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetGeneralStatsQuery = {
@@ -2917,24 +2954,6 @@ export type GetClickedPointsByDaySQuery = {
       date: number
     }>
   }
-}
-
-export type GetExternalTokenBalancesQueryVariables = Exact<{
-  address: Scalars['String']['input']
-}>
-
-export type GetExternalTokenBalancesQuery = {
-  __typename?: 'Query'
-  socialProfileBalances?: {
-    __typename?: 'SocialProfileBalances'
-    externalTokenBalances?: Array<{
-      __typename?: 'SocialProfileExternalTokenBalance'
-      id: string
-      active: boolean
-      amount: string
-      blockchainAddress: string
-    }> | null
-  } | null
 }
 
 export type GetBlockedResourcesQueryVariables = Exact<{
@@ -3920,6 +3939,31 @@ export const SubscribeEvents = gql`
     }
   }
 `
+export const GetExternalTokenBalances = gql`
+  query GetExternalTokenBalances($address: String!) {
+    socialProfileBalances(args: { where: { address: $address } }) {
+      externalTokenBalances {
+        id
+        active
+        amount
+        blockchainAddress
+      }
+    }
+  }
+`
+export const SubscribeExternalTokenBalances = gql`
+  subscription SubscribeExternalTokenBalances($address: String!) {
+    socialProfileExternalTokenBalanceSubscription(args: { address: $address }) {
+      event
+      entity {
+        id
+        active
+        amount
+        blockchainAddress
+      }
+    }
+  }
+`
 export const GetGeneralStats = gql`
   query GetGeneralStats {
     activeStakingTotalActivityMetricsForFixedPeriod(
@@ -4150,18 +4194,6 @@ export const GetClickedPointsByDayS = gql`
       data {
         tapsCount
         date
-      }
-    }
-  }
-`
-export const GetExternalTokenBalances = gql`
-  query GetExternalTokenBalances($address: String!) {
-    socialProfileBalances(args: { where: { address: $address } }) {
-      externalTokenBalances {
-        id
-        active
-        amount
-        blockchainAddress
       }
     }
   }

@@ -8,11 +8,6 @@ import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNav
 import ClaimTaskModal from '@/components/tasks/ClaimTaskModal'
 import { modalConfigByVariant } from '@/components/tasks/config'
 import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
-import { ContentContainer } from '@/services/datahub/content-containers/query'
-import {
-  getBalanceQuery,
-  getExternalTokenBalancesQuery,
-} from '@/services/datahub/leaderboard/points-balance/query'
 import { GamificationTask } from '@/services/datahub/tasks'
 import {
   clearGamificationTasksError,
@@ -20,7 +15,6 @@ import {
 } from '@/services/datahub/tasks/query'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
-import { convertToBigInt } from '@/utils/strings'
 import { Transition } from '@headlessui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
@@ -58,57 +52,11 @@ function ChatContent() {
 
   return (
     <MemeChatRoom
+      contentContainer={contentContainer}
       chatId={contentContainer.rootPost.id}
       shouldShowUnapproved={isModerating}
     />
   )
-}
-
-function usePassRequirement(contentContainer: ContentContainer) {
-  const externalTokenRequirement = convertToBigInt(
-    contentContainer.accessThresholdExternalTokenAmount ?? 0
-  )
-  const pointsRequirement = Number(
-    contentContainer.accessThresholdPointsAmount ?? 0
-  )
-
-  const myAddress = useMyMainAddress()
-  const needToFetchExternalTokens = externalTokenRequirement > 0 && !!myAddress
-  const { data: externalTokens, isLoading: loadingExternalTokens } =
-    getExternalTokenBalancesQuery.useQuery(myAddress ?? '', {
-      enabled: needToFetchExternalTokens,
-    })
-  const { data: points, isLoading: loadingPoints } = getBalanceQuery.useQuery(
-    myAddress ?? '',
-    {
-      enabled: pointsRequirement > 0,
-    }
-  )
-
-  let isLoading = false
-  let passRequirement = true
-  let amountRequired = 0
-  let requiredToken = ''
-  if (pointsRequirement > 0) {
-    isLoading = loadingPoints
-    passRequirement = (points ?? 0) >= pointsRequirement
-    amountRequired = pointsRequirement
-    requiredToken = 'points'
-  } else if (externalTokenRequirement > 0) {
-    isLoading = loadingExternalTokens
-    const tokenBalance = externalTokens?.find(
-      (token) => token.id === contentContainer.externalToken?.id
-    )
-    passRequirement =
-      convertToBigInt(tokenBalance?.amount ?? 0) >= externalTokenRequirement
-    amountRequired = Number(
-      externalTokenRequirement /
-        BigInt(10 ** Number(contentContainer.externalToken?.decimals ?? 0))
-    )
-    requiredToken = contentContainer.externalToken?.name ?? ''
-  }
-
-  return { passRequirement, isLoading, amountRequired, requiredToken }
 }
 
 function ChannelNavbar() {

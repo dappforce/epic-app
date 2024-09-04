@@ -1,8 +1,8 @@
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import HomePageModals from '@/components/modals/HomePageModals'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
-import ChatContent from '../../chat/HomePage/ChatContent'
 import ContestEvmModal from '../ContestEvmModal'
+import MemePageChatContent from './ChatContent'
 import HowToEarnMessage from './HowToEarnMessage'
 
 const MemesPage = () => {
@@ -10,7 +10,7 @@ const MemesPage = () => {
 
   return (
     <LayoutWithBottomNavigation withFixedHeight className='relative'>
-      <ChatContent />
+      <MemePageChatContent />
       <HomePageModals />
       <ContestEvmModal />
       <HowToEarnMessage />

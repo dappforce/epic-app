@@ -9,8 +9,8 @@ import { useLocalStorage } from '@uidotdev/usehooks'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import Router, { useRouter } from 'next/router'
-import { useLayoutEffect, useState } from 'react'
-import { TabState, Tabs, tabStates } from './ChatTabs'
+import { useLayoutEffect } from 'react'
+import { ChatTabs, TabState, tabStates } from './ChatTabs'
 
 dayjs.extend(duration)
 
@@ -25,7 +25,7 @@ const chatIdsBasedOnSelectedTab = {
   'not-approved-contest': env.NEXT_PUBLIC_CONTEST_CHAT_ID,
 }
 
-export default function ChatContent() {
+export default function MemePageChatContent() {
   const { query } = useRouter()
   const isAdmin = useIsModerationAdmin()
   let [selectedTab, setSelectedTab] = useLocalStorage<TabState>(
@@ -57,17 +57,12 @@ export default function ChatContent() {
     }
   }, [query.tab, setSelectedTab])
 
-  const [isOpenRules, setIsOpenRules] = useState(false)
   const { data: serverTime } = getServerTimeQuery.useQuery(null)
   const isContestEnded = !!(
     selectedTab === 'contest' &&
     serverTime &&
     env.NEXT_PUBLIC_CONTEST_END_TIME < serverTime
   )
-  const isCannotPost =
-    isContestEnded ||
-    selectedTab === 'not-approved' ||
-    selectedTab === 'not-approved-contest'
 
   const chatId = chatIdsBasedOnSelectedTab[selectedTab]
   const isContest = chatId === env.NEXT_PUBLIC_CONTEST_CHAT_ID
@@ -80,7 +75,7 @@ export default function ChatContent() {
         isNoTgScroll
         className={cx('sticky top-0', { ['hidden']: isAdmin })}
       />
-      <Tabs
+      <ChatTabs
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
         className={cx(isAdmin && 'top-0')}
