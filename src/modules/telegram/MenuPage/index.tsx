@@ -205,7 +205,7 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
     }
   }, [connectSolanaClick])
 
-  const { providers } = useLinkedProviders(myAddress || '')
+  const { providers } = useLinkedProviders()
 
   const evmProvider = providers?.find(
     (provider) => provider.provider === IdentityProvider.EVM.toString()
