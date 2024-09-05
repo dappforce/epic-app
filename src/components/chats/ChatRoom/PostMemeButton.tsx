@@ -10,7 +10,7 @@ import Meme2EarnIntroModal, {
 import Modal, { ModalFunctionalityProps } from '@/components/modals/Modal'
 import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
 import useIsAddressBlockedInChat from '@/hooks/useIsAddressBlockedInChat'
-import useLinkedEvmAddress from '@/hooks/useLinkedProviders'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import usePostMemeThreshold from '@/hooks/usePostMemeThreshold'
 import useToastError from '@/hooks/useToastError'
 import SolanaButton from '@/modules/telegram/AirdropPage/solana'
@@ -78,8 +78,7 @@ export default function PostMemeButton({
   const { threshold, isLoading: loadingThreshold } =
     usePostMemeThreshold(chatId)
 
-  const { identityAddress, isLoading: loadingEvmAddress } =
-    useLinkedEvmAddress()
+  const { identityAddress, isLoading: loadingEvmAddress } = useLinkedAddress()
   const { isBlocked, isLoading: loadingIsBlocked } = useIsAddressBlockedInChat(
     myAddress,
     chatId

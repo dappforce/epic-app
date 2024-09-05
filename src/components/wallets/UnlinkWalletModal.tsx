@@ -1,4 +1,4 @@
-import useLinkedEvmAddress from '@/hooks/useLinkedProviders'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import {
   reloadEveryIntervalUntilLinkedIdentityFound,
   useUpdateExternalProvider,
@@ -26,7 +26,7 @@ export default function UnlinkWalletModal({
     chain === 'evm' ? IdentityProvider.EVM : IdentityProvider.SOLANA
 
   const { identityAddress, identityAddressProviderId, refetch } =
-    useLinkedEvmAddress(myAddress || '', { enabled: true }, identityProvider)
+    useLinkedAddress(myAddress || '', { enabled: true }, identityProvider)
 
   const { mutate, isLoading, isSuccess, reset } = useUpdateExternalProvider({
     onSuccess: (_, { externalProvider }) => {
