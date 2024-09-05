@@ -59,6 +59,8 @@ function ChannelsList() {
   )
 }
 function Channel({ channel }: { channel: ContentContainer }) {
+  useTgNoScroll()
+
   return (
     <Link
       href={`/tg/channels/${channel.rootPost.id}`}

@@ -8,6 +8,7 @@ import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNav
 import ClaimTaskModal from '@/components/tasks/ClaimTaskModal'
 import { modalConfigByVariant } from '@/components/tasks/config'
 import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
+import useTgNoScroll from '@/hooks/useTgNoScroll'
 import { GamificationTask } from '@/services/datahub/tasks'
 import {
   clearGamificationTasksError,
@@ -32,6 +33,8 @@ export default function ChannelContentPage({
 }: {
   rootPostId: string
 }) {
+  useTgNoScroll()
+
   return (
     <ChannelContentPageProvider rootPostId={rootPostId}>
       <LayoutWithBottomNavigation withFixedHeight className='relative'>
