@@ -1,4 +1,4 @@
-import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import { SendMessageParams } from '@/services/subsocial/commentIds/types'
 import { useExtensionModalState } from '@/stores/extension'
 import { DonateProperies } from '@subsocial/api/types'

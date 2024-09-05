@@ -1,4 +1,4 @@
-import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import useToastError from '@/hooks/useToastError'
 import {
   useAddExternalProviderToIdentity,

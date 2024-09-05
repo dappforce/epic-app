@@ -1,7 +1,7 @@
 import Button from '@/components/Button'
 import Container from '@/components/Container'
 import { env } from '@/env.mjs'
-import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import { addExternalProviderToIdentity } from '@/server/datahub-queue/identity'
 import { createSignedSocialDataEvent } from '@/services/datahub/utils'
 import { decryptPayload } from '@/stores/encryption'

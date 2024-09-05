@@ -1,4 +1,4 @@
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedEvmAddress from '@/hooks/useLinkedProviders'
 import {
   reloadEveryIntervalUntilLinkedIdentityFound,
   useUpdateExternalProvider,

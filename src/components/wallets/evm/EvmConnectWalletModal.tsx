@@ -1,7 +1,7 @@
 import { CommonEVMLoginContent } from '@/components/auth/common/evm/CommonEvmModalContent'
 import BottomDrawer from '@/components/BottomDrawer'
 import { ModalFunctionalityProps } from '@/components/modals/Modal'
-import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'

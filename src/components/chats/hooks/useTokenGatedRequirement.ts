@@ -1,4 +1,4 @@
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import { ContentContainer } from '@/services/datahub/content-containers/query'
 import {
   ExternalTokenBalance,
@@ -15,10 +15,11 @@ type HasToLinkWallet = 'Solana' | 'Ethereum' | undefined
 export default function useTokenGatedRequirement(
   contentContainer?: ContentContainer
 ) {
-  const { identityAddress, isLoading: loadingAddress } = useLinkedEvmAddress(
+  const tokenChain = contentContainer?.externalToken?.chain
+  const { identityAddress, isLoading: loadingAddress } = useLinkedAddress(
     undefined,
     { enabled: true },
-    contentContainer?.externalToken?.chain === ExternalTokenChain.Ethereum
+    tokenChain === ExternalTokenChain.Ethereum
       ? IdentityProvider.EVM
       : IdentityProvider.SOLANA
   )
@@ -51,12 +52,12 @@ export default function useTokenGatedRequirement(
   let hasToLinkWallet: HasToLinkWallet
   let remainingNeeded = 0
   if (externalTokenRequirement > 0) {
-    const tokenChain = contentContainer?.externalToken?.chain
-    if (tokenChain === ExternalTokenChain.Ethereum && !identityAddress) {
-      hasToLinkWallet = 'Ethereum'
-      // TODO: validate solana address
-    } else if (tokenChain === ExternalTokenChain.Solana) {
-      hasToLinkWallet = 'Solana'
+    if (!identityAddress) {
+      if (tokenChain === ExternalTokenChain.Ethereum) {
+        hasToLinkWallet = 'Ethereum'
+      } else if (tokenChain === ExternalTokenChain.Solana) {
+        hasToLinkWallet = 'Solana'
+      }
     }
 
     isLoading = loadingExternalTokens
@@ -90,7 +91,7 @@ export default function useTokenGatedRequirement(
     isLoading,
     amountRequired,
     requiredToken,
-    chain: contentContainer?.externalToken?.chain,
+    chain: tokenChain,
     hasToLinkWallet,
     currentToken,
     remainingNeeded,

@@ -10,7 +10,7 @@ import Meme2EarnIntroModal, {
 import Modal, { ModalFunctionalityProps } from '@/components/modals/Modal'
 import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
 import useIsAddressBlockedInChat from '@/hooks/useIsAddressBlockedInChat'
-import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedEvmAddress from '@/hooks/useLinkedProviders'
 import usePostMemeThreshold from '@/hooks/usePostMemeThreshold'
 import useToastError from '@/hooks/useToastError'
 import SolanaButton from '@/modules/telegram/AirdropPage/solana'
