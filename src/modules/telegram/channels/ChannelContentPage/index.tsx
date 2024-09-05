@@ -149,7 +149,6 @@ function ChannelNavbar() {
                 />
               )}
             </div>
-            <div className='absolute inset-x-0 bottom-0 h-10 w-full bg-gradient-to-b from-transparent to-background' />
             <div className='absolute bottom-2 left-2 translate-y-1/2 rounded-full bg-background p-1'>
               <SkeletonFallback
                 isLoading={isLoading}
@@ -176,7 +175,7 @@ function ChannelNavbar() {
               Channel
             </span>
             <TabButtons
-              className='mt-6'
+              className='mt-4'
               tabs={['Details', 'Tasks']}
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
