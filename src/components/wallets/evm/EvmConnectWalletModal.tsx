@@ -1,5 +1,6 @@
 import { CommonEVMLoginContent } from '@/components/auth/common/evm/CommonEvmModalContent'
-import Modal, { ModalFunctionalityProps } from '@/components/modals/Modal'
+import BottomDrawer from '@/components/BottomDrawer'
+import { ModalFunctionalityProps } from '@/components/modals/Modal'
 import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
@@ -17,7 +18,7 @@ export default function EvmConnectWalletModal(props: ModalFunctionalityProps) {
   )
 
   return (
-    <Modal
+    <BottomDrawer
       {...props}
       title='🔑 Connect Ethereum address'
       description='Create an on-chain proof to link your Epic account.'
@@ -35,6 +36,6 @@ export default function EvmConnectWalletModal(props: ModalFunctionalityProps) {
           props.closeModal()
         }}
       />
-    </Modal>
+    </BottomDrawer>
   )
 }
