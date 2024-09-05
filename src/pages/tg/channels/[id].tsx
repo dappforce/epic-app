@@ -7,7 +7,7 @@ import { dehydrate, QueryClient } from '@tanstack/react-query'
 export function getStaticPaths() {
   return {
     paths: [],
-    fallback: true,
+    fallback: 'blocking',
   }
 }
 
@@ -31,6 +31,7 @@ export const getStaticProps = getCommonStaticProps<AppCommonProps>(
         rootPostId,
         dehydratedState: dehydrate(client),
       },
+      revalidate: 60 * 60,
     }
   }
 )

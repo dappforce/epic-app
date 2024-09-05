@@ -91,7 +91,8 @@ function HowItWorks() {
         <span>
           💎 Creating a meme costs{' '}
           <SkeletonFallback isLoading={isLoading} className='inline-block w-8'>
-            <span>{data?.socialActionPrice.createCommentPoints}</span>
+            4,000
+            {/* <span>{data?.socialActionPrice.createCommentPoints}</span> */}
           </SkeletonFallback>{' '}
           Points
         </span>

@@ -1,4 +1,5 @@
 import { env } from '@/env.mjs'
+import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { LocalStorage } from '@/utils/storage'
 import { useParentData } from './parent'
 import { create, createSelectors } from './utils'
@@ -24,7 +25,10 @@ type State = {
   unreadMessage: UnreadMessage
 
   isOpenMessageModal: 'not-enough-balance' | 'on-review' | 'blocked' | ''
-  currentChatId: string
+  currentData: {
+    chatId: string
+    contentContainer?: ContentContainer
+  }
 }
 
 let savedStateBeforeEditing: State | null = null
@@ -45,7 +49,7 @@ type Actions = {
 
   setOpenMessageModal: (
     isOpenMessageModal: State['isOpenMessageModal'],
-    chatId?: string
+    currentData?: State['currentData']
   ) => void
 }
 
@@ -60,7 +64,10 @@ const INITIAL_STATE: State = {
     lastMessageTime: Date.now(),
   },
   isOpenMessageModal: '',
-  currentChatId: env.NEXT_PUBLIC_MAIN_CHAT_ID,
+  currentData: {
+    chatId: env.NEXT_PUBLIC_MAIN_CHAT_ID,
+    contentContainer: undefined,
+  },
 }
 
 const useMessageDataBase = create<State & Actions>()((set, get) => ({
@@ -102,9 +109,12 @@ const useMessageDataBase = create<State & Actions>()((set, get) => ({
     }
     set({ unreadMessage })
   },
-  setOpenMessageModal: (isOpenMessageModal, chatId) => {
+  setOpenMessageModal: (
+    isOpenMessageModal,
+    currentData?: { chatId: string; contentContainer?: ContentContainer }
+  ) => {
     set({ isOpenMessageModal })
-    if (chatId) set({ currentChatId: chatId })
+    if (currentData) set({ currentData })
   },
   reset: () => {
     savedStateBeforeEditing = null

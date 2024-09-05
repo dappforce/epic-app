@@ -18,7 +18,7 @@ export default function MemeChatRoom({
   chatId: string
   shouldShowUnapproved: boolean
   isContest?: { isContestEnded: boolean }
-  contentContainer?: ContentContainer
+  contentContainer: ContentContainer
 }) {
   const [isOpenRules, setIsOpenRules] = useState(false)
   const isCannotPost = isContest?.isContestEnded || shouldShowUnapproved
@@ -26,6 +26,7 @@ export default function MemeChatRoom({
   return (
     <>
       <ChatRoom
+        contentContainer={contentContainer}
         chatId={chatId}
         hubId={env.NEXT_PUBLIC_MAIN_SPACE_ID}
         className='overflow-hidden'

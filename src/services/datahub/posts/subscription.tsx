@@ -10,6 +10,7 @@ import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { gql } from 'graphql-request'
 import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+import { getContentContainersQuery } from '../content-containers/query'
 import { getTokenomicsMetadataQuery } from '../content-staking/query'
 import {
   DataHubSubscriptionEventEnum,
@@ -189,6 +190,17 @@ async function processMessage(
   const ownerId = newPost?.struct.ownerId
   const isCurrentOwner = ownerId === myAddress
 
+  async function getContentContainer() {
+    const contentContainers = await getContentContainersQuery.fetchQuery(
+      queryClient,
+      {
+        filter: { rootPostIds: [rootPostId ?? ''] },
+      }
+    )
+    const contentContainer = contentContainers.data?.[0]
+    return contentContainer ?? undefined
+  }
+
   if (isCreationEvent) {
     const tokenomics = await getTokenomicsMetadataQuery.fetchQuery(
       queryClient,
@@ -197,6 +209,7 @@ async function processMessage(
     if (isCreationEvent && newPost) {
       if (newPost.struct.approvedInRootPost) {
         if (isCurrentOwner) {
+          const contentContainer = await getContentContainer()
           toast.custom((t) => (
             <Toast
               icon={(className) => (
@@ -204,7 +217,7 @@ async function processMessage(
               )}
               t={t}
               title='Meme Sent!'
-              description={`${tokenomics.socialActionPrice.createCommentPoints} points have been used. More memes, more fun!`}
+              description={`${contentContainer.createCommentPricePointsAmount} points have been used. More memes, more fun!`}
             />
           ))
         }
@@ -257,8 +270,14 @@ async function processMessage(
             }
 
             if (sentMeme === 1 || sentMeme === 3) {
-              useMessageData.getState().setOpenMessageModal('on-review')
+              const contentContainer = await getContentContainer()
+              useMessageData.getState().setOpenMessageModal('on-review', {
+                contentContainer,
+                chatId: contentContainer.rootPost.id,
+              })
             } else {
+              const contentContainer = await getContentContainer()
+              const cost = contentContainer.createCommentPricePointsAmount
               const remaining = Math.max(
                 MIN_MEME_FOR_REVIEW - (sentMeme ?? 0),
                 0
@@ -266,12 +285,10 @@ async function processMessage(
               const title = 'Under review'
               const description =
                 remaining > 0
-                  ? `${
-                      tokenomics.socialActionPrice.createCommentPoints
-                    } points have been used. We received your meme! We need at least ${remaining} more meme${
+                  ? `${cost} points have been used. We received your meme! We need at least ${remaining} more meme${
                       remaining > 1 ? 's' : ''
                     } from you to mark you as a verified creator.`
-                  : `${tokenomics.socialActionPrice.createCommentPoints} points have been used. We received ${sentMeme} memes from you! Now we need a bit of time to finish review you as a verified creator.`
+                  : `${cost} points have been used. We received ${sentMeme} memes from you! Now we need a bit of time to finish review you as a verified creator.`
               toast.custom((t) => (
                 <Toast
                   t={t}

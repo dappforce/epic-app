@@ -2398,6 +2398,7 @@ export type GetContentContainersQuery = {
     data: Array<{
       __typename?: 'ContentContainerConfig'
       id: string
+      createCommentPricePointsAmount?: string | null
       containerType: ContentContainerType
       accessThresholdPointsAmount?: string | null
       likeThresholdExternalTokenAmount?: string | null
@@ -2597,12 +2598,9 @@ export type GetTokenomicsMetadataQuery = {
   __typename?: 'Query'
   activeStakingTokenomicMetadata: {
     __typename?: 'TokenomicMetadataResponse'
+    maxTapsPerDay: number
     superLikeWeightPoints: string
     likerRewardDistributionPercent: number
-    socialActionPrice: {
-      __typename?: 'SocialActionPriceResponse'
-      createCommentPoints: string
-    }
   }
 }
 
@@ -2912,22 +2910,6 @@ export type GetUserReferralsStatsQuery = {
         socialProfile: { __typename?: 'SocialProfile'; id: string }
       }> | null
     } | null
-  }
-}
-
-export type GetTokenomicMetadataQueryVariables = Exact<{ [key: string]: never }>
-
-export type GetTokenomicMetadataQuery = {
-  __typename?: 'Query'
-  activeStakingTokenomicMetadata: {
-    __typename?: 'TokenomicMetadataResponse'
-    maxTapsPerDay: number
-    superLikeWeightPoints: string
-    likerRewardDistributionPercent: number
-    socialActionPrice: {
-      __typename?: 'SocialActionPriceResponse'
-      createCommentPoints: string
-    }
   }
 }
 
@@ -3800,6 +3782,7 @@ export const GetContentContainers = gql`
           coverImage
           image
         }
+        createCommentPricePointsAmount
         containerType
         accessThresholdPointsAmount
         likeThresholdExternalTokenAmount
@@ -3947,11 +3930,9 @@ export const GetDailyReward = gql`
 export const GetTokenomicsMetadata = gql`
   query GetTokenomicsMetadata {
     activeStakingTokenomicMetadata {
+      maxTapsPerDay
       superLikeWeightPoints
       likerRewardDistributionPercent
-      socialActionPrice {
-        createCommentPoints
-      }
     }
   }
 `
@@ -4213,18 +4194,6 @@ export const GetUserReferralsStats = gql`
             id
           }
         }
-      }
-    }
-  }
-`
-export const GetTokenomicMetadata = gql`
-  query GetTokenomicMetadata {
-    activeStakingTokenomicMetadata {
-      maxTapsPerDay
-      superLikeWeightPoints
-      likerRewardDistributionPercent
-      socialActionPrice {
-        createCommentPoints
       }
     }
   }

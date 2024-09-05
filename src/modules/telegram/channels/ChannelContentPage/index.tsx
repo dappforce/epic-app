@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { FaChevronLeft } from 'react-icons/fa6'
+import HowToEarnMessage from './HowToEarnMessage'
 import {
   ChannelContentPageProvider,
   useChannelContentPageContext,
@@ -39,6 +40,7 @@ export default function ChannelContentPage({
     <ChannelContentPageProvider rootPostId={rootPostId}>
       <LayoutWithBottomNavigation withFixedHeight className='relative'>
         <ChannelNavbar />
+        <HowToEarnMessage />
         <ChatContent />
       </LayoutWithBottomNavigation>
     </ChannelContentPageProvider>

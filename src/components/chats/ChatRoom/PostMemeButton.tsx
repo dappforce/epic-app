@@ -153,7 +153,7 @@ export default function PostMemeButton({
           } else {
             useMessageData
               .getState()
-              .setOpenMessageModal('not-enough-balance', chatId)
+              .setOpenMessageModal('not-enough-balance', { chatId })
           }
         }}
       >

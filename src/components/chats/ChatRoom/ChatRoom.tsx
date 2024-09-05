@@ -2,6 +2,7 @@ import Container from '@/components/Container'
 import ExtensionModals from '@/components/extensions'
 import TextArea from '@/components/inputs/TextArea'
 import { getPostQuery } from '@/services/api/query'
+import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { useMessageData } from '@/stores/message'
 import { cx } from '@/utils/class-names'
 import dynamic from 'next/dynamic'
@@ -24,6 +25,7 @@ export type ChatRoomProps = ComponentProps<'div'> & {
   hubId: string
   topElement?: ReactNode
   onlyDisplayUnapprovedMessages?: boolean
+  contentContainer: ContentContainer
 }
 
 export default function ChatRoom({
@@ -36,6 +38,7 @@ export default function ChatRoom({
   hubId,
   topElement,
   onlyDisplayUnapprovedMessages,
+  contentContainer,
   ...props
 }: ChatRoomProps) {
   const replyTo = useMessageData((state) => state.replyTo)
@@ -56,6 +59,7 @@ export default function ChatRoom({
         scrollContainerRef={scrollContainerRef}
       />
       <ChatInputWrapper
+        contentContainer={contentContainer}
         customAction={customAction}
         chatId={chatId}
         hubId={hubId}
@@ -68,7 +72,7 @@ export default function ChatRoom({
 
 type ChatInputWrapperProps = Pick<
   ChatRoomProps,
-  'asContainer' | 'chatId' | 'hubId' | 'customAction'
+  'asContainer' | 'chatId' | 'hubId' | 'customAction' | 'contentContainer'
 > & {
   scrollContainerRef: RefObject<HTMLDivElement>
 }
@@ -78,6 +82,7 @@ function ChatInputWrapper({
   hubId,
   customAction,
   scrollContainerRef,
+  contentContainer,
 }: ChatInputWrapperProps) {
   const clearAction = useMessageData((state) => state.clearAction)
 
@@ -146,6 +151,7 @@ function ChatInputWrapper({
         hubId={hubId}
         chatId={chatId}
         onSubmit={scrollToBottom}
+        containerContainer={contentContainer}
       />
     </>
   )
