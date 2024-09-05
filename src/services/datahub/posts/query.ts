@@ -626,7 +626,7 @@ export const getUserPostedMemesForCountQuery = createQuery({
 })
 
 const GET_POSTS_COUNT_BY_TODAY = gql`
-  query GetUnapprovedMemesCount(
+  query GetPostsCountByToday(
     $createdAtTimeGte: String!
     $createdAtTimeLte: String!
     $postId: String!
@@ -697,7 +697,7 @@ const GET_TOP_MEMES = gql`
     }
   }
 `
-export const getTopnMemesQuery = createQuery({
+export const getTopMemesQuery = createQuery({
   key: 'getTopMemes',
   fetcher: async () => {
     const timestamp = dayjs.utc(new Date()).startOf('day').unix().toString()
@@ -732,7 +732,7 @@ export const getTopnMemesQuery = createQuery({
 const TOP_MEMES_SIZE = 5
 
 export const useGetTopMemes = () => {
-  const { data, isLoading } = getTopnMemesQuery.useQuery({})
+  const { data, isLoading } = getTopMemesQuery.useQuery({})
 
   const dataLength = data?.length || 0
 
@@ -758,7 +758,9 @@ export const useGetTopMemes = () => {
     isLoading: isLoading && isLastMemesLoading,
     data:
       dataLength < TOP_MEMES_SIZE
-        ? [...topMemesIds, ...messageIds.slice(0, 5 - dataLength)]
+        ? Array.from(
+            new Set([...topMemesIds, ...messageIds.slice(0, 5 - dataLength)])
+          )
         : topMemesIds,
   }
 }

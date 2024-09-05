@@ -345,6 +345,7 @@ export type ContentContainerConfig = {
   addressBlockOneTimePenaltyPointsAmount?: Maybe<Scalars['String']['output']>
   closedAt?: Maybe<Scalars['DateTime']['output']>
   containerType: ContentContainerType
+  createCommentPricePointsAmount?: Maybe<Scalars['String']['output']>
   createdAtTime: Scalars['DateTime']['output']
   expirationWindowFrom?: Maybe<Scalars['DateTime']['output']>
   expirationWindowTo?: Maybe<Scalars['DateTime']['output']>
@@ -374,7 +375,7 @@ export type ContentContainerConfigsArgsInputDto = {
 }
 
 export type ContentContainerConfigsFilter = {
-  containerType?: InputMaybe<ContentContainerType>
+  containerType?: InputMaybe<Array<ContentContainerType>>
   hidden?: InputMaybe<Scalars['Boolean']['input']>
   ids?: InputMaybe<Array<Scalars['String']['input']>>
   isClosed?: InputMaybe<Scalars['Boolean']['input']>
@@ -1925,10 +1926,12 @@ export type SocialProfileExternalTokenBalance = {
   active: Scalars['Boolean']['output']
   amount: Scalars['String']['output']
   blockchainAddress: Scalars['String']['output']
+  createdAt: Scalars['DateTime']['output']
   externalToken: ExternalToken
   id: Scalars['String']['output']
   linkedIdentityExternalProvider: LinkedIdentityExternalProvider
   socialProfileBalance: SocialProfileBalances
+  updatedAt?: Maybe<Scalars['DateTime']['output']>
 }
 
 export type SocialProfileExternalTokenBalanceSubscriptionPayload = {
@@ -2395,6 +2398,7 @@ export type GetContentContainersQuery = {
     data: Array<{
       __typename?: 'ContentContainerConfig'
       id: string
+      containerType: ContentContainerType
       accessThresholdPointsAmount?: string | null
       likeThresholdExternalTokenAmount?: string | null
       accessThresholdExternalTokenAmount?: string | null
@@ -3432,6 +3436,35 @@ export type GetUnapprovedMemesCountQuery = {
   }
 }
 
+export type GetPostsCountByTodayQueryVariables = Exact<{
+  createdAtTimeGte: Scalars['String']['input']
+  createdAtTimeLte: Scalars['String']['input']
+  postId: Scalars['String']['input']
+}>
+
+export type GetPostsCountByTodayQuery = {
+  __typename?: 'Query'
+  posts: { __typename?: 'FindPostsResponseDto'; total?: number | null }
+}
+
+export type GetTopMemesQueryVariables = Exact<{
+  timestamp: Scalars['String']['input']
+}>
+
+export type GetTopMemesQuery = {
+  __typename?: 'Query'
+  activeStakingRankedPostIdsBySuperLikesNumber: {
+    __typename?: 'RankedPostIdsBySuperLikesCountResponse'
+    total: number
+    data: Array<{
+      __typename?: 'RankedPostIdBySuperLikesCountWithDetails'
+      postId: string
+      score: number
+      rank: number
+    }>
+  }
+}
+
 export type SubscribePostSubscriptionVariables = Exact<{ [key: string]: never }>
 
 export type SubscribePostSubscription = {
@@ -3767,6 +3800,7 @@ export const GetContentContainers = gql`
           coverImage
           image
         }
+        containerType
         accessThresholdPointsAmount
         likeThresholdExternalTokenAmount
         accessThresholdExternalTokenAmount
@@ -4484,6 +4518,45 @@ export const GetUnapprovedMemesCount = gql`
         id
         approvedInRootPost
       }
+    }
+  }
+`
+export const GetPostsCountByToday = gql`
+  query GetPostsCountByToday(
+    $createdAtTimeGte: String!
+    $createdAtTimeLte: String!
+    $postId: String!
+  ) {
+    posts(
+      args: {
+        filter: {
+          createdAtTimeGte: $createdAtTimeGte
+          createdAtTimeLte: $createdAtTimeLte
+          rootPostId: $postId
+        }
+        pageSize: 100
+      }
+    ) {
+      total
+    }
+  }
+`
+export const GetTopMemes = gql`
+  query GetTopMemes($timestamp: String!) {
+    activeStakingRankedPostIdsBySuperLikesNumber(
+      args: {
+        filter: { period: DAY, timestamp: $timestamp }
+        limit: 5
+        offset: 0
+        order: DESC
+      }
+    ) {
+      data {
+        postId
+        score
+        rank
+      }
+      total
     }
   }
 `

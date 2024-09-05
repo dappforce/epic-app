@@ -8,9 +8,10 @@ import {
   ContentContainer,
   getContentContainersQuery,
 } from '@/services/datahub/content-containers/query'
+import { ContentContainerType } from '@/services/datahub/generated-query'
 import { useGetTopMemes } from '@/services/datahub/posts/query'
+import { useIsAnyQueriesLoading } from '@/subsocial-query'
 import { cx } from '@/utils/class-names'
-import { isEmptyArray } from '@subsocial/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FaChevronRight } from 'react-icons/fa6'
@@ -40,8 +41,18 @@ export default function ChannelsPage() {
 
 function ChannelsList() {
   const { data, isLoading } = getContentContainersQuery.useQuery({
-    filter: { hidden: false },
+    filter: {
+      hidden: false,
+      containerType: [
+        ContentContainerType.PublicChannel,
+        ContentContainerType.CommunityChannel,
+      ],
+    },
   })
+
+  const sorted = data?.data.sort((a, b) =>
+    b.containerType === ContentContainerType.PublicChannel ? 1 : -1
+  )
 
   return (
     <div className='flex flex-col gap-2 px-4'>
@@ -52,7 +63,7 @@ function ChannelsList() {
           ))}
         </>
       )}
-      {data?.data.map((channel) => (
+      {(sorted ?? []).map((channel) => (
         <Channel key={channel.id} channel={channel} />
       ))}
     </div>
@@ -86,6 +97,7 @@ function TopMemesToday() {
   const { data: topMemesIds, isLoading } = useGetTopMemes()
 
   const renderedMessageQueries = getPostQuery.useQueries(topMemesIds)
+  const isMessageLoading = useIsAnyQueriesLoading(renderedMessageQueries)
 
   return (
     <div className='flex flex-col gap-4'>
@@ -96,7 +108,7 @@ function TopMemesToday() {
         </span>
       </div>
       <div className='no-scroll flex items-center gap-3 overflow-auto px-4'>
-        {isLoading && isEmptyArray(topMemesIds) ? (
+        {isLoading || isMessageLoading ? (
           <MemesPreviewSkeleton />
         ) : (
           renderedMessageQueries

@@ -24,6 +24,7 @@ const GET_CONTENT_CONTAINERS = gql`
           coverImage
           image
         }
+        containerType
         accessThresholdPointsAmount
         likeThresholdExternalTokenAmount
         accessThresholdExternalTokenAmount
