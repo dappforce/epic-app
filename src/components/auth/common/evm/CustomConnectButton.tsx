@@ -16,6 +16,7 @@ type CustomConnectButtonProps = ButtonProps & {
   withWalletActionImage?: boolean
   onSuccessConnect: (evmAddress: string) => Promise<void>
   isLoading: boolean
+  hideButton?: boolean
 }
 
 export const CustomConnectButton = ({
@@ -25,6 +26,7 @@ export const CustomConnectButton = ({
   withWalletActionImage = true,
   secondLabel,
   additionalSecondActionLabel,
+  hideButton,
   isLoading,
   ...buttonProps
 }: CustomConnectButtonProps) => {
@@ -105,17 +107,19 @@ export const CustomConnectButton = ({
 
         return (
           <>
-            <Button
-              {...commonButtonProps}
-              onClick={async () => {
-                setHasInteractedOnce(true)
-                const connector = getConnector()
-                isTouchDevice() && (await openMobileWallet({ connector }))
-                onSuccess(account.address)
-              }}
-            >
-              {usedLabel}
-            </Button>
+            {!hideButton && (
+              <Button
+                {...commonButtonProps}
+                onClick={async () => {
+                  setHasInteractedOnce(true)
+                  const connector = getConnector()
+                  isTouchDevice() && (await openMobileWallet({ connector }))
+                  onSuccess(account.address)
+                }}
+              >
+                {usedLabel}
+              </Button>
+            )}
             {additionalSecondActionLabel}
           </>
         )
