@@ -6,8 +6,9 @@ import {
 import { useMyMainAddress } from '@/stores/my-account'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import { useEffect } from 'react'
+import BottomDrawer from '../BottomDrawer'
 import Button from '../Button'
-import Modal, { ModalFunctionalityProps } from '../modals/Modal'
+import { ModalFunctionalityProps } from '../modals/Modal'
 
 type ChainType = 'evm' | 'solana'
 const labels: Record<ChainType, string> = {
@@ -50,7 +51,7 @@ export default function UnlinkWalletModal({
   }, [props.isOpen, reset])
 
   return (
-    <Modal
+    <BottomDrawer
       {...props}
       title={`🖇️ Unlink your ${labels[chain]} address?`}
       description={`Are you sure you want to unlink your ${labels[chain]} address?`}
@@ -79,6 +80,6 @@ export default function UnlinkWalletModal({
           Yes, unlink
         </Button>
       </div>
-    </Modal>
+    </BottomDrawer>
   )
 }

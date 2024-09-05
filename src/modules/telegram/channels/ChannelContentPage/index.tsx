@@ -49,10 +49,6 @@ function ChatContent() {
   const { contentContainer, isModerating } = useChannelContentPageContext()
   if (!contentContainer) return null
 
-  const hasRequirement =
-    Number(contentContainer.accessThresholdExternalTokenAmount ?? 0) > 0 ||
-    Number(contentContainer.accessThresholdPointsAmount ?? 0) > 0
-
   return (
     <MemeChatRoom
       contentContainer={contentContainer}
@@ -139,7 +135,7 @@ function ChannelNavbar() {
         )}
       </nav>
       <Transition show={isAboutOpen}>
-        <div className='absolute top-14 z-10 h-full w-full bg-background transition data-[closed]:translate-x-1/2 data-[closed]:opacity-0'>
+        <div className='absolute top-14 z-10 h-screen w-full overflow-auto bg-background pb-32 transition data-[closed]:translate-x-1/2 data-[closed]:opacity-0'>
           <div className='relative mb-8 h-40 w-full bg-background-light'>
             <div className='h-full w-full overflow-clip'>
               {contentContainer?.metadata.coverImage && (
