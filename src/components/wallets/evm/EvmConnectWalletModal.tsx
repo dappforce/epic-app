@@ -31,7 +31,7 @@ export default function EvmConnectWalletModal(props: ModalFunctionalityProps) {
           setIsError(true)
         }}
         onSuccess={() => {
-          sendEvent(`finish_add_provider_evm_standalone`)
+          sendEvent('finish_add_provider_evm_standalone')
           refetch()
           props.closeModal()
         }}
