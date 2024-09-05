@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import Button from '../Button'
 import Toast from '../Toast'
 import Modal, { ModalFunctionalityProps, ModalProps } from '../modals/Modal'
-import SubsocialProfileForm from './SubsocialProfileForm'
+import UpsertProfileForm from './UpsertProfileForm'
 
 export type SubsocialProfileModalProps = ModalFunctionalityProps &
   Pick<ModalProps, 'onBackClick' | 'title'> & {
@@ -34,7 +34,7 @@ export default function SubsocialProfileModal({
 
   return (
     <Modal {...props} title={title || '✏️ Edit Profile'} withCloseButton>
-      <SubsocialProfileForm onSuccess={onSuccess} />
+      <UpsertProfileForm onSuccess={onSuccess} />
       {cancelButtonText && (
         <Button
           onClick={() => props.closeModal()}
