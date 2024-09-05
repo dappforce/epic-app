@@ -78,7 +78,7 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
               })
           )}
           <Link
-            href='/tg/memes'
+            href='/tg/channels'
             className={cx(
               'flex items-center justify-center rounded-xl bg-slate-800',
               memeCardSize
