@@ -29,7 +29,7 @@ import {
   DeleteAccountConfirmationModal,
 } from './ClearDataModals'
 import LoginAsUser from './LoginAsUser'
-import Menu from './Menu'
+import Menu, { MenuProps } from './Menu'
 import SearchUser from './SearchUser'
 
 type Page = 'menu' | 'my-account' | 'my-crypto-addresses' | 'moderation-tools'
@@ -214,7 +214,7 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
     (provider) => provider.provider === IdentityProvider.SOLANA.toString()
   )
 
-  const cryptoAddressesItems = [
+  const cryptoAddressesItems: MenuProps['menuItems'] = [
     [
       {
         title: `${evmProvider?.externalId ? 'Unlink' : 'Add'} Ethereum Address`,
@@ -243,6 +243,8 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
           solanaProvider?.externalId ? 'Unlink' : 'Add'
         } Solana Address`,
         icon: solanaProvider?.externalId ? '🖇️' : '🛠️',
+        href: solanaProvider?.externalId ? undefined : solanaWalletUrl,
+        openInNewTab: true,
         onClick: () => {
           setModalKind('solana')
 
@@ -255,7 +257,6 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
             }
 
             setConnectSolanaClick(true)
-            router.push(solanaWalletUrl)
           }
         },
         desc: solanaProvider?.externalId ? (

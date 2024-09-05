@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { MdOutlineKeyboardArrowRight } from 'react-icons/md'
 
-type MenuProps = {
+export type MenuProps = {
   menuItems: {
     title: string
     desc?: React.ReactNode
@@ -12,6 +12,7 @@ type MenuProps = {
     icon: string
     href?: string
     onClick?: () => void
+    openInNewTab?: boolean
   }[][]
 }
 
@@ -49,6 +50,7 @@ type MenuItemProps = {
   onClick?: () => void
   textClassName?: string
   withBorder?: boolean
+  openInNewTab?: boolean
 }
 
 const MenuItem = ({
@@ -60,6 +62,7 @@ const MenuItem = ({
   textClassName,
   onClick,
   withBorder,
+  openInNewTab,
 }: MenuItemProps) => {
   const children = (
     <>
@@ -89,7 +92,11 @@ const MenuItem = ({
   })
 
   return href ? (
-    <Link href={href} className={commonClassName}>
+    <Link
+      href={href}
+      target={openInNewTab ? '_blank' : undefined}
+      className={commonClassName}
+    >
       {children}
     </Link>
   ) : (
