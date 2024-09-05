@@ -14,6 +14,7 @@ import {
   getDailyRewardQuery,
   getTodaySuperLikeCountQuery,
 } from '../content-staking/query'
+import { syncExternalTokenBalancesCallbacks } from '../externalTokenBalances/mutation'
 import {
   ServiceMessageStatusCode,
   SocialCallName,
@@ -301,6 +302,23 @@ async function processSubscriptionEvent(
     } else if (eventData.meta.code === ServiceMessageStatusCode.Processed) {
       linkEvmAddressCallbacks.onSuccessCallbacks.forEach((cb) => cb())
       getLinkedIdentityQuery.invalidate(client, getCurrentWallet().address)
+    }
+  }
+
+  if (
+    eventData.meta.callName ===
+      SocialCallName.SynthSocialProfileSyncExternalTokenBalance &&
+    eventData.meta.code === ServiceMessageStatusCode.InternalServerError
+  ) {
+    const externalTokenId = eventData.meta.extension.externalTokenId
+    if (externalTokenId) {
+      syncExternalTokenBalancesCallbacks.triggerCallbacks(
+        {
+          address: mainAddress,
+          externalTokenId: eventData.meta.extension.externalTokenId,
+        },
+        'onError'
+      )
     }
   }
 

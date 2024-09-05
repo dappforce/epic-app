@@ -1,10 +1,15 @@
+import Toast from '@/components/Toast'
 import { getMyMainAddress, useMyMainAddress } from '@/stores/my-account'
+import { convertToBigInt } from '@/utils/strings'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { gql } from 'graphql-request'
 import { useEffect, useRef } from 'react'
+import { toast } from 'sonner'
 import { SubscribeExternalTokenBalancesSubscription } from '../generated-query'
 import { datahubSubscription } from '../utils'
+import { syncExternalTokenBalancesCallbacks } from './mutation'
 import {
+  ExternalTokenBalance,
   getExternalTokenBalancesCache,
   getExternalTokenBalancesQuery,
 } from './query'
@@ -36,6 +41,11 @@ const SUBSCRIBE_EXTERNAL_TOKEN_BALANCES = gql`
         active
         amount
         blockchainAddress
+        externalToken {
+          id
+          address
+          decimals
+        }
       }
     }
   }
@@ -97,22 +107,36 @@ async function processSubscriptionEvent(
 ) {
   const mainAddress = getMyMainAddress() ?? ''
   getExternalTokenBalancesQuery.setQueryData(client, mainAddress, (oldData) => {
+    const newToken: ExternalTokenBalance = {
+      ...eventData.entity,
+      parsedAmount: Number(
+        convertToBigInt(eventData.entity.amount) /
+          BigInt(10 ** eventData.entity.externalToken.decimals)
+      ),
+    }
     const oldDataBalanceIndex = oldData?.findIndex(
       (balance) => balance.id === eventData.entity.id
     )
     if (oldDataBalanceIndex === -1 || oldDataBalanceIndex === undefined) {
-      if (eventData.entity.active) return [...(oldData ?? []), eventData.entity]
+      if (eventData.entity.active) return [...(oldData ?? []), newToken]
       return oldData
     }
 
     const newData = [...(oldData ?? [])]
     if (eventData.entity.active) {
-      newData[oldDataBalanceIndex] = eventData.entity
+      newData[oldDataBalanceIndex] = newToken
     } else {
       newData.splice(oldDataBalanceIndex, 1)
     }
     return newData
   })
+  toast.custom((t) => (
+    <Toast t={t} title='Your balance has been updated successfully' />
+  ))
+  syncExternalTokenBalancesCallbacks.triggerCallbacks(
+    { address: mainAddress, externalTokenId: eventData.entity.id },
+    'onSuccess'
+  )
   const newData = getExternalTokenBalancesQuery.getQueryData(
     client,
     mainAddress

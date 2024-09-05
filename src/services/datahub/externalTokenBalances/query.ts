@@ -1,6 +1,7 @@
 import { getMyMainAddress } from '@/stores/my-account'
 import { createQuery } from '@/subsocial-query'
 import { LocalStorage } from '@/utils/storage'
+import { convertToBigInt } from '@/utils/strings'
 import { gql } from 'graphql-request'
 import {
   GetExternalTokenBalancesQuery,
@@ -16,6 +17,11 @@ const GET_EXTERNAL_TOKEN_BALANCES = gql`
         active
         amount
         blockchainAddress
+        externalToken {
+          id
+          address
+          decimals
+        }
       }
     }
   }
@@ -27,7 +33,7 @@ export type ExternalTokenBalance = NonNullable<
   NonNullable<
     GetExternalTokenBalancesQuery['socialProfileBalances']
   >['externalTokenBalances']
->[number]
+>[number] & { parsedAmount: number }
 async function getExternalTokenBalances(
   address: string
 ): Promise<ExternalTokenBalance[]> {
@@ -39,9 +45,15 @@ async function getExternalTokenBalances(
     variables: { address },
   })
 
-  const balances = (
-    res.socialProfileBalances?.externalTokenBalances || []
-  ).filter((balance) => balance.active)
+  const balances = (res.socialProfileBalances?.externalTokenBalances || [])
+    .filter((balance) => balance.active)
+    .map((balance) => ({
+      ...balance,
+      parsedAmount: Number(
+        convertToBigInt(balance.amount) /
+          BigInt(10 ** balance.externalToken.decimals)
+      ),
+    }))
   if (address === getMyMainAddress()) {
     getExternalTokenBalancesCache.set(JSON.stringify(balances))
   }

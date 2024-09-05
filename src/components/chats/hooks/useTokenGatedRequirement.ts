@@ -1,12 +1,21 @@
+import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
 import { ContentContainer } from '@/services/datahub/content-containers/query'
-import { getExternalTokenBalancesQuery } from '@/services/datahub/externalTokenBalances/query'
+import {
+  ExternalTokenBalance,
+  getExternalTokenBalancesQuery,
+} from '@/services/datahub/externalTokenBalances/query'
+import { ExternalTokenChain } from '@/services/datahub/generated-query'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { useMyMainAddress } from '@/stores/my-account'
 import { convertToBigInt } from '@/utils/strings'
 
+type HasToLinkWallet = 'Solana' | 'Ethereum' | undefined
+
 export default function useTokenGatedRequirement(
   contentContainer?: ContentContainer
 ) {
+  const { evmAddress, isLoading: loadingAddress } = useLinkedEvmAddress()
+
   const externalTokenRequirement = convertToBigInt(
     contentContainer?.accessThresholdExternalTokenAmount ?? 0
   )
@@ -30,16 +39,21 @@ export default function useTokenGatedRequirement(
   let isLoading = false
   let passRequirement = true
   let amountRequired = 0
+  let currentToken: ExternalTokenBalance | undefined
   let requiredToken = ''
-  if (pointsRequirement > 0) {
-    isLoading = loadingPoints
-    passRequirement = (points ?? 0) >= pointsRequirement
-    amountRequired = pointsRequirement
-    requiredToken = 'points'
-  } else if (externalTokenRequirement > 0) {
+  let hasToLinkWallet: HasToLinkWallet
+  if (externalTokenRequirement > 0) {
+    const tokenChain = contentContainer?.externalToken?.chain
+    if (tokenChain === ExternalTokenChain.Ethereum && !evmAddress) {
+      hasToLinkWallet = 'Ethereum'
+      // TODO: validate solana address
+    } else if (tokenChain === ExternalTokenChain.Solana) {
+      hasToLinkWallet = 'Solana'
+    }
+
     isLoading = loadingExternalTokens
     const tokenBalance = externalTokens?.find(
-      (token) => token.id === contentContainer?.externalToken?.id
+      (token) => token.externalToken.id === contentContainer?.externalToken?.id
     )
     passRequirement =
       convertToBigInt(tokenBalance?.amount ?? 0) >= externalTokenRequirement
@@ -48,7 +62,23 @@ export default function useTokenGatedRequirement(
         BigInt(10 ** Number(contentContainer?.externalToken?.decimals ?? 0))
     )
     requiredToken = contentContainer?.externalToken?.name ?? ''
+    currentToken = tokenBalance
+  } else if (pointsRequirement > 0) {
+    isLoading = loadingPoints
+    passRequirement = (points ?? 0) >= pointsRequirement
+    amountRequired = pointsRequirement
+    requiredToken = 'points'
   }
 
-  return { passRequirement, isLoading, amountRequired, requiredToken }
+  isLoading = isLoading || loadingAddress
+
+  return {
+    passRequirement,
+    isLoading,
+    amountRequired,
+    requiredToken,
+    chain: contentContainer?.externalToken?.chain,
+    hasToLinkWallet,
+    currentToken,
+  }
 }

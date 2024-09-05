@@ -1,4 +1,3 @@
-import LinkText from '@/components/LinkText'
 import { env } from '@/env.mjs'
 import { useEncryptData } from '@/services/api/mutation'
 import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
