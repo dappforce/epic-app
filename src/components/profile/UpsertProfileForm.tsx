@@ -9,14 +9,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ProfileContent } from '@subsocial/api/types'
 import { ComponentProps, useEffect, useState } from 'react'
 import { Controller, UseFormWatch, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import FormButton from '../FormButton'
 import { useName } from '../Name'
+import Toast from '../Toast'
 import ImageInput from '../inputs/ImageInput'
 import Input from '../inputs/Input'
 import TextArea from '../inputs/TextArea'
 
-export type SubsocialProfileFormProps = ComponentProps<'form'> & {
+export type UpsertProfileFormProps = ComponentProps<'form'> & {
   onSuccess?: () => void
   onProfileChange?: (profile: ProfileContent) => void
 }
@@ -31,11 +33,11 @@ export function validateNickname(name: string) {
 }
 type FormSchema = z.infer<typeof formSchema>
 
-export default function SubsocialProfileForm({
+export default function UpsertProfileForm({
   onSuccess,
   onProfileChange,
   ...props
-}: SubsocialProfileFormProps) {
+}: UpsertProfileFormProps) {
   const sendEvent = useSendEvent()
   const myAddress = useMyMainAddress()
   const { data: profile } = getProfileQuery.useQuery(myAddress ?? '', {
@@ -71,6 +73,16 @@ export default function SubsocialProfileForm({
   const isLoading = isUpserting
 
   const onSubmit = handleSubmit(async (data) => {
+    if (!profile) {
+      toast.custom((t) => (
+        <Toast
+          t={t}
+          title='Failed to update profile'
+          description='Please close and reopen the app if the problem persist'
+        />
+      ))
+      return
+    }
     const augmented = await augmentDatahubParams({
       spaceId: profile?.profileSpace?.id,
       content: {
