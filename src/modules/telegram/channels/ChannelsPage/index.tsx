@@ -112,18 +112,11 @@ function TopMemesToday() {
                   key={index}
                   message={message}
                   href={`/tg/channels/${message.struct.rootPostId}`}
+                  address={message.struct.createdByAccount}
                 />
               )
             })
         )}
-        <Link
-          href='/tg/channels'
-          className={cx(
-            'flex h-[160px] w-[150px] min-w-[150px] items-center justify-center rounded-xl bg-slate-800'
-          )}
-        >
-          See all
-        </Link>
       </div>
     </div>
   )

@@ -1,5 +1,7 @@
+import AddressAvatar from '@/components/AddressAvatar'
 import LinkText from '@/components/LinkText'
 import MediaLoader from '@/components/MediaLoader'
+import Name from '@/components/Name'
 import { Skeleton } from '@/components/SkeletonFallback'
 import usePaginatedMessageIds from '@/components/chats/hooks/usePaginatedMessageIds'
 import { getPostExtensionProperties } from '@/components/extensions/utils'
@@ -106,10 +108,12 @@ export const MemesPreviewItem = ({
   message,
   className,
   href,
+  address,
 }: {
   message: PostData
   className?: string
   href?: string
+  address?: string
 }) => {
   const { body, extensions } = message.content || {}
 
@@ -123,7 +127,7 @@ export const MemesPreviewItem = ({
   return (
     <Link
       href={href ? href : '/tg/channels'}
-      className={cx(memeCardSize, className)}
+      className={cx('relative', memeCardSize, className)}
     >
       <MediaLoader
         containerClassName={cx(
@@ -134,6 +138,16 @@ export const MemesPreviewItem = ({
         className='object-contain '
         src={imageExt?.image}
       />
+      {address && (
+        <div
+          className={cx(
+            'absolute bottom-[10px] left-[10px] flex max-w-[100px] items-center gap-1 rounded-3xl bg-slate-700 p-[2px] pr-[6px]'
+          )}
+        >
+          <AddressAvatar address={address} className='h-[20px] w-[20px]' />
+          <Name address={address} clipText className='text-sm font-semibold' />
+        </div>
+      )}
     </Link>
   )
 }
