@@ -1,5 +1,6 @@
 import BlueGradient from '@/assets/graphics/blue-gradient.png'
 import { Skeleton } from '@/components/SkeletonFallback'
+import ChatUnreadCount from '@/components/chats/ChatPreview/ChatUnreadCount'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import HomePageModals from '@/components/modals/HomePageModals'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
@@ -13,6 +14,7 @@ import { ContentContainerType } from '@/services/datahub/generated-query'
 import { useGetTopMemes } from '@/services/datahub/posts/query'
 import { useIsAnyQueriesLoading } from '@/subsocial-query'
 import { cx } from '@/utils/class-names'
+import { formatNumber } from '@/utils/strings'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FaChevronRight } from 'react-icons/fa6'
@@ -71,6 +73,7 @@ function ChannelsList() {
     </div>
   )
 }
+
 function Channel({ channel }: { channel: ContentContainer }) {
   useTgNoScroll()
 
@@ -88,7 +91,19 @@ function Channel({ channel }: { channel: ContentContainer }) {
       />
       <div className='flex flex-col gap-1.5'>
         <span className='font-bold'>{channel.metadata.title}</span>
-        <span className='text-sm font-medium text-text-primary'>+23 memes</span>
+        <ChatUnreadCount chatId={channel.rootPost.id}>
+          {({ unreadCount, isLoading }) =>
+            isLoading ? (
+              <Skeleton className='w-20' />
+            ) : (
+              unreadCount > 0 && (
+                <span className='text-sm font-medium text-text-primary'>
+                  +{formatNumber(unreadCount, { shorten: true })} memes
+                </span>
+              )
+            )
+          }
+        </ChatUnreadCount>
       </div>
       <FaChevronRight className='ml-auto mr-1.5 text-xl text-text-muted' />
     </Link>
