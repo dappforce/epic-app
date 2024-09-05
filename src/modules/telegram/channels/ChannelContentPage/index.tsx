@@ -135,7 +135,7 @@ function ChannelNavbar() {
         )}
       </nav>
       <Transition show={isAboutOpen}>
-        <div className='absolute top-14 z-10 h-screen w-full overflow-auto bg-background pb-32 transition data-[closed]:translate-x-1/2 data-[closed]:opacity-0'>
+        <div className='absolute top-14 z-20 h-screen w-full overflow-auto bg-background pb-32 transition data-[closed]:translate-x-1/2 data-[closed]:opacity-0'>
           <div className='relative mb-8 h-40 w-full bg-background-light'>
             <div className='h-full w-full overflow-clip'>
               {contentContainer?.metadata.coverImage && (
