@@ -171,7 +171,7 @@ const useLoginInTelegramMiniApps = () => {
     const login = async () => {
       if (data && ((!parentProxyAddress && isInitializedProxy) || !signer)) {
         await loginTelegram()
-      } else if (data && isInitializedProxy) {
+      } else if (data && isInitializedProxy && signer) {
         // check if the user has profile, because if in any case that the chain of login operations fail, making user doesn't have profile,
         // the call will never get called again without this
         getProfileQuery
