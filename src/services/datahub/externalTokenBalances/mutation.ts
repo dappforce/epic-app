@@ -109,9 +109,10 @@ export function useSyncExternalTokenBalances(
 ) {
   return useSyncExternalTokenBalancesRaw({
     ...config,
-    onSuccess: (...params) => {
-      const [_, { externalTokenId }] = params
-      config?.onSuccess?.(...params)
+    onMutate: (...params) => {
+      const [{ externalTokenId }] = params
+      config?.onMutate?.(...params)
+
       syncExternalTokenBalancesCallbacks.setCallback(
         { address: getMyMainAddress() ?? '', externalTokenId },
         {

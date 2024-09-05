@@ -134,7 +134,10 @@ async function processSubscriptionEvent(
     <Toast t={t} title='Your balance has been updated successfully' />
   ))
   syncExternalTokenBalancesCallbacks.triggerCallbacks(
-    { address: mainAddress, externalTokenId: eventData.entity.id },
+    {
+      address: mainAddress,
+      externalTokenId: eventData.entity.externalToken.id,
+    },
     'onSuccess'
   )
   const newData = getExternalTokenBalancesQuery.getQueryData(

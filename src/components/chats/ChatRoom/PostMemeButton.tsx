@@ -1,11 +1,13 @@
 import Confused from '@/assets/emojis/confused.png'
+import SuccessEmoji from '@/assets/emojis/success.png'
 import BottomDrawer from '@/components/BottomDrawer'
 import Button, { ButtonProps } from '@/components/Button'
 import Card from '@/components/Card'
+import Notice from '@/components/Notice'
 import Meme2EarnIntroModal, {
   hasOpenedMeme2EarnIntroStorage,
 } from '@/components/modals/Meme2EarnIntroModal'
-import { ModalFunctionalityProps } from '@/components/modals/Modal'
+import Modal, { ModalFunctionalityProps } from '@/components/modals/Modal'
 import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
 import useIsAddressBlockedInChat from '@/hooks/useIsAddressBlockedInChat'
 import useLinkedEvmAddress from '@/hooks/useLinkedEvmAddress'
@@ -199,8 +201,17 @@ function TokenGatedModal({
   contentContainer: ContentContainer
   openEvmLinkModal: () => void
 }) {
-  const { amountRequired, requiredToken, hasToLinkWallet, currentToken } =
-    useTokenGatedRequirement(contentContainer)
+  const {
+    amountRequired,
+    requiredToken,
+    hasToLinkWallet,
+    currentToken,
+    passRequirement,
+    remainingNeeded,
+  } = useTokenGatedRequirement(contentContainer)
+  const [isOpenSuccessModal, setIsOpenSuccessModal] = useState(false)
+  const [isAfterSync, setIsAfterSync] = useState(false)
+
   const sendEvent = useSendEvent()
 
   const [isWaitingSyncDone, setIsWaitingSyncDone] = useState(false)
@@ -215,14 +226,16 @@ function TokenGatedModal({
   } = useSyncExternalTokenBalances({
     onMutate: () => setIsWaitingSyncDone(true),
     onSuccessSync: () => {
-      // TODO: onSuccessSync
       setIsWaitingSyncDone(false)
+      setIsAfterSync(true)
+      if (passRequirement) {
+        setIsOpenSuccessModal(true)
+      }
     },
     onError: () => {
       setIsWaitingSyncDone(false)
     },
     onErrorSync: () => {
-      // TODO: onErrorSync
       setIsWaitingSyncDone(false)
     },
   })
@@ -236,6 +249,7 @@ function TokenGatedModal({
     <>
       <BottomDrawer
         {...props}
+        isOpen={props.isOpen && !isOpenSuccessModal}
         title={hasToLinkWallet ? 'Account not yet linked' : '🔒 Hold On'}
         description={
           hasToLinkWallet
@@ -296,6 +310,12 @@ function TokenGatedModal({
                 </Card>
               )}
             </div>
+            {isAfterSync && !passRequirement && (
+              <Notice noticeType='warning'>
+                You need {formatNumber(remainingNeeded)} more {requiredToken} to
+                gain access to this channel
+              </Notice>
+            )}
             <div className='flex flex-col gap-4'>
               <Button
                 size='lg'
@@ -329,6 +349,29 @@ function TokenGatedModal({
         isOpen={isOpenEvmConnect}
         closeModal={() => setIsOpenEvmConnect(false)}
       />
+      <Modal
+        title="You're now a member of the channel!"
+        description='Follow the channel rules and participate in various activities to earn rewards.'
+        isOpen={isOpenSuccessModal}
+        closeModal={() => {
+          setIsOpenSuccessModal(false)
+          props.closeModal()
+        }}
+      >
+        <div className='gap flex flex-col items-center gap-6'>
+          <Image src={SuccessEmoji} alt='' className='h-28 w-28' />
+          <Button
+            className='w-full'
+            size='lg'
+            onClick={() => {
+              setIsOpenSuccessModal(false)
+              props.closeModal()
+            }}
+          >
+            Got it!
+          </Button>
+        </div>
+      </Modal>
     </>
   )
 }

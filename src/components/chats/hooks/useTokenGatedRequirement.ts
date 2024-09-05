@@ -49,6 +49,7 @@ export default function useTokenGatedRequirement(
   let currentToken: ExternalTokenBalance | undefined
   let requiredToken = ''
   let hasToLinkWallet: HasToLinkWallet
+  let remainingNeeded = 0
   if (externalTokenRequirement > 0) {
     const tokenChain = contentContainer?.externalToken?.chain
     if (tokenChain === ExternalTokenChain.Ethereum && !identityAddress) {
@@ -70,11 +71,16 @@ export default function useTokenGatedRequirement(
     )
     requiredToken = contentContainer?.externalToken?.name ?? ''
     currentToken = tokenBalance
+    remainingNeeded = Number(
+      (externalTokenRequirement - convertToBigInt(tokenBalance?.amount ?? 0)) /
+        BigInt(10 ** Number(contentContainer?.externalToken?.decimals ?? 0))
+    )
   } else if (pointsRequirement > 0) {
     isLoading = loadingPoints
     passRequirement = (points ?? 0) >= pointsRequirement
     amountRequired = pointsRequirement
     requiredToken = 'points'
+    remainingNeeded = pointsRequirement - (points ?? 0)
   }
 
   isLoading = isLoading || loadingAddress
@@ -87,5 +93,6 @@ export default function useTokenGatedRequirement(
     chain: contentContainer?.externalToken?.chain,
     hasToLinkWallet,
     currentToken,
+    remainingNeeded,
   }
 }
