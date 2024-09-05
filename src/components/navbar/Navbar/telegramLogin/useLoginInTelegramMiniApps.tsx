@@ -171,6 +171,25 @@ const useLoginInTelegramMiniApps = () => {
     const login = async () => {
       if (data && ((!parentProxyAddress && isInitializedProxy) || !signer)) {
         await loginTelegram()
+      } else if (data) {
+        // check if the user has profile, because if in any case that the chain of login operations fail, making user doesn't have profile,
+        // the call will never get called again without this
+        getProfileQuery
+          .fetchQuery(queryClient, linkedIdentity?.mainAddress ?? '')
+          .then(async (profile) => {
+            if (!profile) {
+              const firstName = data.firstName || ''
+              const lastName = data.lastName || ''
+
+              const augmented = await augmentDatahubParams({
+                content: {
+                  name: `${firstName} ${lastName}`,
+                  image: photoPath,
+                },
+              })
+              upsertProfile(augmented)
+            }
+          })
       }
     }
 
