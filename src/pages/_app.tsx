@@ -29,6 +29,7 @@ import { initAllStores } from '@/stores/registry'
 import '@/styles/globals.css'
 import { cx } from '@/utils/class-names'
 import { isTouchDevice } from '@/utils/device'
+import { lastRedirectProtocol } from '@/utils/globals'
 import '@rainbow-me/rainbowkit/styles.css'
 import { useQueryClient } from '@tanstack/react-query'
 import { SDKProvider } from '@tma.js/sdk-react'
@@ -135,6 +136,9 @@ function AppContent({ Component, pageProps }: AppProps<AppCommonProps>) {
     // for wallet connect integration, because in telegram app, window.open doesn't really work without this
     window.open = (function (open) {
       return function (url, _, features) {
+        if (typeof url === 'string') {
+          lastRedirectProtocol.protocol = url.split('://')[0]
+        }
         return open.call(window, url, '_blank', features)
       }
     })(window.open)

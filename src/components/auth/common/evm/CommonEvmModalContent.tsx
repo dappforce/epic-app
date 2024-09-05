@@ -11,6 +11,7 @@ import {
   getLinkedIdentityQuery,
 } from '@/services/datahub/identity/query'
 import { useMyAccount, useMyGrillAddress } from '@/stores/my-account'
+import { lastRedirectProtocol } from '@/utils/globals'
 import { getCurrentUrlOrigin } from '@/utils/links'
 import { openNewWindow, twitterShareUrl } from '@/utils/social-share'
 import { IdentityProvider as SDKIdentityProvider } from '@subsocial/data-hub-sdk'
@@ -150,7 +151,7 @@ export const CommonEVMLoginContent = ({
       additionalSecondActionLabel={
         isSigning && (
           <Link
-            href='https://metamask.app.link/'
+            href={`${lastRedirectProtocol.protocol}://`}
             target='_blank'
             className='text-sm text-text-muted'
           >
