@@ -216,7 +216,10 @@ function TokenGatedModal({
 
   const [isWaitingSyncDone, setIsWaitingSyncDone] = useState(false)
   useEffect(() => {
-    if (props.isOpen) setIsWaitingSyncDone(false)
+    if (props.isOpen) {
+      setIsWaitingSyncDone(false)
+      setIsAfterSync(false)
+    }
   }, [props.isOpen])
 
   const {
