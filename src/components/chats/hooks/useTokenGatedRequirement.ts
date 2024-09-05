@@ -8,13 +8,20 @@ import { ExternalTokenChain } from '@/services/datahub/generated-query'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { useMyMainAddress } from '@/stores/my-account'
 import { convertToBigInt } from '@/utils/strings'
+import { IdentityProvider } from '@subsocial/data-hub-sdk'
 
 type HasToLinkWallet = 'Solana' | 'Ethereum' | undefined
 
 export default function useTokenGatedRequirement(
   contentContainer?: ContentContainer
 ) {
-  const { evmAddress, isLoading: loadingAddress } = useLinkedEvmAddress()
+  const { identityAddress, isLoading: loadingAddress } = useLinkedEvmAddress(
+    undefined,
+    { enabled: true },
+    contentContainer?.externalToken?.chain === ExternalTokenChain.Ethereum
+      ? IdentityProvider.EVM
+      : IdentityProvider.SOLANA
+  )
 
   const externalTokenRequirement = convertToBigInt(
     contentContainer?.accessThresholdExternalTokenAmount ?? 0
@@ -44,7 +51,7 @@ export default function useTokenGatedRequirement(
   let hasToLinkWallet: HasToLinkWallet
   if (externalTokenRequirement > 0) {
     const tokenChain = contentContainer?.externalToken?.chain
-    if (tokenChain === ExternalTokenChain.Ethereum && !evmAddress) {
+    if (tokenChain === ExternalTokenChain.Ethereum && !identityAddress) {
       hasToLinkWallet = 'Ethereum'
       // TODO: validate solana address
     } else if (tokenChain === ExternalTokenChain.Solana) {

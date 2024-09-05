@@ -1,16 +1,13 @@
+import Button, { ButtonProps } from '@/components/Button'
 import { env } from '@/env.mjs'
 import { useEncryptData } from '@/services/api/mutation'
 import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
 import { useQuery } from '@tanstack/react-query'
 
-export default function SolanaButton() {
-  const url = useGetSolanaWalletUrl()
+export default function SolanaButton(props: ButtonProps) {
+  const { url, isLoading } = useGetSolanaWalletUrl()
 
-  return (
-    <LinkText href={url} className='break-all'>
-      Open Solana
-    </LinkText>
-  )
+  return <Button {...props} isLoading={isLoading} href={url} />
 }
 
 export const useGetSolanaWalletUrl = () => {
@@ -35,5 +32,5 @@ export const useGetSolanaWalletUrl = () => {
     params
   ).toString()}`
 
-  return url
+  return { url, isLoading }
 }

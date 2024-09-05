@@ -187,9 +187,8 @@ function MyAccountPageContent({ setPage }: ContentProps) {
 type ModalChain = 'evm' | 'solana'
 
 function MyCryptoAddressesContent({ setPage }: ContentProps) {
-  const myAddress = useMyMainAddress()
   const [modalKind, setModalKind] = useState<ModalChain>()
-  const solanaWalletUrl = useGetSolanaWalletUrl()
+  const { url: solanaWalletUrl } = useGetSolanaWalletUrl()
   const router = useRouter()
   const [isOpenUseMobileModal, setIsOpenUseMobileModal] = useState(false)
   const [openEvmConnectWalletModal, setOpenEvmConnectWalletModal] =
