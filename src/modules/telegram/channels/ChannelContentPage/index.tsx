@@ -9,6 +9,11 @@ import ClaimTaskModal from '@/components/tasks/ClaimTaskModal'
 import { modalConfigByVariant } from '@/components/tasks/config'
 import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
+import {
+  ContentContainer,
+  getContentContainersQuery,
+} from '@/services/datahub/content-containers/query'
+import { ContentContainerType } from '@/services/datahub/generated-query'
 import { GamificationTask } from '@/services/datahub/tasks'
 import {
   clearGamificationTasksError,
@@ -16,13 +21,16 @@ import {
 } from '@/services/datahub/tasks/query'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
+import { cx } from '@/utils/class-names'
+import { getHumanReadableRelativeTime } from '@/utils/date'
 import { Transition } from '@headlessui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
-import { FaChevronLeft } from 'react-icons/fa6'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6'
 import HowToEarnMessage from './HowToEarnMessage'
 import {
   ChannelContentPageProvider,
@@ -190,7 +198,9 @@ function ChannelNavbar() {
                 </SkeletonFallback>
               )}
               {selectedTab === 'Tasks' && <ChannelTasks />}
-              {selectedTab === 'Contests' && <ContestList />}
+              {selectedTab === 'Contests' && contentContainer && (
+                <ContestList channel={contentContainer} />
+              )}
             </div>
           </Container>
         </div>
@@ -199,8 +209,79 @@ function ChannelNavbar() {
   )
 }
 
-function ContestList() {
-  return <div>asdfasdf</div>
+function ContestList({ channel }: { channel: ContentContainer }) {
+  const { data } = getContentContainersQuery.useQuery(
+    {
+      filter: {
+        containerType: [ContentContainerType.Contest],
+        rootSpaceId: channel.rootSpace?.id ?? '',
+      },
+    },
+    {
+      enabled: !!channel.rootSpace?.id,
+    }
+  )
+  return (
+    <div className='flex flex-col gap-2'>
+      {data?.data.map((contest) => (
+        <Contest key={contest.id} contest={contest} />
+      ))}
+    </div>
+  )
+}
+
+function Contest({ contest }: { contest: ContentContainer }) {
+  useTgNoScroll()
+
+  return (
+    <Link
+      href={`/tg/channels/${contest.rootPost.id}`}
+      className='flex items-center gap-2.5 rounded-2xl bg-background-light px-2.5 py-3.5 transition active:bg-background-lighter'
+    >
+      <Image
+        src={contest.metadata.image ?? ''}
+        alt=''
+        width={100}
+        height={100}
+        className='h-12 w-12 rounded-full object-cover'
+      />
+      <div className='flex flex-col gap-1'>
+        <span className='font-bold'>{contest.metadata.title}</span>
+        <span className='text-sm text-text-muted'>
+          {contest.metadata.description}
+        </span>
+        <div className='flex items-center gap-3'>
+          <ContestStatus contest={contest} className='text-sm' />
+        </div>
+      </div>
+      <FaChevronRight className='ml-auto mr-1.5 text-xl text-text-muted' />
+    </Link>
+  )
+}
+
+function ContestStatus({
+  contest,
+  className,
+}: {
+  contest: ContentContainer
+  className?: string
+}) {
+  if (contest.closedAt) {
+    return <span className={cx('font-medium', className)}>🏁 Finished</span>
+  } else if (!contest.openAt) {
+    return (
+      <span className={cx('font-medium', className)}>
+        📅 Starts in{' '}
+        {getHumanReadableRelativeTime(contest.expirationWindowFrom)}
+      </span>
+    )
+  } else {
+    return (
+      <span className={cx('font-medium text-text-warning', className)}>
+        ⏳ {getHumanReadableRelativeTime(contest.expirationWindowTo)} left
+      </span>
+    )
+  }
 }
 
 function ChannelTasks() {

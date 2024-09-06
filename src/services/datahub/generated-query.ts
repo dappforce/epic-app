@@ -2398,6 +2398,10 @@ export type GetContentContainersQuery = {
     data: Array<{
       __typename?: 'ContentContainerConfig'
       id: string
+      openAt?: any | null
+      closedAt?: any | null
+      expirationWindowFrom?: any | null
+      expirationWindowTo?: any | null
       createCommentPricePointsAmount?: string | null
       containerType: ContentContainerType
       accessThresholdPointsAmount?: string | null
@@ -3782,6 +3786,10 @@ export const GetContentContainers = gql`
           coverImage
           image
         }
+        openAt
+        closedAt
+        expirationWindowFrom
+        expirationWindowTo
         createCommentPricePointsAmount
         containerType
         accessThresholdPointsAmount

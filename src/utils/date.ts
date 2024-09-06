@@ -7,6 +7,10 @@ dayjs.extend(relativeTime)
 dayjs.extend(duration)
 dayjs.extend(dayOfYear)
 
+export function getHumanReadableRelativeTime(date: Date | string | number) {
+  return dayjs(date).fromNow()
+}
+
 export function getTimeRelativeToNow(date: Date | string | number) {
   const dateObj = new Date(date)
   const now = new Date()

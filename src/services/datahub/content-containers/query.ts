@@ -24,6 +24,10 @@ const GET_CONTENT_CONTAINERS = gql`
           coverImage
           image
         }
+        openAt
+        closedAt
+        expirationWindowFrom
+        expirationWindowTo
         createCommentPricePointsAmount
         containerType
         accessThresholdPointsAmount

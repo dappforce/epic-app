@@ -15,9 +15,10 @@ export default function TabButtons({
   return (
     <div
       className={cx(
-        'grid grid-cols-2 gap-px rounded-full bg-background-light text-sm font-medium',
+        'grid gap-px rounded-full bg-background-light text-sm font-medium',
         className
       )}
+      style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }}
     >
       {tabs.map((tab) => (
         <Button
