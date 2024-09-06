@@ -92,7 +92,7 @@ type OpenWalletProps = {
 }
 
 export const openMobileWallet = async ({ connector }: OpenWalletProps) => {
-  const getUri = connector.mobile?.getUri
+  const getUri = connector?.mobile?.getUri
   if (getUri) {
     const mobileUri = await getUri()
 
