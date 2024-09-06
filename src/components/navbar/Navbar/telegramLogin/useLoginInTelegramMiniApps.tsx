@@ -63,7 +63,7 @@ const useLoginInTelegramMiniApps = () => {
   useEffect(() => {
     if (!data) return
     const foundMatchingProvider = linkedIdentity?.externalProviders.find(
-      (p) => p.provider === IdentityProvider.Telegram
+      (p) => p.provider === IdentityProvider.Telegram && p.enabled
     )
     if (!linkedIdentity || !foundMatchingProvider) return
 

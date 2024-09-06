@@ -105,7 +105,7 @@ export default function LinkedIdentitiesContent() {
           withAtSymbolForUsername,
         }) => {
           const isLinked = linkedIdentity?.externalProviders.find(
-            (p) => p.provider === provider
+            (p) => p.provider === provider && p.enabled
           )
           let text = `Connect your ${name}`
           if (isLinked) {
@@ -158,7 +158,7 @@ function EvmConnectButton() {
     getLinkedIdentityQuery.useQuery(grillAddress ?? '')
 
   const hasEvmProvider = linkedIdentity?.externalProviders.some(
-    (p) => p.provider === IdentityProvider.Evm
+    (p) => p.provider === IdentityProvider.Evm && p.enabled
   )
 
   const {

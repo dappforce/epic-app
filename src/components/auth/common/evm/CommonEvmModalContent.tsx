@@ -78,7 +78,7 @@ export const CommonEVMLoginContent = ({
   useEffect(() => {
     if (
       linkedIdentity?.externalProviders.find(
-        (p) => p.provider === IdentityProvider.Evm
+        (p) => p.provider === IdentityProvider.Evm && p.enabled
       )
     ) {
       const res = onSuccess?.(linkedIdentity)

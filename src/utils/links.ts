@@ -105,7 +105,8 @@ export function getUserTelegramLink(
 ) {
   if (!linkedIdentity) return undefined
   const telegram = linkedIdentity.externalProviders.find(
-    (provider) => provider.provider === IdentityProvider.Telegram
+    (provider) =>
+      provider.provider === IdentityProvider.Telegram && provider.enabled
   )
   if (!telegram?.username) return undefined
   return `https://t.me/${telegram.username}`

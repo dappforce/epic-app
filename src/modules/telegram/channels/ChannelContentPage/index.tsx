@@ -177,7 +177,7 @@ function ChannelNavbar() {
             </span>
             <TabButtons
               className='mt-4'
-              tabs={['Details', 'Tasks']}
+              tabs={['Details', 'Tasks', 'Contests']}
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
             />
@@ -190,12 +190,17 @@ function ChannelNavbar() {
                 </SkeletonFallback>
               )}
               {selectedTab === 'Tasks' && <ChannelTasks />}
+              {selectedTab === 'Contests' && <ContestList />}
             </div>
           </Container>
         </div>
       </Transition>
     </>
   )
+}
+
+function ContestList() {
+  return <div>asdfasdf</div>
 }
 
 function ChannelTasks() {

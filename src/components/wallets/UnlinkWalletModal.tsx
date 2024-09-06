@@ -31,17 +31,18 @@ export default function UnlinkWalletModal({
   const { mutate, isLoading, isSuccess, reset } = useUpdateExternalProvider({
     onSuccess: (_, { externalProvider }) => {
       reloadEveryIntervalUntilLinkedIdentityFound((identity) => {
-        const found = identity?.externalProviders.find(
+        const isStillEnabled = identity?.externalProviders.find(
           (p) =>
             // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
             p.provider === externalProvider.provider &&
-            p.externalId === externalProvider.id
+            p.externalId === externalProvider.id &&
+            p.enabled
         )
-        if (!found) {
-          refetch()
+        if (!isStillEnabled) {
           props.closeModal()
+          return true
         }
-        return !found
+        return false
       })
     },
   })
