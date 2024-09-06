@@ -138,7 +138,7 @@ export default function ChatPreview({
                   {defaultDesc}
                 </p>
               )}
-              {(() => {
+              {/* {(() => {
                 if (withUnreadCount && chatId) {
                   return (
                     <ChatUnreadCount
@@ -149,7 +149,7 @@ export default function ChatPreview({
                 }
 
                 return null
-              })()}
+              })()} */}
             </div>
           </div>
         </div>
