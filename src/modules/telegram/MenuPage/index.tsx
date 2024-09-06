@@ -4,8 +4,8 @@ import Name from '@/components/Name'
 import Toast from '@/components/Toast'
 import BackButton from '@/components/layouts/BackButton'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
+import UpsertProfileModal from '@/components/profile/UpsertProfileModal'
 import { getReferralLink } from '@/components/referral/utils'
-import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
 import UnlinkWalletModal from '@/components/wallets/UnlinkWalletModal'
 import UseMobileModal from '@/components/wallets/UseMobileModal'
 import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
@@ -167,7 +167,7 @@ function MyAccountPageContent({ setPage }: ContentProps) {
         </div>
         <Menu menuItems={myAccountItems} />
       </div>
-      <SubsocialProfileModal
+      <UpsertProfileModal
         title='✏️ Edit Profile'
         closeModal={() => setModalKind(undefined)}
         isOpen={modalKind === 'edit-profile'}

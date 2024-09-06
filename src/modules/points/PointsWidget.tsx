@@ -10,7 +10,7 @@ import Card from '@/components/Card'
 import LinkText from '@/components/LinkText'
 import LinkAddressModal from '@/components/modals/LinkEvmAddressModal'
 import RewardPerDayModal from '@/components/modals/RewardPerDayModal'
-import SubsocialProfileModal from '@/components/subsocial-profile/SubsocialProfileModal'
+import UpsertProfileModal from '@/components/profile/UpsertProfileModal'
 import useIsMounted from '@/hooks/useIsMounted'
 import { useSendEvent } from '@/stores/analytics'
 import { cx } from '@/utils/class-names'
@@ -207,7 +207,7 @@ function PointsDrawerContent({
       </Transition>
 
       {/* Modals or Drawers with input cannot be put in another drawer, it causes bug because of telegram apps issue */}
-      <SubsocialProfileModal
+      <UpsertProfileModal
         title='✏️ Edit Profile'
         closeModal={() => setOpenProfileModal(false)}
         isOpen={openProfileModal}
