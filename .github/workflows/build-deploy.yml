@@ -81,6 +81,8 @@ jobs:
             GH_NEYNAR_API_KEY=${{ secrets.GH_NEYNAR_API_KEY }}
             GH_NEXT_PUBLIC_TELEGRAM_BOT_ID=6523818125
             GH_NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=EpicAppBot
+            GH_NEXT_PUBLIC_DAPP_PUBLIC_KEY=${{ secrets.GH_NEXT_PUBLIC_DAPP_PUBLIC_KEY }}
+            GH_DAPP_SECRET_KEY=${{ secrets.GH_DAPP_SECRET_KEY }}
           target: runner
           tags: |
             ${{ env.image }}
