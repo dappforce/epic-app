@@ -55,7 +55,8 @@ export default function useLinkedAddress(
   const usedLoading = address ? isLoadingMainAddress : isLoadingMy
 
   const providers = usedLinkedIdentity?.externalProviders.filter(
-    (identity) => identity.provider === identityProvider.toString()
+    (identity) =>
+      identity.provider === identityProvider.toString() && identity.enabled
   )
   let latestAddress = ''
   let latestCreatedTime = 0

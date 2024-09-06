@@ -127,7 +127,8 @@ export const useAddExternalProviderToIdentity = mutationWrapper(
             (p) =>
               // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
               p.provider === externalProvider.provider &&
-              p.externalId === externalProvider.id
+              p.externalId === externalProvider.id &&
+              p.enabled
           )
       )
     },

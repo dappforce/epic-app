@@ -147,6 +147,7 @@ async function processSessionCreated(
         provider: p.provider,
         username: p.username,
         createdAtTime: p.createdAtTime,
+        enabled: p.enabled,
       })) ?? [],
   }
   if (session.id === useMyAccount.getState().address)

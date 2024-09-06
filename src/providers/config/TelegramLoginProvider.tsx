@@ -88,7 +88,7 @@ export default function TelegramLoginProvider({
       myGrillAddress
     )
     const foundMatchingProvider = linkedIdentity?.externalProviders.find(
-      (p) => p.provider === IdentityProvider.Telegram
+      (p) => p.provider === IdentityProvider.Telegram && p.enabled
     )
     if (!linkedIdentity || !foundMatchingProvider) return false
 
