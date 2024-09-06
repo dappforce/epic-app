@@ -12,7 +12,7 @@ export default function useTgLink(address: string, asLink?: boolean) {
     })
 
   const telegramProvider = linkedIdentity?.externalProviders.find(
-    (p) => p.provider === IdentityProvider.Telegram
+    (p) => p.provider === IdentityProvider.Telegram && p.enabled
   )
   const telegramLink = shouldSeeUsername
     ? getUserTelegramLink(linkedIdentity)

@@ -16,6 +16,7 @@ export type Identity = {
     externalId: string
     username?: string | null
     createdAtTime: string
+    enabled: boolean
   }[]
 }
 

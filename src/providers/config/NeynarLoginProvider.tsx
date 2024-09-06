@@ -79,7 +79,7 @@ export default function NeynarLoginProvider({
     getLinkedIdentityQuery.useQuery(myGrillAddress)
   useEffect(() => {
     const foundIdentity = linkedIdentity?.externalProviders.find(
-      (p) => p.provider === IdentityProvider.Farcaster
+      (p) => p.provider === IdentityProvider.Farcaster && p.enabled
     )
     if (linkedIdentity && foundIdentity) {
       resetLinking()
