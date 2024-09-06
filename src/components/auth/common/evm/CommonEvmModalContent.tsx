@@ -11,6 +11,7 @@ import {
   getLinkedIdentityQuery,
 } from '@/services/datahub/identity/query'
 import { useMyAccount, useMyGrillAddress } from '@/stores/my-account'
+import { lastRedirectProtocol } from '@/utils/globals'
 import { getCurrentUrlOrigin } from '@/utils/links'
 import { openNewWindow, twitterShareUrl } from '@/utils/social-share'
 import { IdentityProvider as SDKIdentityProvider } from '@subsocial/data-hub-sdk'
@@ -146,6 +147,19 @@ export const CommonEVMLoginContent = ({
       className='w-full'
       label={buttonLabel}
       secondLabel='Sign Message'
+      hideButton={isSigning}
+      additionalSecondActionLabel={
+        isSigning && (
+          <Button
+            size='lg'
+            href={`${lastRedirectProtocol.protocol}://`}
+            target='_blank'
+            className='w-full'
+          >
+            Open wallet
+          </Button>
+        )
+      }
       loadingText={!isSigned ? 'Pending Confirmation...' : 'Please wait...'}
     />
   )

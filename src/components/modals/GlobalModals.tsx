@@ -5,21 +5,24 @@ import PostMemeThresholdModal from './PostMemeThresholdModal'
 
 export default function GlobalModals() {
   const isOpenMessageModal = useMessageData.use.isOpenMessageModal()
-  const currentChatId = useMessageData.use.currentChatId()
+  const currentData = useMessageData.use.currentData()
   const setOpenMessageModal = useMessageData.use.setOpenMessageModal()
 
   return (
     <>
       <PostMemeThresholdModal
-        chatId={currentChatId}
+        chatId={currentData.chatId}
         isOpen={isOpenMessageModal === 'not-enough-balance'}
         closeModal={() => setOpenMessageModal('')}
       />
-      <MemeOnReviewModal
-        chatId={currentChatId}
-        isOpen={isOpenMessageModal === 'on-review'}
-        closeModal={() => setOpenMessageModal('')}
-      />
+      {currentData.contentContainer && (
+        <MemeOnReviewModal
+          chatId={currentData.chatId}
+          contentContainer={currentData.contentContainer}
+          isOpen={isOpenMessageModal === 'on-review'}
+          closeModal={() => setOpenMessageModal('')}
+        />
+      )}
       <BlockedModal
         isOpen={isOpenMessageModal === 'blocked'}
         closeModal={() => setOpenMessageModal('')}

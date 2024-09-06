@@ -5,8 +5,11 @@ import {
 import { useMyGrillAddress } from '@/stores/my-account'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 
+// If you want to get the current user's linked providers, don't pass any address, so it queries data based on user's grill address,
+// which is updated by the identity subscription.
+// Send address as param only if you need to get the linked providers of another user.
 export const useLinkedProviders = (
-  address: string,
+  address?: string,
   config = { enabled: true }
 ) => {
   const myGrillAddress = useMyGrillAddress()

@@ -3,7 +3,7 @@ import Button from '@/components/Button'
 import LinkText from '@/components/LinkText'
 import Input from '@/components/inputs/Input'
 import useIsMounted from '@/hooks/useIsMounted'
-import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import { useAddExternalProviderToIdentity } from '@/services/datahub/identity/mutation'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
@@ -79,7 +79,10 @@ const ContestEvmModal = () => {
     if (!evmAddress || !isAddress(evmAddress)) return
     const checksumAddress = getAddress(evmAddress)
     mutate({
-      externalProvider: { id: checksumAddress, provider: IdentityProvider.EVM },
+      externalProvider: {
+        id: checksumAddress,
+        provider: IdentityProvider.EVM,
+      },
     })
   }
 

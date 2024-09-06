@@ -18,10 +18,7 @@ export default function PostMemeThresholdModal({
 }: ModalFunctionalityProps & { chatId: string }) {
   const sendEvent = useSendEvent()
   const { threshold } = usePostMemeThreshold(chatId)
-  const thresholdPoints = formatNumber(
-    threshold?.thresholdPointsAmount ?? '0',
-    { shorten: true }
-  )
+  const thresholdPoints = formatNumber(threshold ?? '0', { shorten: true })
 
   const isContest = chatId === env.NEXT_PUBLIC_CONTEST_CHAT_ID
 

@@ -1,6 +1,7 @@
 import Button from '@/components/Button'
 import CatClicker from '@/components/CatClicker'
 import FormatBalance from '@/components/FormatBalance'
+import { getTokenomicsMetadataQuery } from '@/services/datahub/content-staking/query'
 import {
   decreaseEnergyValue,
   increasePointsBalance,
@@ -10,7 +11,6 @@ import {
   getClickedPointsByDayQuery,
   getEnergyStateQuery,
 } from '@/services/datahub/leaderboard/points-balance/query'
-import { getActiveStakingTokenomicMetadataQuery } from '@/services/datahub/leaderboard/query'
 import { getDayAndWeekTimestamp } from '@/services/datahub/utils'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
@@ -54,7 +54,7 @@ const PointsClicker = ({ className }: PointsClickerProps) => {
     myAddress || ''
   )
   const { data: tokenomicMetadata, isLoading: isTokenomicMetadataLoading } =
-    getActiveStakingTokenomicMetadataQuery.useQuery({})
+    getTokenomicsMetadataQuery.useQuery({})
   const { data: clickedPointsByDay, isLoading: isClickedPointsLoading } =
     getClickedPointsByDayQuery.useQuery(myAddress || '')
 
@@ -250,7 +250,7 @@ const LikeMemesInfoMessage = ({
 }: LikeMemesInfoMessageProps) => {
   const [domReady, setDomReady] = useState(false)
   const { data: tokenomicMetadata, isLoading: isTokenomicMetadataLoading } =
-    getActiveStakingTokenomicMetadataQuery.useQuery({})
+    getTokenomicsMetadataQuery.useQuery({})
 
   const sendEvent = useSendEvent()
 

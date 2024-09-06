@@ -58,7 +58,7 @@ const getWallet = (chains: Chain[]) => {
   const walletOptions = {
     chains,
     projectId: walletConnectProjectId,
-    appName: 'Grill',
+    appName: 'Epic',
   }
   const supportedWallets: Record<string, Wallet> = {
     metamask: metaMaskWallet(walletOptions),
@@ -92,7 +92,7 @@ type OpenWalletProps = {
 }
 
 export const openMobileWallet = async ({ connector }: OpenWalletProps) => {
-  const getUri = connector.mobile?.getUri
+  const getUri = connector?.mobile?.getUri
   if (getUri) {
     const mobileUri = await getUri()
 

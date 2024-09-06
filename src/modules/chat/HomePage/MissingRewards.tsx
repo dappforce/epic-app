@@ -1,5 +1,5 @@
 import Button from '@/components/Button'
-import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'

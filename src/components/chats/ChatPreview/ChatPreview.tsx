@@ -138,18 +138,6 @@ export default function ChatPreview({
                   {defaultDesc}
                 </p>
               )}
-              {(() => {
-                if (withUnreadCount && chatId) {
-                  return (
-                    <ChatUnreadCount
-                      className='ml-2 flex-shrink-0'
-                      chatId={chatId}
-                    />
-                  )
-                }
-
-                return null
-              })()}
             </div>
           </div>
         </div>

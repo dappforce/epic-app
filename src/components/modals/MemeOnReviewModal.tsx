@@ -1,7 +1,7 @@
 import Check from '@/assets/emojis/check.png'
 import Time from '@/assets/emojis/time.png'
 import { MIN_MEME_FOR_REVIEW } from '@/constants/chat'
-import { getTokenomicsMetadataQuery } from '@/services/datahub/content-staking/query'
+import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { getUserPostedMemesForCountQuery } from '@/services/datahub/posts/query'
 import { useMyMainAddress } from '@/stores/my-account'
 import Image from 'next/image'
@@ -10,10 +10,13 @@ import Modal, { ModalFunctionalityProps } from './Modal'
 
 export default function MemeOnReviewModal({
   chatId,
+  contentContainer,
   ...props
-}: ModalFunctionalityProps & { chatId: string }) {
+}: ModalFunctionalityProps & {
+  chatId: string
+  contentContainer: ContentContainer
+}) {
   const myAddress = useMyMainAddress() ?? ''
-  const { data: tokenomics } = getTokenomicsMetadataQuery.useQuery(null)
   const { data: postedMemes } = getUserPostedMemesForCountQuery.useQuery(
     { address: myAddress, chatId },
     {
@@ -26,12 +29,12 @@ export default function MemeOnReviewModal({
   const description =
     remaining > 0
       ? `${
-          tokenomics?.socialActionPrice.createCommentPoints
+          contentContainer.createCommentPricePointsAmount
         } points have been used. We received your meme! We need at least ${remaining} more meme${
           remaining > 1 ? 's' : ''
         } from you to mark you as a verified creator.`
       : `${
-          tokenomics?.socialActionPrice.createCommentPoints
+          contentContainer.createCommentPricePointsAmount
         } points have been used. We received ${
           sentMeme ?? 0
         } memes from you! Now we need a bit of time to finish review you as a verified creator.`

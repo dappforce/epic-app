@@ -1,6 +1,6 @@
 import Diamond from '@/assets/emojis/diamond.png'
 import SkeletonFallback from '@/components/SkeletonFallback'
-import SubsocialProfileModal from '@/components/profile/UpsertProfileModal'
+import UpsertProfileModal from '@/components/profile/UpsertProfileModal'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
 import { formatNumber } from '@/utils/strings'
@@ -54,7 +54,7 @@ const ReferrerStats = ({
           </div>
         </div>
       </div>
-      <SubsocialProfileModal
+      <UpsertProfileModal
         title='✏️ Edit Profile'
         closeModal={() => setOpenProfileModal(false)}
         isOpen={openProfileModal}

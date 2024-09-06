@@ -2,7 +2,6 @@ import ImageAdd from '@/assets/icons/image-add.svg'
 import Button from '@/components/Button'
 import InfoPanel from '@/components/InfoPanel'
 import MediaLoader, { MediaLoaderProps } from '@/components/MediaLoader'
-import SkeletonFallback from '@/components/SkeletonFallback'
 import Spinner from '@/components/Spinner'
 import { SUPPORTED_IMAGE_EXTENSIONS } from '@/components/inputs/ImageInput'
 import {
@@ -12,7 +11,6 @@ import {
 import useDebounce from '@/hooks/useDebounce'
 import { useSaveImage } from '@/services/api/mutation'
 import { getPostQuery } from '@/services/api/query'
-import { getTokenomicsMetadataQuery } from '@/services/datahub/content-staking/query'
 import { useExtensionModalState } from '@/stores/extension'
 import { useMessageData } from '@/stores/message'
 import { cx } from '@/utils/class-names'
@@ -35,9 +33,8 @@ export default function ImageModal({
   hubId,
   chatId,
   onSubmit,
+  containerContainer,
 }: ExtensionModalsProps) {
-  const { data: tokenomics, isLoading: loadingTokenomics } =
-    getTokenomicsMetadataQuery.useQuery(null)
   const { closeModal, initialData, isOpen } =
     useExtensionModalState('subsocial-image')
   const messageToEdit = useMessageData.use.messageToEdit()
@@ -113,13 +110,7 @@ export default function ImageModal({
       description={
         <span>
           Posting a meme costs{' '}
-          <SkeletonFallback
-            isLoading={loadingTokenomics}
-            className='inline-block w-8'
-          >
-            <span>{tokenomics?.socialActionPrice.createCommentPoints}</span>
-          </SkeletonFallback>{' '}
-          points.
+          {containerContainer.createCommentPricePointsAmount} points.
         </span>
       }
       isOpen={isOpen}

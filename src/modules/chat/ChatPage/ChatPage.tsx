@@ -11,6 +11,7 @@ import usePrevious from '@/hooks/usePrevious'
 import useWrapInRef from '@/hooks/useWrapInRef'
 import { useConfigContext } from '@/providers/config/ConfigProvider'
 import { getPostQuery } from '@/services/api/query'
+import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { useModerationActions } from '@/services/datahub/moderation/mutation'
 import { getPostMetadataQuery } from '@/services/datahub/posts/query'
 import { getSpaceQuery } from '@/services/datahub/spaces/query'
@@ -194,6 +195,8 @@ export default function ChatPage({
         }}
       >
         <ChatRoom
+          // FIXME: if this component is needed
+          contentContainer={{} as ContentContainer}
           hubId={hubId}
           chatId={chatId}
           asContainer

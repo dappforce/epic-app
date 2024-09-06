@@ -1,6 +1,6 @@
 import Toast from '@/components/Toast'
 import { linkEvmAddressCallbacks } from '@/components/modals/LinkEvmAddressModal'
-import { claimTaskErrorStore } from '@/modules/telegram/TasksPage/ClaimTaskTokensModal'
+import { claimTaskErrorStore } from '@/components/tasks/config'
 import { getPostQuery } from '@/services/api/query'
 import { deleteOptimisticData } from '@/services/subsocial/commentIds/optimistic'
 import { getCurrentWallet } from '@/services/subsocial/hooks'
@@ -14,6 +14,7 @@ import {
   getDailyRewardQuery,
   getTodaySuperLikeCountQuery,
 } from '../content-staking/query'
+import { syncExternalTokenBalancesCallbacks } from '../externalTokenBalances/mutation'
 import {
   ServiceMessageStatusCode,
   SocialCallName,
@@ -38,13 +39,8 @@ export function useDatahubEventsSubscriber() {
   useEffect(() => {
     if (!myAddress) return
 
-    const listener = () => {
-      unsubRef.current = subscription(queryClient)
-    }
-    listener()
-    document.addEventListener('visibilitychange', listener)
+    unsubRef.current = subscription(queryClient)
     return () => {
-      document.removeEventListener('visibilitychange', listener)
       unsubRef.current?.()
     }
   }, [queryClient, myAddress])
@@ -306,6 +302,23 @@ async function processSubscriptionEvent(
     } else if (eventData.meta.code === ServiceMessageStatusCode.Processed) {
       linkEvmAddressCallbacks.onSuccessCallbacks.forEach((cb) => cb())
       getLinkedIdentityQuery.invalidate(client, getCurrentWallet().address)
+    }
+  }
+
+  if (
+    eventData.meta.callName ===
+      SocialCallName.SynthSocialProfileSyncExternalTokenBalance &&
+    eventData.meta.code === ServiceMessageStatusCode.InternalServerError
+  ) {
+    const externalTokenId = eventData.meta.extension.externalTokenId
+    if (externalTokenId) {
+      syncExternalTokenBalancesCallbacks.triggerCallbacks(
+        {
+          address: mainAddress,
+          externalTokenId: eventData.meta.extension.externalTokenId,
+        },
+        'onError'
+      )
     }
   }
 

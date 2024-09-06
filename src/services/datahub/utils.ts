@@ -128,7 +128,10 @@ export async function createSignedSocialDataEvent<
   T extends keyof typeof socialCallName
 >(
   callName: T,
-  params: DatahubParams<{}>,
+  params: Pick<
+    DatahubParams<{}>,
+    'timestamp' | 'address' | 'uuid' | 'proxyToAddress' | 'signer'
+  >,
   eventArgs: SocialCallDataArgs<T> | undefined,
   content?: any
 ) {

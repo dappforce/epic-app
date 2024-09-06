@@ -42,7 +42,7 @@ export async function linkIdentity(
   )
 }
 
-function reloadEveryIntervalUntilLinkedIdentityFound(
+export function reloadEveryIntervalUntilLinkedIdentityFound(
   foundChecker: (linkedIdentity: Identity | null) => boolean
 ) {
   const intervalId = setInterval(async () => {
@@ -95,7 +95,7 @@ async function addExternalProviderToIdentity(
     SocialCallDataArgs<'synth_add_linked_identity_external_provider'>
   >
 ) {
-  const input = await createSocialDataEventPayload(
+  const input = await createSignedSocialDataEvent(
     socialCallName.synth_add_linked_identity_external_provider,
     params,
     params.args
@@ -165,15 +165,16 @@ export const useUpdateExternalProvider = mutationWrapper(
   },
   {
     onSuccess: (_, { externalProvider }) => {
-      reloadEveryIntervalUntilLinkedIdentityFound(
-        (identity) =>
-          !!identity?.externalProviders.find(
-            (p) =>
-              // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
-              p.provider === externalProvider.provider &&
-              p.externalId === externalProvider.id
-          )
-      )
+      reloadEveryIntervalUntilLinkedIdentityFound((identity) => {
+        const isFound = !!identity?.externalProviders.find(
+          (p) =>
+            // @ts-expect-error different provider for IdentityProvider, one from generated type, one from sdk
+            p.provider === externalProvider.provider &&
+            p.externalId === externalProvider.id
+        )
+        if (!externalProvider.enabled) return !isFound
+        return isFound
+      })
     },
   }
 )

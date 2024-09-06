@@ -1,6 +1,5 @@
 import { createQuery } from '@/subsocial-query'
 import {
-  getActiveStakingTokenomicMetadata,
   getLeaderboardData,
   getUserData,
   getUserReferrals,
@@ -55,14 +54,6 @@ export const getLeaderboardDataByAllTimeQuery = createQuery({
 export const getLeaderboardDataByWeekQuery = createQuery({
   key: 'leaderboardDataByWeek',
   fetcher: () => getLeaderboardData('week'),
-  defaultConfigGenerator: (data) => ({
-    enabled: !!data,
-  }),
-})
-
-export const getActiveStakingTokenomicMetadataQuery = createQuery({
-  key: 'activeStakingTokenomicMetadata',
-  fetcher: () => getActiveStakingTokenomicMetadata(),
   defaultConfigGenerator: (data) => ({
     enabled: !!data,
   }),

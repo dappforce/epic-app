@@ -1,5 +1,7 @@
+import AddressAvatar from '@/components/AddressAvatar'
 import LinkText from '@/components/LinkText'
 import MediaLoader from '@/components/MediaLoader'
+import Name from '@/components/Name'
 import { Skeleton } from '@/components/SkeletonFallback'
 import usePaginatedMessageIds from '@/components/chats/hooks/usePaginatedMessageIds'
 import { getPostExtensionProperties } from '@/components/extensions/utils'
@@ -76,7 +78,7 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
               })
           )}
           <Link
-            href='/tg/memes'
+            href='/tg/channels'
             className={cx(
               'flex items-center justify-center rounded-xl bg-slate-800',
               memeCardSize
@@ -90,7 +92,7 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
   )
 }
 
-const MemesPreviewSkeleton = () => {
+export const MemesPreviewSkeleton = () => {
   const items = Array.from({ length: 5 })
 
   return (
@@ -102,12 +104,16 @@ const MemesPreviewSkeleton = () => {
   )
 }
 
-const MemesPreviewItem = ({
+export const MemesPreviewItem = ({
   message,
   className,
+  href,
+  address,
 }: {
   message: PostData
   className?: string
+  href?: string
+  address?: string
 }) => {
   const { body, extensions } = message.content || {}
 
@@ -119,7 +125,10 @@ const MemesPreviewItem = ({
   )
 
   return (
-    <Link href='/tg/memes' className={cx(memeCardSize, className)}>
+    <Link
+      href={href ? href : '/tg/channels'}
+      className={cx('relative', memeCardSize, className)}
+    >
       <MediaLoader
         containerClassName={cx(
           'overflow-hidden rounded-xl flex-1 justify-center flex items-center cursor-pointer',
@@ -129,6 +138,16 @@ const MemesPreviewItem = ({
         className='object-contain '
         src={imageExt?.image}
       />
+      {address && (
+        <div
+          className={cx(
+            'absolute bottom-[10px] left-[10px] flex max-w-[100px] items-center gap-1 rounded-3xl bg-slate-700 p-[2px] pr-[6px]'
+          )}
+        >
+          <AddressAvatar address={address} className='h-[20px] w-[20px]' />
+          <Name address={address} clipText className='text-sm font-semibold' />
+        </div>
+      )}
     </Link>
   )
 }

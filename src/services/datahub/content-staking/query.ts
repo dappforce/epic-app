@@ -636,15 +636,9 @@ export const getDailyRewardQuery = createQuery({
 export const GET_TOKENOMICS_METADATA = gql`
   query GetTokenomicsMetadata {
     activeStakingTokenomicMetadata {
+      maxTapsPerDay
       superLikeWeightPoints
       likerRewardDistributionPercent
-      socialActionPrice {
-        createCommentPoints
-      }
-      thresholdsAndRules {
-        contextPostId
-        thresholdPointsAmount
-      }
     }
   }
 `

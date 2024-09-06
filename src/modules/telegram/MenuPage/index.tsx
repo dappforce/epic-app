@@ -4,26 +4,32 @@ import Name from '@/components/Name'
 import Toast from '@/components/Toast'
 import BackButton from '@/components/layouts/BackButton'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
-import LinkAddressModal from '@/components/modals/LinkEvmAddressModal'
-import SubsocialProfileModal from '@/components/profile/UpsertProfileModal'
+import UpsertProfileModal from '@/components/profile/UpsertProfileModal'
 import { getReferralLink } from '@/components/referral/utils'
+import UnlinkWalletModal from '@/components/wallets/UnlinkWalletModal'
+import UseMobileModal from '@/components/wallets/UseMobileModal'
+import EvmConnectWalletModal from '@/components/wallets/evm/EvmConnectWalletModal'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
-import { useLinkedProviders } from '@/hooks/useLinkedEvmAddress'
+import { useLinkedProviders } from '@/hooks/useLinkedProviders'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import PointsWidget from '@/modules/points/PointsWidget'
 import { useMyMainAddress } from '@/stores/my-account'
+import { useSubscriptionState } from '@/stores/subscription'
 import { truncateAddress } from '@/utils/account'
+import { isTouchDevice } from '@/utils/device'
 import { copyToClipboard } from '@/utils/strings'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { useGetSolanaWalletUrl } from '../AirdropPage/solana'
 import {
   CrearLocalData,
   DeleteAccountConfirmationModal,
 } from './ClearDataModals'
 import LoginAsUser from './LoginAsUser'
-import Menu from './Menu'
+import Menu, { MenuProps } from './Menu'
 import SearchUser from './SearchUser'
 
 type Page = 'menu' | 'my-account' | 'my-crypto-addresses' | 'moderation-tools'
@@ -161,7 +167,7 @@ function MyAccountPageContent({ setPage }: ContentProps) {
         </div>
         <Menu menuItems={myAccountItems} />
       </div>
-      <SubsocialProfileModal
+      <UpsertProfileModal
         title='✏️ Edit Profile'
         closeModal={() => setModalKind(undefined)}
         isOpen={modalKind === 'edit-profile'}
@@ -178,16 +184,27 @@ function MyAccountPageContent({ setPage }: ContentProps) {
   )
 }
 
-type AddressesModalKind = 'evm' | 'solana' | undefined
+type ModalChain = 'evm' | 'solana'
 
 function MyCryptoAddressesContent({ setPage }: ContentProps) {
-  const myAddress = useMyMainAddress()
-  const [modaKind, setModalKind] = useState<AddressesModalKind>(undefined)
+  const [modalKind, setModalKind] = useState<ModalChain>()
+  const { url: solanaWalletUrl } = useGetSolanaWalletUrl()
+  const router = useRouter()
+  const [isOpenUseMobileModal, setIsOpenUseMobileModal] = useState(false)
+  const [openEvmConnectWalletModal, setOpenEvmConnectWalletModal] =
+    useState(false)
+  const [openUnlinkModal, setOpenUnlinkModal] = useState(false)
+  const [connectSolanaClick, setConnectSolanaClick] = useState(false)
 
-  const providerByModalKind =
-    modaKind === 'evm' ? IdentityProvider.EVM : IdentityProvider.SOLANA
+  useEffect(() => {
+    if (connectSolanaClick) {
+      useSubscriptionState
+        .getState()
+        .setSubscriptionState('identity', 'always-sub')
+    }
+  }, [connectSolanaClick])
 
-  const { providers } = useLinkedProviders(myAddress || '')
+  const { providers } = useLinkedProviders()
 
   const evmProvider = providers?.find(
     (provider) => provider.provider === IdentityProvider.EVM.toString()
@@ -197,22 +214,51 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
     (provider) => provider.provider === IdentityProvider.SOLANA.toString()
   )
 
-  const cryptoAddressesItems = [
+  const cryptoAddressesItems: MenuProps['menuItems'] = [
     [
       {
-        title: `${evmProvider?.externalId ? 'Edit' : 'Add'} Ethereum Address`,
+        title: `${evmProvider?.externalId ? 'Unlink' : 'Add'} Ethereum Address`,
         desc: evmProvider?.externalId ? (
           <span className='font-medium leading-none text-slate-400'>
             {truncateAddress(evmProvider?.externalId)}
           </span>
         ) : undefined,
-        icon: evmProvider?.externalId ? '✏️' : '🛠️',
-        onClick: () => setModalKind('evm'),
+        icon: evmProvider?.externalId ? '🖇️' : '🛠️',
+        onClick: () => {
+          setModalKind('evm')
+          if (evmProvider?.externalId) {
+            setOpenUnlinkModal(true)
+          } else {
+            if (!isTouchDevice()) {
+              setIsOpenUseMobileModal(true)
+              return
+            }
+
+            setOpenEvmConnectWalletModal(true)
+          }
+        },
       },
       {
-        title: `${solanaProvider?.externalId ? 'Edit' : 'Add'} Solana Address`,
-        icon: solanaProvider?.externalId ? '✏️' : '🛠️',
-        onClick: () => setModalKind('solana'),
+        title: `${
+          solanaProvider?.externalId ? 'Unlink' : 'Add'
+        } Solana Address`,
+        icon: solanaProvider?.externalId ? '🖇️' : '🛠️',
+        href: solanaProvider?.externalId ? undefined : solanaWalletUrl,
+        openInNewTab: true,
+        onClick: () => {
+          setModalKind('solana')
+
+          if (solanaProvider?.externalId) {
+            setOpenUnlinkModal(true)
+          } else {
+            if (!isTouchDevice()) {
+              setIsOpenUseMobileModal(true)
+              return
+            }
+
+            setConnectSolanaClick(true)
+          }
+        },
         desc: solanaProvider?.externalId ? (
           <span className='font-medium leading-none text-slate-400'>
             {truncateAddress(solanaProvider?.externalId)}
@@ -236,10 +282,20 @@ function MyCryptoAddressesContent({ setPage }: ContentProps) {
         </div>
         <Menu menuItems={cryptoAddressesItems} />
       </div>
-      <LinkAddressModal
-        isOpen={!!modaKind}
-        identityProvider={providerByModalKind}
-        closeModal={() => setModalKind(undefined)}
+      <EvmConnectWalletModal
+        isOpen={openEvmConnectWalletModal}
+        closeModal={() => setOpenEvmConnectWalletModal(false)}
+      />
+      <UnlinkWalletModal
+        chain={modalKind || 'evm'}
+        isOpen={openUnlinkModal}
+        closeModal={() => setOpenUnlinkModal(false)}
+      />
+
+      <UseMobileModal
+        isOpen={isOpenUseMobileModal}
+        closeModal={() => setIsOpenUseMobileModal(false)}
+        chain={modalKind as ModalChain}
       />
     </>
   )

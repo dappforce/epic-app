@@ -11,7 +11,7 @@ export type SubsocialProfileModalProps = ModalFunctionalityProps &
     cancelButtonText?: string
   }
 
-export default function SubsocialProfileModal({
+export default function UpsertProfileModal({
   title,
   cancelButtonText,
   ...props

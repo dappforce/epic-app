@@ -1,3 +1,4 @@
+import { ContentContainer } from '@/services/datahub/content-containers/query'
 import dynamic from 'next/dynamic'
 
 const DonateModal = dynamic(() => import('./donate/DonateModal/DonateModal'), {
@@ -13,6 +14,7 @@ const NftModal = dynamic(() => import('./nft/NftModal'), {
 export type ExtensionModalsProps = {
   hubId: string
   chatId: string
+  containerContainer: ContentContainer
   onSubmit: () => void
 }
 

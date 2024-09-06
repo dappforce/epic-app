@@ -50,6 +50,22 @@ export type CreateMutateActiveStakingSuperLikeInput = {
   sig: Scalars['String']['input'];
 };
 
+export type CreateMutateContentContainerConfigInput = {
+  callData?: InputMaybe<SocialCallDataInput>;
+  dataType: SocialEventDataType;
+  protVersion?: InputMaybe<Scalars['String']['input']>;
+  providerAddr: Scalars['String']['input'];
+  sig: Scalars['String']['input'];
+};
+
+export type CreateMutateExternalTokenInput = {
+  callData?: InputMaybe<SocialCallDataInput>;
+  dataType: SocialEventDataType;
+  protVersion?: InputMaybe<Scalars['String']['input']>;
+  providerAddr: Scalars['String']['input'];
+  sig: Scalars['String']['input'];
+};
+
 export type CreateMutateGamificationEntityInput = {
   callData?: InputMaybe<SocialCallDataInput>;
   dataType: SocialEventDataType;
@@ -183,11 +199,14 @@ export type Mutation = {
   addPostViewsBatch: IngestDataResponseDto;
   addTappingActivityStates: IngestDataResponseDto;
   claimEntranceDailyReward: IngestDataResponseDto;
+  contentContainerConfigCreate: IngestDataResponseDto;
+  contentContainerConfigUpdate: IngestDataResponseDto;
   createLinkedIdentity: IngestDataResponseDto;
   createPostOffChain: IngestDataResponseDto;
   createPostOptimistic: IngestDataResponseDto;
   createSpaceOffChain: IngestDataResponseDto;
   deleteLinkedIdentity: IngestDataResponseDto;
+  externalTokenCreate: IngestDataResponseDto;
   gamificationClaimTask: IngestDataResponseDto;
   gamificationUpdateTaskStatus: IngestDataResponseDto;
   ingestDataFromIndexerNeynar: IngestPersistentDataFromSquidResponseDto;
@@ -203,6 +222,7 @@ export type Mutation = {
   setPostApproveStatus: IngestDataResponseDto;
   socialProfileAddReferrerId: IngestDataResponseDto;
   socialProfileSetActionPermissions: IngestDataResponseDto;
+  socialProfileSyncExternalTokenBalance: IngestDataResponseDto;
   updateLinkedIdentityExternalProvider: IngestDataResponseDto;
   updatePostBlockchainSyncStatus: IngestDataResponseDto;
   updatePostOptimistic: IngestDataResponseDto;
@@ -245,6 +265,16 @@ export type MutationClaimEntranceDailyRewardArgs = {
 };
 
 
+export type MutationContentContainerConfigCreateArgs = {
+  args: CreateMutateContentContainerConfigInput;
+};
+
+
+export type MutationContentContainerConfigUpdateArgs = {
+  args: CreateMutateContentContainerConfigInput;
+};
+
+
 export type MutationCreateLinkedIdentityArgs = {
   createLinkedIdentityInput: CreateMutateLinkedIdentityInput;
 };
@@ -267,6 +297,11 @@ export type MutationCreateSpaceOffChainArgs = {
 
 export type MutationDeleteLinkedIdentityArgs = {
   deleteLinkedIdentityInput: CreateMutateLinkedIdentityInput;
+};
+
+
+export type MutationExternalTokenCreateArgs = {
+  args: CreateMutateExternalTokenInput;
 };
 
 
@@ -341,6 +376,11 @@ export type MutationSocialProfileAddReferrerIdArgs = {
 
 
 export type MutationSocialProfileSetActionPermissionsArgs = {
+  args: SocialProfileAddReferrerIdInput;
+};
+
+
+export type MutationSocialProfileSyncExternalTokenBalanceArgs = {
   args: SocialProfileAddReferrerIdInput;
 };
 
@@ -450,6 +490,8 @@ export enum SocialCallName {
   SynthAddLinkedIdentityExternalProvider = 'synth_add_linked_identity_external_provider',
   SynthAddPostView = 'synth_add_post_view',
   SynthAddPostViewsBatch = 'synth_add_post_views_batch',
+  SynthCreateContentContainerConfig = 'synth_create_content_container_config',
+  SynthCreateExternalToken = 'synth_create_external_token',
   SynthCreateLinkedIdentity = 'synth_create_linked_identity',
   SynthCreatePostTxFailed = 'synth_create_post_tx_failed',
   SynthCreatePostTxRetry = 'synth_create_post_tx_retry',
@@ -475,6 +517,8 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthSocialProfileSyncExternalTokenBalance = 'synth_social_profile_sync_external_token_balance',
+  SynthUpdateContentContainerConfig = 'synth_update_content_container_config',
   SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
   SynthUpdatePostTxRetry = 'synth_update_post_tx_retry',
@@ -546,6 +590,13 @@ export type LinkIdentityMutationVariables = Exact<{
 
 
 export type LinkIdentityMutation = { __typename?: 'Mutation', initLinkedIdentity: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
+
+export type SyncExternalTokenBalancesMutationVariables = Exact<{
+  args: SocialProfileAddReferrerIdInput;
+}>;
+
+
+export type SyncExternalTokenBalancesMutation = { __typename?: 'Mutation', socialProfileSyncExternalTokenBalance: { __typename?: 'IngestDataResponseDto', processed: boolean, callId?: string | null, message?: string | null } };
 
 export type CreateFramesLikeMutationVariables = Exact<{
   args: CreateMutateActiveStakingSuperLikeInput;
@@ -692,6 +743,15 @@ export const ClaimDailyReward = gql`
 export const LinkIdentity = gql`
     mutation LinkIdentity($args: CreateMutateLinkedIdentityInput!) {
   initLinkedIdentity(args: $args) {
+    processed
+    callId
+    message
+  }
+}
+    `;
+export const SyncExternalTokenBalances = gql`
+    mutation SyncExternalTokenBalances($args: SocialProfileAddReferrerIdInput!) {
+  socialProfileSyncExternalTokenBalance(args: $args) {
     processed
     callId
     message

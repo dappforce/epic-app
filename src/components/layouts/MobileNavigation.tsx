@@ -70,7 +70,7 @@ const tabs: Tab[] = [
         <NewMemeNotice />
       </div>
     ),
-    href: '/tg/memes',
+    href: '/tg/channels',
   },
   {
     id: 'friends',

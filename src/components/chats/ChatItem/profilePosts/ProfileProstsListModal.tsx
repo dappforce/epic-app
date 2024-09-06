@@ -5,7 +5,6 @@ import SkeletonFallback from '@/components/SkeletonFallback'
 import { env } from '@/env.mjs'
 import useAuthorizedForModeration from '@/hooks/useAuthorizedForModeration'
 import useIsModerationAdmin from '@/hooks/useIsModerationAdmin'
-import { TabButton } from '@/modules/chat/HomePage/ChatTabs'
 import { getModerationReasonsQuery } from '@/services/datahub/moderation/query'
 import { getPaginatedPostIdsByPostIdAndAccount } from '@/services/datahub/posts/queryByAccount'
 import { useSendEvent } from '@/stores/analytics'
@@ -15,7 +14,7 @@ import { isTouchDevice } from '@/utils/device'
 import { Transition } from '@headlessui/react'
 import { useMiniAppRaw } from '@tma.js/sdk-react'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   HiOutlineChevronLeft,
@@ -39,7 +38,9 @@ const chatIdByTab = {
   contest: env.NEXT_PUBLIC_CONTEST_CHAT_ID,
 }
 
-const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
+export default function ProfilePostsListModal({
+  tabsConfig,
+}: ProfilePostsListModalProps) {
   const [isOpenDetail, setIsOpenDetail] = useState(false)
   const [selectedTab, setSelectedTab] = useState<Tab>(
     tabsConfig?.defaultTab || 'all'
@@ -234,4 +235,48 @@ const ProfilePostsListModal = ({ tabsConfig }: ProfilePostsListModalProps) => {
   )
 }
 
-export default ProfilePostsListModal
+export const tabStates = [
+  'all',
+  'contest',
+  'not-approved',
+  'not-approved-contest',
+] as const
+
+export type TabState = (typeof tabStates)[number]
+export function TabButton({
+  selectedTab,
+  setSelectedTab,
+  tab,
+  children,
+  className,
+  size = 'md',
+  highlightSelected,
+}: {
+  tab: TabState
+  selectedTab: TabState
+  setSelectedTab: (tab: TabState) => void
+  children: ReactNode
+  className?: string
+  size?: 'md' | 'sm'
+  highlightSelected?: boolean
+}) {
+  const isSelected = selectedTab === tab
+  return (
+    <Button
+      variant={isSelected ? 'primary' : 'transparent'}
+      className={cx(
+        'h-10 py-0 text-sm',
+        size === 'sm' ? 'px-2' : 'h-10',
+        isSelected
+          ? highlightSelected
+            ? 'bg-orange-500/80'
+            : 'bg-background-primary/30'
+          : '',
+        className
+      )}
+      onClick={() => setSelectedTab(tab)}
+    >
+      {children}
+    </Button>
+  )
+}

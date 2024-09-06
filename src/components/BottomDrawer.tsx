@@ -56,7 +56,7 @@ export default function BottomDrawer({
         )}
         <div className='mx-auto flex w-full max-w-screen-md flex-col gap-6 overflow-auto px-5 py-6 pb-6'>
           <div className='flex flex-col gap-2'>
-            <span className='text-2xl font-medium'>{title}</span>
+            <span className={cx('text-2xl font-medium')}>{title}</span>
             <span className='text-text-muted'>{description}</span>
           </div>
           <div className='flex w-full flex-col'>

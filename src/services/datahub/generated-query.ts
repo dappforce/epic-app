@@ -327,6 +327,83 @@ export type CommentDataShort = {
   summary?: Maybe<Scalars['String']['output']>
 }
 
+export type ContainerConfigMetadata = {
+  __typename?: 'ContainerConfigMetadata'
+  coverImage?: Maybe<Scalars['String']['output']>
+  description?: Maybe<Scalars['String']['output']>
+  image?: Maybe<Scalars['String']['output']>
+  isExternalTokenRewardPool?: Maybe<Scalars['Boolean']['output']>
+  rewardPoolAmount?: Maybe<Scalars['String']['output']>
+  title?: Maybe<Scalars['String']['output']>
+  winnersNumber?: Maybe<Scalars['Int']['output']>
+}
+
+export type ContentContainerConfig = {
+  __typename?: 'ContentContainerConfig'
+  accessThresholdExternalTokenAmount?: Maybe<Scalars['String']['output']>
+  accessThresholdPointsAmount?: Maybe<Scalars['String']['output']>
+  addressBlockOneTimePenaltyPointsAmount?: Maybe<Scalars['String']['output']>
+  closedAt?: Maybe<Scalars['DateTime']['output']>
+  containerType: ContentContainerType
+  createCommentPricePointsAmount?: Maybe<Scalars['String']['output']>
+  createdAtTime: Scalars['DateTime']['output']
+  expirationWindowFrom?: Maybe<Scalars['DateTime']['output']>
+  expirationWindowTo?: Maybe<Scalars['DateTime']['output']>
+  externalToken?: Maybe<ExternalToken>
+  hidden: Scalars['Boolean']['output']
+  id: Scalars['String']['output']
+  isCreatorModerationPenalty?: Maybe<Scalars['Boolean']['output']>
+  isDeductionRewardsOnModeration?: Maybe<Scalars['Boolean']['output']>
+  isExpirable: Scalars['Boolean']['output']
+  isPostModerationPenalty?: Maybe<Scalars['Boolean']['output']>
+  likeThresholdExternalTokenAmount?: Maybe<Scalars['String']['output']>
+  metadata: ContainerConfigMetadata
+  openAt?: Maybe<Scalars['DateTime']['output']>
+  postBlockOneTimePenaltyPointsAmount?: Maybe<Scalars['String']['output']>
+  rootPost: Post
+  rootSpace?: Maybe<Space>
+  slug: Scalars['String']['output']
+  updatedAtTime?: Maybe<Scalars['DateTime']['output']>
+}
+
+export type ContentContainerConfigsArgsInputDto = {
+  filter: ContentContainerConfigsFilter
+  offset?: InputMaybe<Scalars['Int']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<QueryOrder>
+  pageSize?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type ContentContainerConfigsFilter = {
+  containerType?: InputMaybe<Array<ContentContainerType>>
+  hidden?: InputMaybe<Scalars['Boolean']['input']>
+  ids?: InputMaybe<Array<Scalars['String']['input']>>
+  isClosed?: InputMaybe<Scalars['Boolean']['input']>
+  isExpirable?: InputMaybe<Scalars['Boolean']['input']>
+  isOpen?: InputMaybe<Scalars['Boolean']['input']>
+  rootPostIds?: InputMaybe<Array<Scalars['String']['input']>>
+  rootSpaceId?: InputMaybe<Scalars['String']['input']>
+}
+
+export type ContentContainerConfigsResourcesResponseDto = {
+  __typename?: 'ContentContainerConfigsResourcesResponseDto'
+  data: Array<ContentContainerConfig>
+  offset?: Maybe<Scalars['Int']['output']>
+  pageSize?: Maybe<Scalars['Int']['output']>
+  total?: Maybe<Scalars['Int']['output']>
+}
+
+export type ContentContainerExternalTokenContractMethods = {
+  __typename?: 'ContentContainerExternalTokenContractMethods'
+  balanceOf: Scalars['String']['output']
+}
+
+export enum ContentContainerType {
+  CommunityChannel = 'COMMUNITY_CHANNEL',
+  Contest = 'CONTEST',
+  PublicChannel = 'PUBLIC_CHANNEL',
+}
+
 export type ContentExtension = {
   __typename?: 'ContentExtension'
   amount?: Maybe<Scalars['String']['output']>
@@ -439,6 +516,8 @@ export enum DataHubSubscriptionEventEnum {
   ServiceAccountWarningEvent = 'SERVICE_ACCOUNT_WARNING_EVENT',
   SocialProfileBalancesCreated = 'SOCIAL_PROFILE_BALANCES_CREATED',
   SocialProfileBalancesStateUpdated = 'SOCIAL_PROFILE_BALANCES_STATE_UPDATED',
+  SocialProfileExternalTokenBalanceCreated = 'SOCIAL_PROFILE_EXTERNAL_TOKEN_BALANCE_CREATED',
+  SocialProfileExternalTokenBalanceStateUpdated = 'SOCIAL_PROFILE_EXTERNAL_TOKEN_BALANCE_STATE_UPDATED',
 }
 
 export enum DataType {
@@ -535,6 +614,25 @@ export type ExtensionPinnedResource = {
   space?: Maybe<Space>
 }
 
+export type ExternalToken = {
+  __typename?: 'ExternalToken'
+  address: Scalars['String']['output']
+  chain: ExternalTokenChain
+  contractAbi: Scalars['String']['output']
+  contractMethods?: Maybe<ContentContainerExternalTokenContractMethods>
+  createdByAccount: Account
+  decimals: Scalars['Int']['output']
+  id: Scalars['String']['output']
+  name: Scalars['String']['output']
+  relatedContentContainers: Array<ContentContainerConfig>
+  symbol: Scalars['String']['output']
+}
+
+export enum ExternalTokenChain {
+  Ethereum = 'ETHEREUM',
+  Solana = 'SOLANA',
+}
+
 export type FindPostsFilter = {
   AND?: InputMaybe<Array<FindPostsFilter>>
   OR?: InputMaybe<Array<FindPostsFilter>>
@@ -607,6 +705,7 @@ export type FindSpacesWithFilterResponseDto = {
 export type FindTasksFilter = {
   address: Scalars['String']['input']
   completed?: InputMaybe<Scalars['Boolean']['input']>
+  rootSpaceId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type FindTasksResponseDto = {
@@ -651,6 +750,7 @@ export type GamificationTask = {
   periodicityConfig?: Maybe<Scalars['String']['output']>
   periodicityType: GamificationTaskPeriodicity
   rewardPoints: Scalars['String']['output']
+  rootSpace?: Maybe<Space>
   startedAt?: Maybe<Scalars['DateTime']['output']>
   tag: Scalars['String']['output']
   updatedAt?: Maybe<Scalars['DateTime']['output']>
@@ -727,6 +827,7 @@ export type InitModeratorInputDto = {
 
 export type IsBalanceSufficientForSocialActionInput = {
   address: Scalars['String']['input']
+  containerId?: InputMaybe<Scalars['String']['input']>
   socialAction: SocialAction
 }
 
@@ -772,6 +873,7 @@ export type LinkedIdentityExternalProvider = {
   isAutoInitialized: Scalars['Boolean']['output']
   linkedIdentity: LinkedIdentity
   provider: IdentityProvider
+  synthetic: Scalars['Boolean']['output']
   updatedAtTime?: Maybe<Scalars['DateTime']['output']>
   username?: Maybe<Scalars['String']['output']>
 }
@@ -1053,6 +1155,7 @@ export type Post = {
   canonical?: Maybe<Scalars['String']['output']>
   /** content CID */
   content?: Maybe<Scalars['String']['output']>
+  contentContainerConfig?: Maybe<ContentContainerConfig>
   createdAtBlock?: Maybe<Scalars['Int']['output']>
   createdAtTime?: Maybe<Scalars['DateTime']['output']>
   createdByAccount: Account
@@ -1185,6 +1288,7 @@ export type Query = {
   activeStakingDateDetails: DateTimeDetailsResponseDto
   activeStakingIsActiveStaker: Scalars['Boolean']['output']
   activeStakingRankedPostIdsByActiveStakingActivity: RankedPostIdsByActiveStakingActivityResponse
+  activeStakingRankedPostIdsBySuperLikesNumber: RankedPostIdsBySuperLikesCountResponse
   activeStakingRewardsByPosts: Array<RewardsByPostsResponseDto>
   activeStakingRewardsByWeek: Array<TotalRewardsByWeekResponse>
   activeStakingRewardsReportByWeek: Array<ActiveStakingRewardsReport>
@@ -1196,6 +1300,7 @@ export type Query = {
   activeStakingSuperLikesNumberGoal: Scalars['Int']['output']
   activeStakingTokenomicMetadata: TokenomicMetadataResponse
   activeStakingTotalActivityMetricsForFixedPeriod: TotalActivityMetricsForFixedPeriodResponseDto
+  contentContainerConfigs: ContentContainerConfigsResourcesResponseDto
   domains: DomainsResponse
   gamificationEntranceDailyRewardSequence?: Maybe<GamificationEntranceDailyRewardsSequence>
   gamificationTappingActivityStatsByDate: TappingActivityStatsByDateResponseDto
@@ -1267,6 +1372,10 @@ export type QueryActiveStakingRankedPostIdsByActiveStakingActivityArgs = {
   args: RankedPostIdsByActiveStakingActivityInput
 }
 
+export type QueryActiveStakingRankedPostIdsBySuperLikesNumberArgs = {
+  args: RankedPostIdsBySuperLikesCountInput
+}
+
 export type QueryActiveStakingRewardsByPostsArgs = {
   args: RewardsByPostsInput
 }
@@ -1301,6 +1410,10 @@ export type QueryActiveStakingSuperLikesArgs = {
 
 export type QueryActiveStakingTotalActivityMetricsForFixedPeriodArgs = {
   args: TotalActivityMetricsForFixedPeriodInput
+}
+
+export type QueryContentContainerConfigsArgs = {
+  args: ContentContainerConfigsArgsInputDto
 }
 
 export type QueryDomainsArgs = {
@@ -1445,6 +1558,14 @@ export type RankedAddressWithDetails = {
   reward: Scalars['String']['output']
 }
 
+export type RankedPostIdBySuperLikesCountWithDetails = {
+  __typename?: 'RankedPostIdBySuperLikesCountWithDetails'
+  postId: Scalars['String']['output']
+  rank: Scalars['Int']['output']
+  rootPostId?: Maybe<Scalars['String']['output']>
+  score: Scalars['Float']['output']
+}
+
 export type RankedPostIdWithDetails = {
   __typename?: 'RankedPostIdWithDetails'
   ownerAddress?: Maybe<Scalars['String']['output']>
@@ -1469,6 +1590,27 @@ export type RankedPostIdsByActiveStakingActivityInput = {
 export type RankedPostIdsByActiveStakingActivityResponse = {
   __typename?: 'RankedPostIdsByActiveStakingActivityResponse'
   data: Array<RankedPostIdWithDetails>
+  limit: Scalars['Int']['output']
+  offset: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+}
+
+export type RankedPostIdsBySuperLikesCountInput = {
+  filter?: InputMaybe<RankedPostIdsBySuperLikesCountInputFilter>
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  order?: InputMaybe<ActiveStakingListOrder>
+}
+
+export type RankedPostIdsBySuperLikesCountInputFilter = {
+  period: ActiveStakingPeriod
+  rootPostId?: InputMaybe<Scalars['String']['input']>
+  timestamp?: InputMaybe<Scalars['String']['input']>
+}
+
+export type RankedPostIdsBySuperLikesCountResponse = {
+  __typename?: 'RankedPostIdsBySuperLikesCountResponse'
+  data: Array<RankedPostIdBySuperLikesCountWithDetails>
   limit: Scalars['Int']['output']
   offset: Scalars['Int']['output']
   total: Scalars['Int']['output']
@@ -1695,6 +1837,8 @@ export enum SocialCallName {
   SynthAddLinkedIdentityExternalProvider = 'synth_add_linked_identity_external_provider',
   SynthAddPostView = 'synth_add_post_view',
   SynthAddPostViewsBatch = 'synth_add_post_views_batch',
+  SynthCreateContentContainerConfig = 'synth_create_content_container_config',
+  SynthCreateExternalToken = 'synth_create_external_token',
   SynthCreateLinkedIdentity = 'synth_create_linked_identity',
   SynthCreatePostTxFailed = 'synth_create_post_tx_failed',
   SynthCreatePostTxRetry = 'synth_create_post_tx_retry',
@@ -1718,6 +1862,8 @@ export enum SocialCallName {
   SynthSetPostApproveStatus = 'synth_set_post_approve_status',
   SynthSocialProfileAddReferrerId = 'synth_social_profile_add_referrer_id',
   SynthSocialProfileSetActionPermissions = 'synth_social_profile_set_action_permissions',
+  SynthSocialProfileSyncExternalTokenBalance = 'synth_social_profile_sync_external_token_balance',
+  SynthUpdateContentContainerConfig = 'synth_update_content_container_config',
   SynthUpdateLinkedIdentityExternalProvider = 'synth_update_linked_identity_external_provider',
   SynthUpdatePostTxFailed = 'synth_update_post_tx_failed',
   SynthUpdatePostTxRetry = 'synth_update_post_tx_retry',
@@ -1761,6 +1907,7 @@ export type SocialProfileBalances = {
   activeStakingTempReward: Scalars['String']['output']
   activeStakingTempToken: Scalars['String']['output']
   activeStakingTempTokenInitial: Scalars['String']['output']
+  externalTokenBalances?: Maybe<Array<SocialProfileExternalTokenBalance>>
   id: Scalars['String']['output']
 }
 
@@ -1771,6 +1918,25 @@ export type SocialProfileBalancesSubscriptionInput = {
 export type SocialProfileBalancesSubscriptionPayload = {
   __typename?: 'SocialProfileBalancesSubscriptionPayload'
   entity: SocialProfileBalances
+  event: DataHubSubscriptionEventEnum
+}
+
+export type SocialProfileExternalTokenBalance = {
+  __typename?: 'SocialProfileExternalTokenBalance'
+  active: Scalars['Boolean']['output']
+  amount: Scalars['String']['output']
+  blockchainAddress: Scalars['String']['output']
+  createdAt: Scalars['DateTime']['output']
+  externalToken: ExternalToken
+  id: Scalars['String']['output']
+  linkedIdentityExternalProvider: LinkedIdentityExternalProvider
+  socialProfileBalance: SocialProfileBalances
+  updatedAt?: Maybe<Scalars['DateTime']['output']>
+}
+
+export type SocialProfileExternalTokenBalanceSubscriptionPayload = {
+  __typename?: 'SocialProfileExternalTokenBalanceSubscriptionPayload'
+  entity: SocialProfileExternalTokenBalance
   event: DataHubSubscriptionEventEnum
 }
 
@@ -1870,6 +2036,7 @@ export type Subscription = {
   post: PostSubscriptionPayload
   serviceMessageToTarget: AccountServiceMessageToTargetResponse
   socialProfileBalancesSubscription: SocialProfileBalancesSubscriptionPayload
+  socialProfileExternalTokenBalanceSubscription: SocialProfileExternalTokenBalanceSubscriptionPayload
 }
 
 export type SubscriptionServiceMessageToTargetArgs = {
@@ -1877,6 +2044,10 @@ export type SubscriptionServiceMessageToTargetArgs = {
 }
 
 export type SubscriptionSocialProfileBalancesSubscriptionArgs = {
+  args: SocialProfileBalancesSubscriptionInput
+}
+
+export type SubscriptionSocialProfileExternalTokenBalanceSubscriptionArgs = {
   args: SocialProfileBalancesSubscriptionInput
 }
 
@@ -2214,6 +2385,45 @@ export type SubscribeBalancesSubscription = {
   }
 }
 
+export type GetContentContainersQueryVariables = Exact<{
+  args: ContentContainerConfigsArgsInputDto
+}>
+
+export type GetContentContainersQuery = {
+  __typename?: 'Query'
+  contentContainerConfigs: {
+    __typename?: 'ContentContainerConfigsResourcesResponseDto'
+    total?: number | null
+    offset?: number | null
+    data: Array<{
+      __typename?: 'ContentContainerConfig'
+      id: string
+      createCommentPricePointsAmount?: string | null
+      containerType: ContentContainerType
+      accessThresholdPointsAmount?: string | null
+      likeThresholdExternalTokenAmount?: string | null
+      accessThresholdExternalTokenAmount?: string | null
+      rootPost: { __typename?: 'Post'; id: string }
+      rootSpace?: { __typename?: 'Space'; id: string } | null
+      metadata: {
+        __typename?: 'ContainerConfigMetadata'
+        title?: string | null
+        description?: string | null
+        coverImage?: string | null
+        image?: string | null
+      }
+      externalToken?: {
+        __typename?: 'ExternalToken'
+        id: string
+        chain: ExternalTokenChain
+        name: string
+        address: string
+        decimals: number
+      } | null
+    }>
+  }
+}
+
 export type GetSuperLikeCountsQueryVariables = Exact<{
   postIds: Array<Scalars['String']['input']> | Scalars['String']['input']
 }>
@@ -2388,17 +2598,9 @@ export type GetTokenomicsMetadataQuery = {
   __typename?: 'Query'
   activeStakingTokenomicMetadata: {
     __typename?: 'TokenomicMetadataResponse'
+    maxTapsPerDay: number
     superLikeWeightPoints: string
     likerRewardDistributionPercent: number
-    socialActionPrice: {
-      __typename?: 'SocialActionPriceResponse'
-      createCommentPoints: string
-    }
-    thresholdsAndRules: Array<{
-      __typename?: 'ThresholdsAndRulesResponse'
-      contextPostId: string
-      thresholdPointsAmount: string
-    }>
   }
 }
 
@@ -2439,6 +2641,55 @@ export type SubscribeEventsSubscription = {
       code: ServiceMessageStatusCode
       callId?: string | null
       extension?: any | null
+    }
+  }
+}
+
+export type GetExternalTokenBalancesQueryVariables = Exact<{
+  address: Scalars['String']['input']
+}>
+
+export type GetExternalTokenBalancesQuery = {
+  __typename?: 'Query'
+  socialProfileBalances?: {
+    __typename?: 'SocialProfileBalances'
+    externalTokenBalances?: Array<{
+      __typename?: 'SocialProfileExternalTokenBalance'
+      id: string
+      active: boolean
+      amount: string
+      blockchainAddress: string
+      externalToken: {
+        __typename?: 'ExternalToken'
+        id: string
+        address: string
+        decimals: number
+      }
+    }> | null
+  } | null
+}
+
+export type SubscribeExternalTokenBalancesSubscriptionVariables = Exact<{
+  address: Scalars['String']['input']
+}>
+
+export type SubscribeExternalTokenBalancesSubscription = {
+  __typename?: 'Subscription'
+  socialProfileExternalTokenBalanceSubscription: {
+    __typename?: 'SocialProfileExternalTokenBalanceSubscriptionPayload'
+    event: DataHubSubscriptionEventEnum
+    entity: {
+      __typename?: 'SocialProfileExternalTokenBalance'
+      id: string
+      active: boolean
+      amount: string
+      blockchainAddress: string
+      externalToken: {
+        __typename?: 'ExternalToken'
+        id: string
+        address: string
+        decimals: number
+      }
     }
   }
 }
@@ -2659,22 +2910,6 @@ export type GetUserReferralsStatsQuery = {
         socialProfile: { __typename?: 'SocialProfile'; id: string }
       }> | null
     } | null
-  }
-}
-
-export type GetTokenomicMetadataQueryVariables = Exact<{ [key: string]: never }>
-
-export type GetTokenomicMetadataQuery = {
-  __typename?: 'Query'
-  activeStakingTokenomicMetadata: {
-    __typename?: 'TokenomicMetadataResponse'
-    maxTapsPerDay: number
-    superLikeWeightPoints: string
-    likerRewardDistributionPercent: number
-    socialActionPrice: {
-      __typename?: 'SocialActionPriceResponse'
-      createCommentPoints: string
-    }
   }
 }
 
@@ -3183,6 +3418,35 @@ export type GetUnapprovedMemesCountQuery = {
   }
 }
 
+export type GetPostsCountByTodayQueryVariables = Exact<{
+  createdAtTimeGte: Scalars['String']['input']
+  createdAtTimeLte: Scalars['String']['input']
+  postId: Scalars['String']['input']
+}>
+
+export type GetPostsCountByTodayQuery = {
+  __typename?: 'Query'
+  posts: { __typename?: 'FindPostsResponseDto'; total?: number | null }
+}
+
+export type GetTopMemesQueryVariables = Exact<{
+  timestamp: Scalars['String']['input']
+}>
+
+export type GetTopMemesQuery = {
+  __typename?: 'Query'
+  activeStakingRankedPostIdsBySuperLikesNumber: {
+    __typename?: 'RankedPostIdsBySuperLikesCountResponse'
+    total: number
+    data: Array<{
+      __typename?: 'RankedPostIdBySuperLikesCountWithDetails'
+      postId: string
+      score: number
+      rank: number
+    }>
+  }
+}
+
 export type SubscribePostSubscriptionVariables = Exact<{ [key: string]: never }>
 
 export type SubscribePostSubscription = {
@@ -3377,6 +3641,7 @@ export type GetSpacesQuery = {
 
 export type GetGamificationTasksQueryVariables = Exact<{
   address: Scalars['String']['input']
+  rootSpaceId: Scalars['String']['input']
 }>
 
 export type GetGamificationTasksQuery = {
@@ -3394,6 +3659,13 @@ export type GetGamificationTasksQuery = {
       completed: boolean
       claimed: boolean
       linkedIdentity: { __typename?: 'LinkedIdentity'; id: string }
+      metadata?: {
+        __typename?: 'GamificationTaskMetadata'
+        telegramChannelToJoin?: string | null
+        twitterChannelToJoin?: string | null
+        likesNumberToAchieve?: string | null
+        referralsNumberToAchieve?: number | null
+      } | null
     }>
   }
 }
@@ -3490,6 +3762,41 @@ export const SubscribeBalances = gql`
       entity {
         activeStakingPoints
       }
+    }
+  }
+`
+export const GetContentContainers = gql`
+  query GetContentContainers($args: ContentContainerConfigsArgsInputDto!) {
+    contentContainerConfigs(args: $args) {
+      data {
+        id
+        rootPost {
+          id
+        }
+        rootSpace {
+          id
+        }
+        metadata {
+          title
+          description
+          coverImage
+          image
+        }
+        createCommentPricePointsAmount
+        containerType
+        accessThresholdPointsAmount
+        likeThresholdExternalTokenAmount
+        accessThresholdExternalTokenAmount
+        externalToken {
+          id
+          chain
+          name
+          address
+          decimals
+        }
+      }
+      total
+      offset
     }
   }
 `
@@ -3623,15 +3930,9 @@ export const GetDailyReward = gql`
 export const GetTokenomicsMetadata = gql`
   query GetTokenomicsMetadata {
     activeStakingTokenomicMetadata {
+      maxTapsPerDay
       superLikeWeightPoints
       likerRewardDistributionPercent
-      socialActionPrice {
-        createCommentPoints
-      }
-      thresholdsAndRules {
-        contextPostId
-        thresholdPointsAmount
-      }
     }
   }
 `
@@ -3663,6 +3964,41 @@ export const SubscribeEvents = gql`
         code
         callId
         extension
+      }
+    }
+  }
+`
+export const GetExternalTokenBalances = gql`
+  query GetExternalTokenBalances($address: String!) {
+    socialProfileBalances(args: { where: { address: $address } }) {
+      externalTokenBalances {
+        id
+        active
+        amount
+        blockchainAddress
+        externalToken {
+          id
+          address
+          decimals
+        }
+      }
+    }
+  }
+`
+export const SubscribeExternalTokenBalances = gql`
+  subscription SubscribeExternalTokenBalances($address: String!) {
+    socialProfileExternalTokenBalanceSubscription(args: { address: $address }) {
+      event
+      entity {
+        id
+        active
+        amount
+        blockchainAddress
+        externalToken {
+          id
+          address
+          decimals
+        }
       }
     }
   }
@@ -3858,18 +4194,6 @@ export const GetUserReferralsStats = gql`
             id
           }
         }
-      }
-    }
-  }
-`
-export const GetTokenomicMetadata = gql`
-  query GetTokenomicMetadata {
-    activeStakingTokenomicMetadata {
-      maxTapsPerDay
-      superLikeWeightPoints
-      likerRewardDistributionPercent
-      socialActionPrice {
-        createCommentPoints
       }
     }
   }
@@ -4166,6 +4490,45 @@ export const GetUnapprovedMemesCount = gql`
     }
   }
 `
+export const GetPostsCountByToday = gql`
+  query GetPostsCountByToday(
+    $createdAtTimeGte: String!
+    $createdAtTimeLte: String!
+    $postId: String!
+  ) {
+    posts(
+      args: {
+        filter: {
+          createdAtTimeGte: $createdAtTimeGte
+          createdAtTimeLte: $createdAtTimeLte
+          rootPostId: $postId
+        }
+        pageSize: 100
+      }
+    ) {
+      total
+    }
+  }
+`
+export const GetTopMemes = gql`
+  query GetTopMemes($timestamp: String!) {
+    activeStakingRankedPostIdsBySuperLikesNumber(
+      args: {
+        filter: { period: DAY, timestamp: $timestamp }
+        limit: 5
+        offset: 0
+        order: DESC
+      }
+    ) {
+      data {
+        postId
+        score
+        rank
+      }
+      total
+    }
+  }
+`
 export const SubscribePost = gql`
   subscription SubscribePost {
     post {
@@ -4278,8 +4641,10 @@ export const GetSpaces = gql`
   ${SpaceFragment}
 `
 export const GetGamificationTasks = gql`
-  query GetGamificationTasks($address: String!) {
-    gamificationTasks(args: { filter: { address: $address } }) {
+  query GetGamificationTasks($address: String!, $rootSpaceId: String!) {
+    gamificationTasks(
+      args: { filter: { address: $address, rootSpaceId: $rootSpaceId } }
+    ) {
       data {
         rewardPoints
         id
@@ -4290,6 +4655,12 @@ export const GetGamificationTasks = gql`
         claimed
         linkedIdentity {
           id
+        }
+        metadata {
+          telegramChannelToJoin
+          twitterChannelToJoin
+          likesNumberToAchieve
+          referralsNumberToAchieve
         }
       }
       total

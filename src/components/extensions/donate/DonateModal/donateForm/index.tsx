@@ -1,7 +1,7 @@
 import ProfilePreview from '@/components/ProfilePreview'
 import CommonExtensionModal from '@/components/extensions/common/CommonExtensionModal'
 import SelectInput from '@/components/inputs/SelectInput'
-import useLinkedAddress from '@/hooks/useLinkedEvmAddress'
+import useLinkedAddress from '@/hooks/useLinkedProviders'
 import { getPostQuery } from '@/services/api/query'
 import { useExtensionModalState } from '@/stores/extension'
 import { useMessageData } from '@/stores/message'

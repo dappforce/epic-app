@@ -1,6 +1,6 @@
 import Thumbsup from '@/assets/emojis/thumbsup.png'
 import { useIsAddressBlockedInApp } from '@/hooks/useIsAddressBlockedInApp'
-import { useIsHowToEarnMessageClosedStorage } from '@/modules/telegram/MemesPage/HowToEarnMessage'
+import { useIsHowToEarnMessageClosedStorage } from '@/modules/telegram/channels/ChannelContentPage/HowToEarnMessage'
 import { getPostQuery, getServerTimeQuery } from '@/services/api/query'
 import { useCreateSuperLike } from '@/services/datahub/content-staking/mutation'
 import {

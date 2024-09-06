@@ -19,6 +19,7 @@ const ModeratorPage = () => {
 const Content = () => {
   const searchParams = useSearchParams()
   const moderator = searchParams?.get('moderator')
+  const channel = searchParams?.get('channel')
 
   return (
     <div className='flex  justify-center'>
@@ -26,13 +27,13 @@ const Content = () => {
         {!moderator ? (
           <PendingPostsList
             hubId={env.NEXT_PUBLIC_MAIN_SPACE_ID}
-            chatId={env.NEXT_PUBLIC_MAIN_CHAT_ID}
+            chatId={channel || env.NEXT_PUBLIC_MAIN_CHAT_ID}
           />
         ) : (
           <ModeratedContentByModerator
             moderator={moderator}
             hubId={env.NEXT_PUBLIC_MAIN_SPACE_ID}
-            chatId={env.NEXT_PUBLIC_MAIN_CHAT_ID}
+            chatId={channel || env.NEXT_PUBLIC_MAIN_CHAT_ID}
           />
         )}
       </div>
