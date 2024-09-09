@@ -1,3 +1,8 @@
+import Calendar from '@/assets/emojis/calendar.png'
+import Finish from '@/assets/emojis/finish.png'
+import MoneyBag from '@/assets/emojis/moneybag.png'
+import Time from '@/assets/emojis/time.png'
+import Trophy from '@/assets/emojis/trophy.png'
 import Button from '@/components/Button'
 import Container from '@/components/Container'
 import SkeletonFallback from '@/components/SkeletonFallback'
@@ -21,6 +26,10 @@ import {
 } from '@/services/datahub/tasks/query'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
+import { cx } from '@/utils/class-names'
+import { getHumanReadableRelativeTime } from '@/utils/date'
+import { formatBalanceToNumber } from '@/utils/formatBalance'
+import { formatNumber } from '@/utils/strings'
 import { Transition } from '@headlessui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
@@ -30,7 +39,7 @@ import { AiOutlineInfoCircle } from 'react-icons/ai'
 import { FaChevronLeft } from 'react-icons/fa6'
 import ContainerSkeleton, {
   ChannelPreview,
-  ContestDetails,
+  ContestInfoPreview,
   ContestPreview,
 } from '../ContainerPreview'
 import HowToEarnMessage from './HowToEarnMessage'
@@ -142,9 +151,7 @@ function ChannelNavbar() {
                 </div>
               )}
             </div>
-            {isContest && (
-              <ContestDetails contest={contentContainer} className='mt-0.5' />
-            )}
+            {isContest && <ContestInfoPreview contest={contentContainer} />}
           </div>
         </div>
         {!isAboutOpen && (
@@ -193,6 +200,9 @@ function ChannelNavbar() {
               </SkeletonFallback>{' '}
               {isContest ? 'Contest' : 'Channel'}
             </span>
+            {isContest && (
+              <ContestInfo contest={contentContainer} className='mb-2 mt-4' />
+            )}
             <TabButtons
               className='mt-4'
               tabs={[
@@ -223,6 +233,85 @@ function ChannelNavbar() {
         </div>
       </Transition>
     </>
+  )
+}
+
+function ContestInfo({
+  contest,
+  className,
+}: {
+  contest: ContentContainer
+  className?: string
+}) {
+  return (
+    <div className={cx('flex items-center gap-10', className)}>
+      <div className='flex flex-col gap-1'>
+        {(() => {
+          if (contest.closedAt) {
+            return (
+              <>
+                <div className='flex items-center gap-1.5'>
+                  <Image src={Finish} alt='' className='h-6 w-6' />
+                  <span className='text-xl font-bold'>Finished</span>
+                </div>
+                <span className='text-sm text-text-muted'>Contest Status</span>
+              </>
+            )
+          } else if (!contest.openAt) {
+            return (
+              <>
+                <div className='flex items-center gap-1.5'>
+                  <Image src={Calendar} alt='' className='h-6 w-6' />
+                  <span className='text-xl font-bold'>
+                    {getHumanReadableRelativeTime(contest.expirationWindowFrom)}
+                  </span>
+                </div>
+                <span className='text-sm text-text-muted'>Starts in</span>
+              </>
+            )
+          } else {
+            return (
+              <>
+                <div className='flex items-center gap-1.5'>
+                  <Image src={Time} alt='' className='h-6 w-6' />
+                  <span className='text-xl font-bold'>
+                    {getHumanReadableRelativeTime(contest.expirationWindowTo)}
+                  </span>
+                </div>
+                <span className='text-sm text-text-muted'>Finished in</span>
+              </>
+            )
+          }
+        })()}
+      </div>
+      <div className='flex flex-col gap-1'>
+        <div className='flex items-center gap-1.5'>
+          <Image src={Trophy} alt='' className='h-6 w-6' />
+          <span className='text-xl font-bold'>
+            {contest.metadata.winnersNumber}
+          </span>
+        </div>
+        <span className='text-sm text-text-muted'>Winners</span>
+      </div>
+      <div className='flex flex-col gap-1'>
+        <div className='flex items-center gap-1.5'>
+          <Image src={MoneyBag} alt='' className='h-6 w-6' />
+          <span className='text-xl font-bold'>
+            {formatNumber(
+              formatBalanceToNumber(
+                contest.metadata.rewardPoolAmount ?? '0',
+                contest.externalToken?.decimals ?? 0
+              ),
+              { shorten: true }
+            )}{' '}
+            {contest.metadata.isExternalTokenRewardPool
+              ? contest.externalToken?.name ?? 'Tokens'
+              : 'Points'}
+          </span>
+        </div>
+        <span className='text-sm text-text-muted'>Winners</span>
+      </div>
+    </div>
   )
 }
 

@@ -1,5 +1,10 @@
-import ChatUnreadCount from '@/components/chats/ChatPreview/ChatUnreadCount'
+import Calendar from '@/assets/emojis/calendar.png'
+import Finish from '@/assets/emojis/finish.png'
+import MoneyBag from '@/assets/emojis/moneybag.png'
+import Time from '@/assets/emojis/time.png'
+import Trophy from '@/assets/emojis/trophy.png'
 import { Skeleton } from '@/components/SkeletonFallback'
+import ChatUnreadCount from '@/components/chats/ChatPreview/ChatUnreadCount'
 import { ContentContainer } from '@/services/datahub/content-containers/query'
 import { cx } from '@/utils/class-names'
 import { getHumanReadableRelativeTime } from '@/utils/date'
@@ -82,7 +87,7 @@ export function ContestPreview({ contest }: { contest: ContentContainer }) {
         <span className='text-sm text-text-muted'>
           {truncate(contest.metadata.description ?? '')}
         </span>
-        <ContestDetails contest={contest} className='mt-0.5' />
+        <ContestInfoPreview contest={contest} className='mt-0.5' />
       </div>
       <FaChevronRight className='ml-auto mr-1.5 flex-shrink-0 text-xl text-text-muted' />
     </Link>
@@ -97,24 +102,34 @@ function ContestStatus({
   className?: string
 }) {
   if (contest.closedAt) {
-    return <span className={cx('font-medium', className)}>🏁 Finished</span>
+    return (
+      <div className='flex items-center gap-1'>
+        <Image src={Finish} alt='' className='h-3.5 w-3.5' />
+        <span className={cx('font-medium', className)}>Finished</span>
+      </div>
+    )
   } else if (!contest.openAt) {
     return (
-      <span className={cx('font-medium', className)}>
-        📅 Starts in{' '}
-        {getHumanReadableRelativeTime(contest.expirationWindowFrom)}
-      </span>
+      <div className='flex items-center gap-1'>
+        <Image src={Calendar} alt='' className='h-3.5 w-3.5' />
+        <span className={cx('font-medium', className)}>
+          Starts in {getHumanReadableRelativeTime(contest.expirationWindowFrom)}
+        </span>
+      </div>
     )
   } else {
     return (
-      <span className={cx('font-medium text-text-warning', className)}>
-        ⏳ {getHumanReadableRelativeTime(contest.expirationWindowTo)} left
-      </span>
+      <div className='flex items-center gap-1'>
+        <Image src={Time} alt='' className='h-3.5 w-3.5' />
+        <span className={cx('font-medium text-text-warning', className)}>
+          {getHumanReadableRelativeTime(contest.expirationWindowTo)} left
+        </span>
+      </div>
     )
   }
 }
 
-export function ContestDetails({
+export function ContestInfoPreview({
   contest,
   className,
 }: {
@@ -130,21 +145,27 @@ export function ContestDetails({
     >
       <ContestStatus contest={contest} />
       {!!contest.metadata.rewardPoolAmount && (
-        <span>
-          💰{' '}
-          {formatNumber(
-            formatBalanceToNumber(
-              contest.metadata.rewardPoolAmount,
-              contest.externalToken?.decimals ?? 0
-            )
-          )}{' '}
-          {contest.metadata.isExternalTokenRewardPool
-            ? contest.externalToken?.name ?? 'Tokens'
-            : 'Points'}
-        </span>
+        <div className='flex items-center gap-1'>
+          <Image src={MoneyBag} alt='' className='h-3.5 w-3.5' />
+          <span>
+            {formatNumber(
+              formatBalanceToNumber(
+                contest.metadata.rewardPoolAmount,
+                contest.externalToken?.decimals ?? 0
+              ),
+              { shorten: true }
+            )}{' '}
+            {contest.metadata.isExternalTokenRewardPool
+              ? contest.externalToken?.name ?? 'Tokens'
+              : 'Points'}
+          </span>
+        </div>
       )}
       {!!contest.metadata.winnersNumber && (
-        <span>🏆 {contest.metadata.winnersNumber}</span>
+        <div className='flex items-center gap-1'>
+          <Image src={Trophy} alt='' className='h-3.5 w-3.5' />
+          <span>{contest.metadata.winnersNumber}</span>
+        </div>
       )}
     </div>
   )
