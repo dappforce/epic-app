@@ -2415,6 +2415,9 @@ export type GetContentContainersQuery = {
         description?: string | null
         coverImage?: string | null
         image?: string | null
+        isExternalTokenRewardPool?: boolean | null
+        rewardPoolAmount?: string | null
+        winnersNumber?: number | null
       }
       externalToken?: {
         __typename?: 'ExternalToken'
@@ -3785,6 +3788,9 @@ export const GetContentContainers = gql`
           description
           coverImage
           image
+          isExternalTokenRewardPool
+          rewardPoolAmount
+          winnersNumber
         }
         openAt
         closedAt

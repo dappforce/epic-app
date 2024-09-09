@@ -89,7 +89,7 @@ export function parseJSONData<T>(data: string | null) {
   }
 }
 
-export function convertToBigInt(num: number | string) {
+export function convertToBigInt(num: number | string | bigint) {
   try {
     return BigInt(num)
   } catch {

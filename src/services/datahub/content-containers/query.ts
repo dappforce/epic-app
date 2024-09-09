@@ -23,6 +23,9 @@ const GET_CONTENT_CONTAINERS = gql`
           description
           coverImage
           image
+          isExternalTokenRewardPool
+          rewardPoolAmount
+          winnersNumber
         }
         openAt
         closedAt

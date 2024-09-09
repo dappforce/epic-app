@@ -1,7 +1,7 @@
 import { getMyMainAddress } from '@/stores/my-account'
 import { createQuery } from '@/subsocial-query'
+import { formatBalanceToNumber } from '@/utils/formatBalance'
 import { LocalStorage } from '@/utils/storage'
-import { convertToBigInt } from '@/utils/strings'
 import { gql } from 'graphql-request'
 import {
   GetExternalTokenBalancesQuery,
@@ -49,9 +49,9 @@ async function getExternalTokenBalances(
     .filter((balance) => balance.active)
     .map((balance) => ({
       ...balance,
-      parsedAmount: Number(
-        convertToBigInt(balance.amount) /
-          BigInt(10 ** balance.externalToken.decimals)
+      parsedAmount: formatBalanceToNumber(
+        balance.amount,
+        balance.externalToken.decimals
       ),
     }))
   if (address === getMyMainAddress()) {

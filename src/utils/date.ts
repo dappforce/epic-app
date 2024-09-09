@@ -8,7 +8,7 @@ dayjs.extend(duration)
 dayjs.extend(dayOfYear)
 
 export function getHumanReadableRelativeTime(date: Date | string | number) {
-  return dayjs(date).fromNow()
+  return dayjs(date).fromNow(true)
 }
 
 export function getTimeRelativeToNow(date: Date | string | number) {

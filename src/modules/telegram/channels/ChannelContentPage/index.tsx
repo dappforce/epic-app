@@ -1,6 +1,6 @@
 import Button from '@/components/Button'
 import Container from '@/components/Container'
-import SkeletonFallback, { Skeleton } from '@/components/SkeletonFallback'
+import SkeletonFallback from '@/components/SkeletonFallback'
 import TabButtons from '@/components/TabButtons'
 import TaskCard from '@/components/TaskCard'
 import MemeChatRoom from '@/components/chats/ChatRoom/MemeChatRoom'
@@ -21,16 +21,18 @@ import {
 } from '@/services/datahub/tasks/query'
 import { useSendEvent } from '@/stores/analytics'
 import { useMyMainAddress } from '@/stores/my-account'
-import { cx } from '@/utils/class-names'
-import { getHumanReadableRelativeTime } from '@/utils/date'
 import { Transition } from '@headlessui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6'
+import { FaChevronLeft } from 'react-icons/fa6'
+import ContainerSkeleton, {
+  ChannelPreview,
+  ContestDetails,
+  ContestPreview,
+} from '../ContainerPreview'
 import HowToEarnMessage from './HowToEarnMessage'
 import {
   ChannelContentPageProvider,
@@ -84,6 +86,9 @@ function ChannelNavbar() {
   const myAddress = useMyMainAddress() ?? ''
   const canModerate = useAuthorizedForModeration(rootPostId, myAddress)
 
+  const isContest =
+    contentContainer?.containerType === ContentContainerType.Contest
+
   return (
     <>
       <nav className='flex h-14 items-center gap-2.5 bg-background-light px-3'>
@@ -111,29 +116,34 @@ function ChannelNavbar() {
             />
           </SkeletonFallback>
           <div className='flex flex-col gap-0.5'>
-            <span className='font-bold'>
-              {isAboutOpen && 'About '}
-              <SkeletonFallback
-                isLoading={isLoading}
-                className='inline-block w-16 align-middle'
-              >
-                {contentContainer?.metadata.title}
-              </SkeletonFallback>{' '}
-              Channel
-            </span>
-            {canModerate && (
-              <div className='flex'>
-                <Button
-                  variant={isModerating ? 'primary' : 'primaryOutline'}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsModerating(!isModerating)
-                  }}
-                  className='w-auto px-2 py-0.5 text-xs'
+            <div className='flex items-center gap-2'>
+              <span className='line-clamp-1 font-bold'>
+                {isAboutOpen && 'About '}
+                <SkeletonFallback
+                  isLoading={isLoading}
+                  className='inline-block w-16 align-middle'
                 >
-                  Moderation Mode
-                </Button>
-              </div>
+                  {contentContainer?.metadata.title}
+                </SkeletonFallback>{' '}
+                {isContest ? 'Contest' : 'Channel'}
+              </span>
+              {canModerate && (
+                <div className='flex'>
+                  <Button
+                    variant={isModerating ? 'primary' : 'primaryOutline'}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsModerating(!isModerating)
+                    }}
+                    className='w-auto px-2 py-0.5 text-xs'
+                  >
+                    {isModerating ? 'Moderating' : 'Moderate'}
+                  </Button>
+                </div>
+              )}
+            </div>
+            {isContest && (
+              <ContestDetails contest={contentContainer} className='mt-0.5' />
             )}
           </div>
         </div>
@@ -181,11 +191,15 @@ function ChannelNavbar() {
               >
                 {contentContainer?.metadata.title}
               </SkeletonFallback>{' '}
-              Channel
+              {isContest ? 'Contest' : 'Channel'}
             </span>
             <TabButtons
               className='mt-4'
-              tabs={['Details', 'Tasks', 'Contests']}
+              tabs={[
+                'Details',
+                'Tasks',
+                isContest ? 'Related Channels' : 'Contests',
+              ]}
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
             />
@@ -201,6 +215,9 @@ function ChannelNavbar() {
               {selectedTab === 'Contests' && contentContainer && (
                 <ContestList channel={contentContainer} />
               )}
+              {selectedTab === 'Related Channels' && contentContainer && (
+                <RelatedChannelsList container={contentContainer} />
+              )}
             </div>
           </Container>
         </div>
@@ -209,8 +226,34 @@ function ChannelNavbar() {
   )
 }
 
+function RelatedChannelsList({ container }: { container: ContentContainer }) {
+  const { data, isLoading } = getContentContainersQuery.useQuery(
+    {
+      filter: {
+        containerType: [
+          ContentContainerType.CommunityChannel,
+          ContentContainerType.PublicChannel,
+        ],
+        rootSpaceId: container.rootSpace?.id ?? '',
+      },
+    },
+    {
+      enabled: !!container.rootSpace?.id,
+    }
+  )
+  return (
+    <div className='flex flex-col gap-2'>
+      {isLoading &&
+        Array.from({ length: 3 }).map((_, i) => <ContainerSkeleton key={i} />)}
+      {data?.data.map((channel) => (
+        <ChannelPreview withDescription key={channel.id} channel={channel} />
+      ))}
+    </div>
+  )
+}
+
 function ContestList({ channel }: { channel: ContentContainer }) {
-  const { data } = getContentContainersQuery.useQuery(
+  const { data, isLoading } = getContentContainersQuery.useQuery(
     {
       filter: {
         containerType: [ContentContainerType.Contest],
@@ -223,65 +266,13 @@ function ContestList({ channel }: { channel: ContentContainer }) {
   )
   return (
     <div className='flex flex-col gap-2'>
+      {isLoading &&
+        Array.from({ length: 3 }).map((_, i) => <ContainerSkeleton key={i} />)}
       {data?.data.map((contest) => (
-        <Contest key={contest.id} contest={contest} />
+        <ContestPreview key={contest.id} contest={contest} />
       ))}
     </div>
   )
-}
-
-function Contest({ contest }: { contest: ContentContainer }) {
-  useTgNoScroll()
-
-  return (
-    <Link
-      href={`/tg/channels/${contest.rootPost.id}`}
-      className='flex items-center gap-2.5 rounded-2xl bg-background-light px-2.5 py-3.5 transition active:bg-background-lighter'
-    >
-      <Image
-        src={contest.metadata.image ?? ''}
-        alt=''
-        width={100}
-        height={100}
-        className='h-12 w-12 rounded-full object-cover'
-      />
-      <div className='flex flex-col gap-1'>
-        <span className='font-bold'>{contest.metadata.title}</span>
-        <span className='text-sm text-text-muted'>
-          {contest.metadata.description}
-        </span>
-        <div className='flex items-center gap-3'>
-          <ContestStatus contest={contest} className='text-sm' />
-        </div>
-      </div>
-      <FaChevronRight className='ml-auto mr-1.5 text-xl text-text-muted' />
-    </Link>
-  )
-}
-
-function ContestStatus({
-  contest,
-  className,
-}: {
-  contest: ContentContainer
-  className?: string
-}) {
-  if (contest.closedAt) {
-    return <span className={cx('font-medium', className)}>🏁 Finished</span>
-  } else if (!contest.openAt) {
-    return (
-      <span className={cx('font-medium', className)}>
-        📅 Starts in{' '}
-        {getHumanReadableRelativeTime(contest.expirationWindowFrom)}
-      </span>
-    )
-  } else {
-    return (
-      <span className={cx('font-medium text-text-warning', className)}>
-        ⏳ {getHumanReadableRelativeTime(contest.expirationWindowTo)} left
-      </span>
-    )
-  }
 }
 
 function ChannelTasks() {
@@ -310,7 +301,7 @@ function ChannelTasks() {
     <div className='flex flex-col gap-2'>
       {isLoading &&
         Array.from({ length: 3 }).map((_, idx) => (
-          <Skeleton key={idx} className='h-16 w-full rounded-xl' />
+          <ContainerSkeleton key={idx} />
         ))}
       {isSuccess && !gamificationTasks.data.length && (
         <div className='mt-4 text-center font-medium text-text-muted'>

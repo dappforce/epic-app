@@ -1,6 +1,6 @@
 import Toast from '@/components/Toast'
 import { getMyMainAddress, useMyMainAddress } from '@/stores/my-account'
-import { convertToBigInt } from '@/utils/strings'
+import { formatBalanceToNumber } from '@/utils/formatBalance'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { gql } from 'graphql-request'
 import { useEffect, useRef } from 'react'
@@ -109,9 +109,9 @@ async function processSubscriptionEvent(
   getExternalTokenBalancesQuery.setQueryData(client, mainAddress, (oldData) => {
     const newToken: ExternalTokenBalance = {
       ...eventData.entity,
-      parsedAmount: Number(
-        convertToBigInt(eventData.entity.amount) /
-          BigInt(10 ** eventData.entity.externalToken.decimals)
+      parsedAmount: formatBalanceToNumber(
+        eventData.entity.amount,
+        eventData.entity.externalToken.decimals
       ),
     }
     const oldDataBalanceIndex = oldData?.findIndex(
