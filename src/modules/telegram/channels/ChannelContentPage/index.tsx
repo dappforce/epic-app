@@ -81,7 +81,7 @@ function ChatContent() {
 
 function ChannelNavbar() {
   const [isAboutOpen, setIsAboutOpen] = useState(false)
-  const [selectedTab, setSelectedTab] = useState('Details')
+  const [selectedTab, setSelectedTab] = useState('Tasks')
   const router = useRouter()
 
   const {
@@ -206,8 +206,8 @@ function ChannelNavbar() {
             <TabButtons
               className='mt-4'
               tabs={[
-                'Details',
                 'Tasks',
+                'Details',
                 isContest ? 'Related Channels' : 'Contests',
               ]}
               selectedTab={selectedTab}
