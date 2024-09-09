@@ -10,7 +10,6 @@ import { cx } from '@/utils/class-names'
 import { getHumanReadableRelativeTime } from '@/utils/date'
 import { formatBalanceToNumber } from '@/utils/formatBalance'
 import { formatNumber } from '@/utils/strings'
-import truncate from 'lodash.truncate'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FaChevronRight } from 'react-icons/fa6'
@@ -82,10 +81,10 @@ export function ContestPreview({ contest }: { contest: ContentContainer }) {
         height={100}
         className='h-12 w-12 flex-shrink-0 rounded-full object-cover'
       />
-      <div className='flex flex-col gap-1.5'>
+      <div className='flex flex-1 flex-col gap-1.5'>
         <span className='font-bold'>{contest.metadata.title}</span>
-        <span className='text-sm text-text-muted'>
-          {truncate(contest.metadata.description ?? '')}
+        <span className='line-clamp-1 text-sm text-text-muted'>
+          {contest.metadata.description}
         </span>
         <ContestInfoPreview contest={contest} className='mt-0.5' />
       </div>
