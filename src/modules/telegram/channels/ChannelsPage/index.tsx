@@ -1,27 +1,21 @@
 import BlueGradient from '@/assets/graphics/blue-gradient.png'
 import { Skeleton } from '@/components/SkeletonFallback'
-import ChatUnreadCount from '@/components/chats/ChatPreview/ChatUnreadCount'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
 import HomePageModals from '@/components/modals/HomePageModals'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import PointsWidget from '@/modules/points/PointsWidget'
 import { getPostQuery } from '@/services/api/query'
-import {
-  ContentContainer,
-  getContentContainersQuery,
-} from '@/services/datahub/content-containers/query'
+import { getContentContainersQuery } from '@/services/datahub/content-containers/query'
 import { ContentContainerType } from '@/services/datahub/generated-query'
 import { useGetTopMemes } from '@/services/datahub/posts/query'
 import { useIsAnyQueriesLoading } from '@/subsocial-query'
 import { cx } from '@/utils/class-names'
-import { formatNumber } from '@/utils/strings'
 import Image from 'next/image'
-import Link from 'next/link'
-import { FaChevronRight } from 'react-icons/fa6'
 import {
   MemesPreviewItem,
   MemesPreviewSkeleton,
 } from '../../HomePage/MemesPreview'
+import ContainerSkeleton, { ChannelPreview } from '../ContainerPreview'
 
 export default function ChannelsPage() {
   useTgNoScroll()
@@ -63,50 +57,14 @@ function ChannelsList() {
       {isLoading && (
         <>
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className='h-16 w-full rounded-xl' />
+            <ContainerSkeleton key={i} />
           ))}
         </>
       )}
       {(sorted ?? []).map((channel) => (
-        <Channel key={channel.id} channel={channel} />
+        <ChannelPreview key={channel.id} channel={channel} />
       ))}
     </div>
-  )
-}
-
-function Channel({ channel }: { channel: ContentContainer }) {
-  useTgNoScroll()
-
-  return (
-    <Link
-      href={`/tg/channels/${channel.rootPost.id}`}
-      className='flex items-center gap-2.5 rounded-xl bg-background-light px-2.5 py-3.5 transition active:bg-background-lighter'
-    >
-      <Image
-        src={channel.metadata.image ?? ''}
-        alt=''
-        width={100}
-        height={100}
-        className='h-12 w-12 rounded-full object-cover'
-      />
-      <div className='flex flex-col gap-1.5'>
-        <span className='font-bold'>{channel.metadata.title}</span>
-        <ChatUnreadCount chatId={channel.rootPost.id}>
-          {({ unreadCount, isLoading }) =>
-            isLoading ? (
-              <Skeleton className='w-20' />
-            ) : (
-              unreadCount > 0 && (
-                <span className='text-sm font-medium text-text-primary'>
-                  +{formatNumber(unreadCount, { shorten: true })} memes
-                </span>
-              )
-            )
-          }
-        </ChatUnreadCount>
-      </div>
-      <FaChevronRight className='ml-auto mr-1.5 text-xl text-text-muted' />
-    </Link>
   )
 }
 

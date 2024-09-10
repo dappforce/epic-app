@@ -7,6 +7,7 @@ import {
 import { ExternalTokenChain } from '@/services/datahub/generated-query'
 import { getBalanceQuery } from '@/services/datahub/leaderboard/points-balance/query'
 import { useMyMainAddress } from '@/stores/my-account'
+import { formatBalanceToNumber } from '@/utils/formatBalance'
 import { convertToBigInt } from '@/utils/strings'
 import { IdentityProvider } from '@subsocial/data-hub-sdk'
 
@@ -66,15 +67,15 @@ export default function useTokenGatedRequirement(
     )
     passRequirement =
       convertToBigInt(tokenBalance?.amount ?? 0) >= externalTokenRequirement
-    amountRequired = Number(
-      externalTokenRequirement /
-        BigInt(10 ** Number(contentContainer?.externalToken?.decimals ?? 0))
+    amountRequired = formatBalanceToNumber(
+      externalTokenRequirement,
+      contentContainer?.externalToken?.decimals ?? 0
     )
     requiredToken = contentContainer?.externalToken?.name ?? ''
     currentToken = tokenBalance
-    remainingNeeded = Number(
-      (externalTokenRequirement - convertToBigInt(tokenBalance?.amount ?? 0)) /
-        BigInt(10 ** Number(contentContainer?.externalToken?.decimals ?? 0))
+    remainingNeeded = formatBalanceToNumber(
+      externalTokenRequirement - convertToBigInt(tokenBalance?.amount ?? 0),
+      contentContainer?.externalToken?.decimals ?? 0
     )
   } else if (pointsRequirement > 0) {
     isLoading = loadingPoints

@@ -7,7 +7,7 @@ import { isDef } from '@subsocial/utils'
 import { useState } from 'react'
 import LeaderboardModal from '../FriendsPage/LeaderboardModal'
 
-const ContestPreview = () => {
+const HomePageContestPreview = () => {
   const { data: referrersData } = getReferralLeaderboardQuery(true).useQuery({})
   const [isOpen, setIsOpen] = useState(false)
 
@@ -79,4 +79,4 @@ const ContestPreviewItem = ({ item, withDivider }: ContestPreviewItemProps) => {
   )
 }
 
-export default ContestPreview
+export default HomePageContestPreview

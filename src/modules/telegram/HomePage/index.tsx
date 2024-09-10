@@ -4,7 +4,7 @@ import { env } from '@/env.mjs'
 import useTgNoScroll from '@/hooks/useTgNoScroll'
 import PointsWidget from '@/modules/points/PointsWidget'
 import Image from 'next/image'
-import ContestPreview from './ContestPreview'
+import HomePageContestPreview from './HomePageContestPreview'
 import MemesPreview from './MemesPreview'
 import TasksPreview from './TasksPreview'
 
@@ -32,7 +32,7 @@ const HomePageContent = () => {
         chatId={env.NEXT_PUBLIC_MAIN_CHAT_ID}
         hubId={env.NEXT_PUBLIC_MAIN_SPACE_ID}
       />
-      <ContestPreview />
+      <HomePageContestPreview />
       <TasksPreview />
     </div>
   )
