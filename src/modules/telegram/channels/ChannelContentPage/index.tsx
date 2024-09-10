@@ -75,6 +75,11 @@ function ChatContent() {
       contentContainer={contentContainer}
       chatId={contentContainer.rootPost.id}
       shouldShowUnapproved={isModerating}
+      isContest={
+        contentContainer.containerType === ContentContainerType.Contest
+          ? { isContestEnded: !!contentContainer.closedAt }
+          : undefined
+      }
     />
   )
 }
@@ -101,13 +106,15 @@ function ChannelNavbar() {
   return (
     <>
       <nav className='flex h-14 items-center gap-2.5 bg-background-light px-3'>
-        <FaChevronLeft
-          onClick={() => {
-            if (isAboutOpen) setIsAboutOpen(false)
-            else router.push('/tg/channels')
-          }}
-          className='text-lg text-text-muted'
-        />
+        <Button size='circleSm' variant='transparent'>
+          <FaChevronLeft
+            onClick={() => {
+              if (isAboutOpen) setIsAboutOpen(false)
+              else router.push('/tg/channels')
+            }}
+            className='text-lg text-text-muted'
+          />
+        </Button>
         <div
           className='flex items-center gap-2.5'
           onClick={() => setIsAboutOpen(true)}
