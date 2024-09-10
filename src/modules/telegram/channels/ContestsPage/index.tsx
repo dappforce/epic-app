@@ -1,8 +1,7 @@
 import BlueGradient from '@/assets/graphics/blue-gradient.png'
-import Container from '@/components/Container'
 import TabButtons from '@/components/TabButtons'
+import BackButton from '@/components/layouts/BackButton'
 import LayoutWithBottomNavigation from '@/components/layouts/LayoutWithBottomNavigation'
-import PointsWidget from '@/modules/points/PointsWidget'
 import { getContentContainersQuery } from '@/services/datahub/content-containers/query'
 import {
   ContentContainerConfigsFilter,
@@ -23,27 +22,28 @@ export default function ContestsPage({
 
   return (
     <LayoutWithBottomNavigation withFixedHeight className='relative'>
-      <PointsWidget isNoTgScroll className='sticky top-0' />
       <Image
         src={BlueGradient}
         alt=''
         className='absolute left-0 top-0 w-full'
       />
-      <Container className='relative flex h-full flex-col gap-4 pt-6'>
-        <div className='flex flex-col items-center gap-3 text-center'>
-          <h1 className='text-3xl font-bold'>MEME CONTESTS</h1>
-          <p className='text-text-muted'>
-            Complete tasks within a limited time to earn rewards.
-          </p>
+      <div className='flex flex-col overflow-auto px-4 pt-4'>
+        <div className='flex flex-col gap-4'>
+          <BackButton title='Meme Contests' backPath='/tg/menu' />
         </div>
-        <TabButtons
-          className='mt-2'
-          tabs={['History', 'Ongoing', 'Upcoming']}
-          selectedTab={selectedTab}
-          setSelectedTab={setSelectedTab}
-        />
-        <ContestsList selectedTab={selectedTab} />
-      </Container>
+        <p className='mt-2 text-text-muted'>
+          Compete with others by submitting the best memes to earn rewards.
+        </p>
+        <div className='relative mt-4 flex h-full flex-col gap-4'>
+          <TabButtons
+            className='mt-2'
+            tabs={['History', 'Ongoing', 'Upcoming']}
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+          />
+          <ContestsList selectedTab={selectedTab} />
+        </div>
+      </div>
     </LayoutWithBottomNavigation>
   )
 }
@@ -69,7 +69,8 @@ function ContestsList({ selectedTab }: { selectedTab: string }) {
         Array.from({ length: 3 }).map((_, i) => <ContainerSkeleton key={i} />)}
       {data?.data.length === 0 && (
         <div className='mt-4 text-center text-text-muted'>
-          No {selectedTab.toLowerCase()} contests yet.
+          There are no {selectedTab.toLowerCase()} contests right now. Please
+          check back later.
         </div>
       )}
       {data?.data?.map((contest) => (
