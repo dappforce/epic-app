@@ -357,6 +357,14 @@ function ContestList({ channel }: { channel: ContentContainer }) {
     <div className='flex flex-col gap-2'>
       {isLoading &&
         Array.from({ length: 3 }).map((_, i) => <ContainerSkeleton key={i} />)}
+      {data?.data.length === 0 && (
+        <div className='mt-4 flex flex-col items-center gap-1 text-center'>
+          <p className='text-text-muted'>
+            No contests available right now, but exciting challenges are coming
+            soon!
+          </p>
+        </div>
+      )}
       {data?.data.map((contest) => (
         <ContestPreview key={contest.id} contest={contest} />
       ))}
