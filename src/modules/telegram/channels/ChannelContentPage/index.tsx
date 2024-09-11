@@ -316,7 +316,7 @@ function ContestInfo({
               : 'Points'}
           </span>
         </div>
-        <span className='text-sm text-text-muted'>Winners</span>
+        <span className='text-sm text-text-muted'>Rewards pool</span>
       </div>
     </div>
   )
