@@ -28,21 +28,21 @@ const HomePageContestPreview = () => {
           </LinkText>
         </div>
         <div className='flex flex-col gap-2'>
-          {isLoading &&
-            Array.from({ length: 3 }).map((_, idx) => (
-              <ContestPreviewItemSkeleton key={idx} />
-            ))}
-          {data.map((item, index) => {
-            if (!item) return null
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, idx) => (
+                <ContestPreviewItemSkeleton key={idx} />
+              ))
+            : data.map((item, index) => {
+                if (!item) return null
 
-            return (
-              <ContestPreviewItem
-                key={index}
-                item={item}
-                withDivider={data.length !== index + 1}
-              />
-            )
-          })}
+                return (
+                  <ContestPreviewItem
+                    key={index}
+                    item={item}
+                    withDivider={data.length !== index + 1}
+                  />
+                )
+              })}
         </div>
         <Button variant={'primary'} size={'md'} href='/tg/friends'>
           Invite frends and earn $
@@ -93,8 +93,8 @@ const ContestPreviewItemSkeleton = () => {
         <div className='flex items-center gap-2'>
           <Skeleton className='h-[38px] w-[38px] rounded-full' />
           <div className='flex flex-col gap-2'>
-            <Skeleton className='w-40' />
-            <Skeleton className='w-24 text-sm' />
+            <Skeleton className='my-0 w-40' />
+            <Skeleton className='my-0 w-24 text-sm' />
           </div>
         </div>
         <Skeleton className='w-6' />
