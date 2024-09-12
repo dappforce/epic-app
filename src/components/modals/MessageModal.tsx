@@ -5,7 +5,7 @@ import { useMyAccount, useMyMainAddress } from '@/stores/my-account'
 import { cx } from '@/utils/class-names'
 import { CommentData } from '@subsocial/api/types'
 import { useEffect, useRef, useState } from 'react'
-import { HiArrowUpRight, HiOutlineInformationCircle } from 'react-icons/hi2'
+import { HiOutlineInformationCircle } from 'react-icons/hi2'
 import Button from '../Button'
 import Card from '../Card'
 import ProfilePreview from '../ProfilePreview'
@@ -76,20 +76,18 @@ export default function MessageModal({
       {...props}
       isOpen={props.isOpen && !isOpenLoginModal}
       initialFocus={buttonRef}
-      title={
-        <span className='flex items-center'>Message from {chatTitle}</span>
-      }
+      title={<span className='flex items-center'>{chatTitle}</span>}
     >
       <div
         className={cx(
-          'relative flex max-h-96 flex-col overflow-y-auto rounded-2xl bg-background p-2 pb-0 md:p-4 md:pb-0',
+          'relative flex flex-col overflow-y-auto rounded-2xl pb-0',
           !message && 'h-28 animate-pulse'
         )}
       >
         {message ? (
           <div className='flex flex-col pb-2'>
             <MemeChatItem
-              className='max-w-none rounded-2xl bg-background-lighter'
+              className='max-w-none rounded-2xl bg-background-lighter/50'
               noBorder
               enableChatMenu={false}
               message={message}
@@ -98,27 +96,28 @@ export default function MessageModal({
             />
           </div>
         ) : (
-          <Skeleton />
+          <Skeleton className='h-96 w-full rounded-2xl' />
         )}
         {(scrollToMessage || redirectTo) && (
-          <div className='sticky -bottom-px left-0 bg-background pb-4 pt-2'>
+          <div className='sticky -bottom-px left-0 pt-4'>
             <Button
               ref={buttonRef}
               isLoading={isScrolling}
-              onClick={scrollToMessage ? handleScrollToMessage : undefined}
-              href={scrollToMessage ? undefined : redirectTo}
+              onClick={() => props.closeModal()}
+              // onClick={scrollToMessage ? handleScrollToMessage : undefined}
+              // href={scrollToMessage ? undefined : redirectTo}
               target='_blank'
               size='lg'
-              variant='primaryOutline'
               className='w-full'
             >
-              {scrollToMessage ? (
+              Check Out More Memes!
+              {/* {scrollToMessage ? (
                 'Scroll to message'
               ) : (
                 <span>
                   Go to message <HiArrowUpRight className='inline' />
                 </span>
-              )}
+              )} */}
             </Button>
           </div>
         )}

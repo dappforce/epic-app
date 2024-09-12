@@ -126,7 +126,11 @@ export const MemesPreviewItem = ({
 
   return (
     <Link
-      href={href ? href : '/tg/channels'}
+      href={
+        href
+          ? href
+          : `/tg/channels/${message.struct.rootPostId}?messageId=${message.id}`
+      }
       className={cx('relative', memeCardSize, className)}
     >
       <MediaLoader

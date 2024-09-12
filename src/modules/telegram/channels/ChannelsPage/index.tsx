@@ -100,7 +100,6 @@ function TopMemesToday() {
                 <MemesPreviewItem
                   key={index}
                   message={message}
-                  href={`/tg/channels/${message.struct.rootPostId}`}
                   address={message.struct.createdByAccount}
                 />
               )
