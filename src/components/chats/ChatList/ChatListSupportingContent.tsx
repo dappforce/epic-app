@@ -65,13 +65,13 @@ export default function ChatListSupportingContent({
   const renderedMessageIdsRef = useWrapInRef(renderedMessageIds)
   useEffect(() => {
     if (hasScrolledToMessageRef.current) return
-    hasScrolledToMessageRef.current = true
 
     const messageId = getUrlQuery('messageId')
     const recipient = getUrlQuery('targetAcc')
     const isMessageIdsFetched = !isLoadingIds
 
     if (!isMessageIdsFetched) return
+    hasScrolledToMessageRef.current = true
 
     if (messageId && validateNumber(messageId)) {
       isInitialized.current = true
