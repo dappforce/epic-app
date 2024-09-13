@@ -74,6 +74,7 @@ export default function MessageModal({
   return (
     <Modal
       {...props}
+      withCloseButton
       isOpen={props.isOpen && !isOpenLoginModal}
       initialFocus={buttonRef}
       title={<span className='flex items-center'>{chatTitle}</span>}

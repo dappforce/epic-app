@@ -48,11 +48,16 @@ import {
   useChannelContentPageContext,
 } from './context'
 
+type ChannelContentPageProps = {
+  rootPostId: string
+}
 export default function ChannelContentPage({
   rootPostId,
-}: {
-  rootPostId: string
-}) {
+}: ChannelContentPageProps) {
+  return <ChannelContentPageInner rootPostId={rootPostId} key={rootPostId} />
+}
+
+function ChannelContentPageInner({ rootPostId }: ChannelContentPageProps) {
   useTgNoScroll()
 
   return (
@@ -110,7 +115,7 @@ function ChannelNavbar() {
           <FaChevronLeft
             onClick={() => {
               if (isAboutOpen) setIsAboutOpen(false)
-              else router.push('/tg/channels')
+              else router.back()
             }}
             className='text-lg text-text-muted'
           />
