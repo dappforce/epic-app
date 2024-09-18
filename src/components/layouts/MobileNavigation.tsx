@@ -183,7 +183,7 @@ function NewMemeNotice() {
   const isMounted = useIsMounted()
 
   if (
-    pathname !== '/tg/memes' &&
+    pathname !== '/tg/channels' &&
     isMounted &&
     lastMessage &&
     getLastReadTime() < lastMessage.struct.createdAtTime

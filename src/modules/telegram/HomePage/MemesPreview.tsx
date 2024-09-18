@@ -53,7 +53,7 @@ const MemesPreview = ({ chatId, hubId }: MemesPreviewProps) => {
             </span>
           </SkeletonFallback>
         </div>
-        <LinkText variant='primary' href='/tg/memes'>
+        <LinkText variant='primary' href='/tg/channels'>
           See all
         </LinkText>
       </div>
