@@ -23,7 +23,7 @@ const TasksPreview = () => {
             sendEvent('tasks_tap_the_cat_open')
           }}
           title='Tap the cat'
-          href='/tg/memes'
+          href='/tg/tap'
           reward={'43,200/day'}
           completed={false}
         />

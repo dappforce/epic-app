@@ -131,7 +131,7 @@ export function DailyTasks({ withTitle = true }: { withTitle?: boolean }) {
               sendEvent('tasks_like_open')
             }}
             title='Like 10 memes'
-            href='/tg/memes'
+            href='/tg/channels'
             reward={pointsPerSuperLike * 10}
             completed={(superLikeCount?.count ?? 0) >= 10}
             customAction={

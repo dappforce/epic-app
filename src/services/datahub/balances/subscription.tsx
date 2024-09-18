@@ -17,7 +17,7 @@ export function useDatahubBalancesSubscriber() {
   const { pathname } = useRouter()
 
   useEffect(() => {
-    if (!myAddress || pathname !== '/tg/memes') return
+    if (!myAddress || pathname !== '/tg/channels') return
 
     const listener = () => {
       unsubRef.current = subscription(queryClient, myAddress!)
