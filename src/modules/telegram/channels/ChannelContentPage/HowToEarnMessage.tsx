@@ -51,7 +51,7 @@ export default function HowToEarnMessage() {
   return (
     <>
       {isModalVisible && (
-        <div className='absolute bottom-32 w-full animate-fade px-2 pb-2'>
+        <div className='absolute bottom-32 z-10 w-full animate-fade px-2 pb-2'>
           <div
             className='flex items-center gap-[10px] rounded-[20px] bg-slate-800 p-[10px] pr-4'
             onClick={(e) => {
