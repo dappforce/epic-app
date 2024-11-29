@@ -17,7 +17,8 @@
     "codegen:moderation": "graphql-codegen --require dotenv/config --config codegen-moderation.ts",
     "codegen:notifications": "graphql-codegen --require dotenv/config --config codegen-notifications.ts",
     "codegen:datahub-query": "graphql-codegen --require dotenv/config --config codegen-datahub-query.ts",
-    "codegen:datahub-queue": "graphql-codegen --require dotenv/config --config codegen-datahub-queue.ts"
+    "codegen:datahub-queue": "graphql-codegen --require dotenv/config --config codegen-datahub-queue.ts",
+    "generate:solana-keys": "tsx scripts/generate-solana-keys.ts"
   },
   "resolutions": {
     "@babel/runtime": "^7.24.6"
@@ -171,7 +172,8 @@
     "tailwind-scrollbar": "^3.0.0",
     "tailwindcss": "^3.4.1",
     "tailwindcss-touch": "^1.0.1",
-    "tsup": "^6.7.0"
+    "tsup": "^6.7.0",
+    "tsx": "^4.19.2"
   },
   "msw": {
     "workerDirectory": "public"
